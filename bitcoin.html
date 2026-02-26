@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Was ist Bitcoin? — SignalsLayered</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #0f1628;
+    --bg3: #151e35;
+    --border: rgba(100,140,255,0.08);
+    --border2: rgba(100,140,255,0.18);
+    --text: #ffffff;
+    --muted: #4a5880;
+    --muted2: #a0aec0;
+    --accent: #4d9fff;
+    --red: #ff4d6a;
+    --yellow: #ffcb47;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    line-height: 1.75;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(77,159,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(77,159,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* TOPBAR */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    height: 56px;
+    background: rgba(10,14,26,0.95);
+    border-bottom: 1px solid var(--border2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+  }
+  .logo span {
+    color: #7a8ab8;
+    font-weight: 400;
+    font-size: 0.72rem;
+    margin-left: 4px;
+  }
+
+  .nav-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    background: rgba(77,159,255,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(77,159,255,0.25);
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0a0e1a 0%, #0f1e40 50%, #0a0e1a 100%);
+    padding: 80px 40px 70px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 100%, rgba(77,159,255,0.15) 0%, transparent 70%);
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: rgba(77,159,255,0.1);
+    border: 1px solid rgba(77,159,255,0.3);
+    color: var(--accent);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 5px 16px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    position: relative;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.05;
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 .accent { color: var(--accent); }
+
+  .hero-sub {
+    color: rgba(255,255,255,0.5);
+    font-size: 1.05rem;
+    font-weight: 400;
+    max-width: 560px;
+    margin: 0 auto 36px;
+    position: relative;
+  }
+
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    position: relative;
+  }
+
+  .meta-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .meta-item span { color: var(--muted2); }
+
+  /* ARTICLE */
+  .article-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 64px 24px 100px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+
+  h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 32px 0 10px;
+  }
+
+  p {
+    color: rgba(255,255,255,0.75);
+    font-size: 1rem;
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+
+  .divider {
+    border: none;
+    height: 1px;
+    background: var(--border2);
+    margin: 52px 0;
+  }
+
+  .pull-quote {
+    border-left: 3px solid var(--accent);
+    padding: 18px 24px;
+    background: rgba(77,159,255,0.06);
+    margin: 32px 0;
+    border-radius: 0 8px 8px 0;
+  }
+  .pull-quote p {
+    color: rgba(255,255,255,0.85);
+    font-style: italic;
+    margin: 0;
+  }
+
+  .highlight-box {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 28px 0;
+  }
+  .highlight-box h3 {
+    margin-top: 0;
+    color: var(--accent);
+  }
+
+  /* COMPARE GRID */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 28px 0;
+  }
+
+  .compare-card {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .compare-card.winner {
+    border-color: var(--accent);
+    background: rgba(77,159,255,0.06);
+  }
+
+  .asset-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #fff;
+    margin-bottom: 14px;
+  }
+
+  .trait {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: var(--muted2);
+    margin-bottom: 7px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot.yes { background: #00c076; }
+  .dot.no { background: var(--red); }
+  .dot.mid { background: var(--yellow); }
+
+  /* CHECKLIST */
+  .checklist {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .checklist li {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .check-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(0,192,118,0.15);
+    border: 1px solid rgba(0,192,118,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .check-icon svg {
+    width: 11px;
+    height: 11px;
+    stroke: #00c076;
+    stroke-width: 2.5;
+    fill: none;
+  }
+
+  .checklist li div strong {
+    display: block;
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+
+  .checklist li div span {
+    color: var(--muted2);
+    font-size: 0.9rem;
+    display: block;
+  }
+
+  /* SATOSHI BOX */
+  .satoshi-box {
+    background: linear-gradient(135deg, rgba(77,159,255,0.1), rgba(123,95,255,0.08));
+    border: 1px solid rgba(77,159,255,0.25);
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+    margin: 40px 0;
+  }
+
+  .satoshi-box .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .equation {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .equation .highlight { color: var(--accent); }
+
+  .satoshi-box .sub {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: var(--muted2);
+  }
+
+  /* CONCLUSION */
+  .conclusion {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    padding: 36px;
+    margin: 40px 0;
+  }
+
+  /* DISCLAIMER */
+  .disclaimer {
+    background: rgba(255,203,71,0.06);
+    border: 1px solid rgba(255,203,71,0.2);
+    border-radius: 10px;
+    padding: 18px 22px;
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.55);
+    margin-top: 32px;
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 24px 32px;
+    border-top: 1px solid var(--border2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    position: relative;
+    z-index: 1;
+  }
+
+  footer a { color: var(--muted); text-decoration: none; margin: 0 10px; }
+  footer a:hover { color: var(--accent); }
+
+  /* FADE IN */
+  .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-in.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 640px) {
+    .compare-grid { grid-template-columns: 1fr; }
+    .hero { padding: 60px 20px 50px; }
+    .topbar { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="/" class="logo">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAEaklEQVR4nO2YW28VVRTHf2vP7fRc28JpC7UFbC00UEioBklMipcH4wMvPvut/A5+A30DowkRjBcUUQTKrbTQ2gs9Pbe57OXDHCqJpU1mIJrAeplJ9szav/mvy14Zmf70c+V/bOa/BtjLXgPmtVccUCS3i5cHKGCjOLeblwZo44RSfRDJqeKLBxQhiSLenHuX6U8+IImTXO5ePKCC4xg0Tnh8/SbGdUCznwVuXh4RQVVTMnGQJCLqq+CUS3jFApokiMmuQy5AESEJY8QoVOuEbgXHjWhZhTimOnYAtTYXYK4QR50uldERvMCn3QoZmhonqA8i4uAWCiRhiEi+LMqkoIiQRDEH3z7J4XNn2Vx4xMbiXwxNDfPr1wtotZ++gSqoEnZDgmIhM2Cmz1NrcQOffUcnuH3xMk7YYejEJIWVJfxqDXVcmk8a6NYW41PjeWokY4hFELVc/e4GG6Hh1KF+vHvznJw5jPFcwnaHYHOdMzNjnHn/dFrVGSkzF4lV6Phlqr7QbbYZGRnk7vwSbKxx/swEszNjXPlxnksXfsKJY8QxkIFR8gysraOzFGxIKdriw3PHGRiokMQxBd/lywvXud70KNkuwe1rmXthNgVVwfUwG2uEjxZpHT/FF98+YG6yQn2gxFffP2Cz2E9p+Q7m7i3oL2XaJjsg6aAiv1+jcfUWhXsP8ebe4+L9AJlv4gQlClcu0bj8C97+GrVaCTIeyblCjEC43mLrj/uIKn3nziL799O98A3h4grFyVGK43VAM+VffkBAXIMNE7ZuLhIur4MRxPepTo/h95ewOYeFPUNsjPQE0B3zXKMExzXUTozTXqwQb7UpHRlGHJPOg7uMW0+XdqufXQFVodHs4rkOrmP+me2EdDaQdJdON8ZzDcFwDbdeQySdB0UkfaYX4d5t+uEihHECCJ4rz4V8bqNWBccRzs8d4+TUMGMjNYwRPNdgJF0DSKxy+tgBAt/FFRgdLGCtYoyQWCWKLVFisarbVxQa7ZCx4TKj9RJhZJ9bQzsqKAKJtZSDgLnZQ/x2ewVjhL7ARRUC38EYw/zCGtNH6jxea3J6+iBGlLsLy9xZavDZx0eJYsvjtRajQ2V8z9DuxKhCtezzaLXFxMEqP9xYYX5xk8B3UPtvGXdUUDUNQTdM+PP+KvWBIp1uTKUY8Nb4Ph4uN7jzcJ3JsUFUlaSnTCHw6C8HfPTOG9RKPp0wZmZiH61OTOA5rDe6LK228Nx021Y35slWiNPL8x3F2quKiwWPZjskjBLmZg8TJ5ZLVx/gew7GCNILc8F36YQxvufguYZmO6JS9Bitl/j55irlPo8wSrCq+J5DGCWU+zzaYbJri9wTMLGKY9Jkb3diFCgGLsrT6lNEZDvvrOp2BFSVOLEEvoO16XNCeo4bSX0bs3sH37PNOD0HqlDs8wCwvVxJizpdf7qREdk+NYwIruNiVbc7gPbe02feyQX4rNkdkng3S1XO9/PsFf/18QLsNWBeew2Y114D5rX/PeDfaWvatPf4Wu8AAAAASUVORK5CYII=" style="height:32px;width:auto;" alt="Logo">
+    SignalsLayered <span>Trader Intelligence Platform</span>
+  </a>
+  <div class="nav-tag">Education & Analysis</div>
+</div>
+
+<div class="hero">
+  <div class="hero-badge">Bitcoin Fundamentals</div>
+  <h1>Der <span class="accent">Bitcoin</span></h1>
+  <p class="hero-sub">Warum Bitcoin mehr als eine Währung ist – und warum er die wichtigste Erfindung im modernen Finanzsystem darstellt.</p>
+  <div class="hero-meta">
+    <div class="meta-item">📅 <span>Februar 2025</span></div>
+    <div class="meta-item">⏱ <span>8 Min. Lesezeit</span></div>
+    <div class="meta-item">✍️ <span>SignalsLayered</span></div>
+  </div>
+</div>
+
+<div class="article-wrap">
+
+  <div class="fade-in">
+    <div class="section-label">Grundlagen</div>
+    <h2>Was ist Geld?</h2>
+    <p>Um zu verstehen, was Bitcoin ist, müssen wir zunächst verstehen, was Geld eigentlich bedeutet. Geld ist im Kern <strong>gespeicherte Arbeitszeit</strong> oder <strong>gespeicherte Arbeitsleistung</strong>. Man muss arbeiten, um Geld zu verdienen – und dieses Geld kann man dann sammeln, sparen und später einsetzen.</p>
+    <p>Von diesem gespeicherten Wert kann man dann andere dafür bezahlen, Leistungen für einen zu erbringen. Geld ist das universelle Tauschmedium für Arbeit und Leistung.</p>
+    <p>Es gibt viele verschiedene Formen von Geld und Währungen. In Deutschland ist es der Euro. Aber im weiteren Sinne können auch Immobilien, Gold, Aktien oder andere Wertgegenstände als Wertaufbewahrungsmittel dienen.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="fade-in">
+    <div class="section-label">Das Problem</div>
+    <h2>Warum verliert Geld seinen Wert?</h2>
+    <p>Das zentrale Problem mit modernem Geld ist die <strong>Inflation</strong>. Staaten und Zentralbanken können jederzeit neue Geldmengen drucken oder digital erzeugen – ohne eine entsprechende Gegenleistung dahinter.</p>
+    <p>Das war nicht immer so: Bis 1971 war der US-Dollar an Gold gebunden. Als US-Präsident Nixon den <strong>Goldstandard</strong> aufhob, wurde Geld zu einem reinen Vertrauensobjekt – dem sogenannten <em>Fiatgeld</em>.</p>
+    <div class="pull-quote">
+      <p>„Geld verliert langsam aber sicher seinen Wert – nicht durch Zufall, sondern durch das System, das es erschaffen hat."</p>
+    </div>
+    <p>Das Ergebnis: Jeder Euro, den du heute sparst, hat in 10 Jahren deutlich weniger Kaufkraft. Die Inflation frisst deine gespeicherte Arbeitsleistung still und leise auf.</p>
+    <div class="highlight-box">
+      <h3>⚡ Stichwort: Inflation</h3>
+      <p>Inflation bedeutet, dass die gleiche Menge Geld im Laufe der Zeit weniger Waren kauft. Bei einer jährlichen Inflation von 3 % verliert dein Geld in 24 Jahren die Hälfte seiner Kaufkraft.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="fade-in">
+    <div class="section-label">Vergleich</div>
+    <h2>Die Schwächen klassischer Wertspeicher</h2>
+    <p>Menschen suchen seit jeher nach einer Möglichkeit, ihre Arbeitsleistung sicher zu speichern. Die klassischen Alternativen haben jedoch alle deutliche Schwächen:</p>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <div class="asset-name">🏠 Immobilien</div>
+        <div class="trait"><span class="dot no"></span>Nicht teilbar</div>
+        <div class="trait"><span class="dot no"></span>Nicht transportierbar</div>
+        <div class="trait"><span class="dot no"></span>Illiquide</div>
+        <div class="trait"><span class="dot no"></span>Hohe Haltungskosten</div>
+        <div class="trait"><span class="dot mid"></span>Werterhalt möglich</div>
+      </div>
+      <div class="compare-card">
+        <div class="asset-name">🥇 Gold</div>
+        <div class="trait"><span class="dot mid"></span>Begrenzt verfügbar</div>
+        <div class="trait"><span class="dot no"></span>Schwer zu transportieren</div>
+        <div class="trait"><span class="dot no"></span>Nicht digital versendbar</div>
+        <div class="trait"><span class="dot no"></span>Lagerkosten nötig</div>
+        <div class="trait"><span class="dot yes"></span>Historisch bewährt</div>
+      </div>
+      <div class="compare-card winner">
+        <div class="asset-name">₿ Bitcoin</div>
+        <div class="trait"><span class="dot yes"></span>Maximal begrenzt</div>
+        <div class="trait"><span class="dot yes"></span>Global versendbar</div>
+        <div class="trait"><span class="dot yes"></span>Sofort &amp; günstig</div>
+        <div class="trait"><span class="dot yes"></span>Keine Haltungskosten</div>
+        <div class="trait"><span class="dot yes"></span>Dein Eigentum</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="fade-in">
+    <div class="section-label">Die Lösung</div>
+    <h2>Was ist Bitcoin?</h2>
+    <p>Bitcoin wurde 2008 von einer Person oder Gruppe unter dem Pseudonym <strong>Satoshi Nakamoto</strong> veröffentlicht – mitten in der globalen Finanzkrise. Nakamoto entwarf ein System, das ohne Banken, Regierungen oder Mittelsmänner auskommt.</p>
+    <p>Am 3. Januar 2009 wurde der erste Bitcoin-Block gemint. Im Jahr 2010 fand die erste reale Transaktion statt: <strong>10.000 Bitcoin für zwei Pizzen</strong> – heute würden diese Coins hunderte Millionen Euro wert sein.</p>
+    <p>Bitcoin ist kein Unternehmen, keine Aktie und kein Schuldschein. Es ist ein Protokoll – wie das Internet – das von niemandem kontrolliert werden kann und auf tausenden Computern weltweit gleichzeitig läuft.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="fade-in">
+    <div class="section-label">Eigenschaften</div>
+    <h2>Warum Bitcoin der optimale Wertspeicher ist</h2>
+    <ul class="checklist">
+      <li>
+        <div class="check-icon"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div><strong>Absolut begrenzt</strong><span>Es wird niemals mehr als 21 Millionen Bitcoin geben. Diese Grenze ist im Code festgelegt und kann nicht geändert werden.</span></div>
+      </li>
+      <li>
+        <div class="check-icon"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div><strong>Dezentralisiert &amp; unkontrollierbar</strong><span>Keine Regierung, keine Bank und kein Unternehmen kann Bitcoin beschlagnahmen, einfrieren oder manipulieren.</span></div>
+      </li>
+      <li>
+        <div class="check-icon"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div><strong>Weltweit und sofort versendbar</strong><span>Bitcoin kann innerhalb von Minuten an jeden Ort der Welt gesendet werden – 24/7, ohne Banköffnungszeiten.</span></div>
+      </li>
+      <li>
+        <div class="check-icon"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div><strong>Keine Haltungskosten</strong><span>Im Gegensatz zu Gold oder Immobilien entstehen bei Bitcoin keine Lager-, Versicherungs- oder Verwaltungskosten.</span></div>
+      </li>
+      <li>
+        <div class="check-icon"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div><strong>Dein Eigentum</strong><span>Mit dem eigenen Private Key ist Bitcoin unantastbar. Niemand kann darauf zugreifen, ohne deinen persönlichen Schlüssel zu haben.</span></div>
+      </li>
+      <li>
+        <div class="check-icon"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div><strong>Teilbar bis ins kleinste Detail</strong><span>Ein Bitcoin lässt sich in 100 Millionen Einheiten (Satoshi) aufteilen – man kann also auch sehr kleine Beträge investieren.</span></div>
+      </li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+  <div class="fade-in">
+    <div class="section-label">Wichtiger Hinweis</div>
+    <h2>Was ist mit der Volatilität?</h2>
+    <p>Bitcoin ist derzeit noch sehr volatil – der Preis kann innerhalb kurzer Zeit stark schwanken. Das liegt daran, dass Bitcoin noch ein relativ junges Asset ist und sich der Markt noch in der frühen Adoptionsphase befindet.</p>
+    <p>Historisch betrachtet hat Bitcoin trotz aller Rückschläge langfristig immer neue Höchststände erreicht. Wer einen langen Anlagehorizont hat und mindestens 4 Jahre gehalten hat, hat mit Bitcoin bisher noch nie Verlust gemacht.</p>
+  </div>
+
+  <div class="satoshi-box fade-in">
+    <div class="label">Wissenswertes</div>
+    <div class="equation"><span class="highlight">1 BTC</span> = 100.000.000 <span class="highlight">Satoshi</span></div>
+    <div class="sub">Die kleinste Einheit von Bitcoin – benannt nach dem anonymen Erfinder Satoshi Nakamoto</div>
+  </div>
+
+  <div class="conclusion fade-in">
+    <div class="section-label">Fazit</div>
+    <h2>Bitcoin ist die Lösung</h2>
+    <p>Menschen suchen seit Jahrhunderten nach einer idealen Form, Wert zu speichern. Bitcoin erfüllt diese Anforderungen wie kein anderes Asset zuvor. Es ist begrenzt, dezentralisiert, transparent und global zugänglich.</p>
+    <p style="margin-top:14px;">Die Volatilität ist keine Schwäche des Systems, sondern ein Merkmal seiner frühen Phase. Mit wachsender Adoption wird Bitcoin stabiler – und sein innerer Wert als ultimativer Wertspeicher der digitalen Ära immer klarer erkennbar.</p>
+  </div>
+
+  <div class="disclaimer fade-in">
+    ⚠️ <strong>Risikohinweis:</strong> Dieser Artikel dient ausschließlich zu Informations- und Bildungszwecken und stellt keine Anlage- oder Finanzberatung dar. Investitionen in Kryptowährungen sind hochspekulativ und mit erheblichen Verlustrisiken verbunden.
+  </div>
+
+</div>
+
+<footer>
+  © 2026 SignalsLayered &nbsp;|&nbsp;
+  <a href="/">← Back to Dashboard</a> &nbsp;|&nbsp;
+  <a href="/privacy.html">Privacy Policy</a> &nbsp;|&nbsp;
+  <a href="/impressum.html">Impressum</a>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
