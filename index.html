@@ -889,10 +889,7 @@
         </div>
       </div>
 
-      <div class="ai-summary">
-        <span class="ai-generating" id="ai-gen-badge">● AI ANALYSIS ACTIVE</span><br>
-        <span id="ai-summary-text">Prediction Markets signal 68% probability for bullish movement within the next 72h. Macro environment remains supportive through Fed pause expectations. Political uncertainty (US Congress regulation debate) pressures the politics score.</span>
-      </div>
+
     </div>
 
     <!-- PANEL: BITCOIN CHART (TRADINGVIEW) -->
@@ -997,27 +994,7 @@
       </div>
     </div>
 
-    <!-- AI QUERY BOX -->
-    <div class="ai-box">
-      <div class="ai-box-header">
-        <div class="ai-icon">🤖</div>
-        <div>
-          <div class="ai-box-title">Ask AI Analyst</div>
-          <div class="ai-box-sub">Ask a question about all aggregated signals · Powered by Claude AI</div>
-        </div>
-      </div>
-      <div class="ai-query-area">
-        <textarea class="ai-input" id="ai-input" placeholder="e.g. „What does the combination of high sentiment and low politics score mean for BTC short-term?""></textarea>
-        <button class="ai-send-btn" id="ai-send" onclick="queryAI()">ANALYZE →</button>
-      </div>
-      <div class="ai-suggested">
-        <button class="sugg-btn" onclick="fillQuery('What are the biggest risks according to current signals?')">Biggest Risks?</button>
-        <button class="sugg-btn" onclick="fillQuery('Which signal is currently most relevant?')">Strongest Signal?</button>
-        <button class="sugg-btn" onclick="fillQuery('How do you assess the political events for BTC?')">Politics Impact?</button>
-        <button class="sugg-btn" onclick="fillQuery('Short vs. long-term outlook based on all data?')">Short vs. Long?</button>
-      </div>
-      <div class="ai-response" id="ai-response">← Ask a question to get an AI analysis of the aggregated market data.</div>
-    </div>
+
 
   </div>
 </div>
@@ -1545,87 +1522,6 @@
     document.getElementById('ai-response').textContent = '← Ask a question for ' + asset + '-specific AI analysis.';
   }
 
-  // AI Query
-  function fillQuery(text) {
-    document.getElementById('ai-input').value = text;
-    document.getElementById('ai-input').focus();
-  }
-
-  async function queryAI() {
-    const input = document.getElementById('ai-input').value.trim();
-    if (!input) return;
-
-    const btn = document.getElementById('ai-send');
-    const resp = document.getElementById('ai-response');
-    btn.disabled = true;
-    btn.textContent = 'ANALYZING...';
-    resp.innerHTML = '<span class="ai-cursor"></span>';
-
-    // Get active asset
-    const activeBtn = document.querySelector('.asset-btn.active');
-    const asset = 'BTC';
-    const d = assetData[asset];
-
-    const systemPrompt = `Du bist ein präziser Trading-Analyst auf der SIGNAL-Plattform.
-Du analysierst aggregierte Marktdaten für ${asset}.
-
-Aktuelle Datenlage:
-- Signal Score: ${d.score}/100 (${d.verdict})
-- Prediction Markets Score: ${d.pred}% bullish
-- Community Sentiment: ${d.sent}% bullish  
-- Politischer Score: ${d.pol}% (politisches Umfeld)
-- Makro Score: ${d.macro}% (makroökonomisches Umfeld)
-- Fear & Greed: ${d.fg} (${d.fgLabel})
-
-Kontext: ${d.summary}
-
-Reply in English, precise and in 3-5 sentences. No long introductions. Get straight to the analysis.
-Use short, clear sentences. Add a concrete conclusion at the end.`;
-
-    try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          system: systemPrompt,
-          messages: [{ role: 'user', content: input }]
-        })
-      });
-
-      const data = await response.json();
-      const text = data.content?.[0]?.text || 'No response received.';
-
-      // Typewriter effect
-      resp.textContent = '';
-      let i = 0;
-      function type() {
-        if (i < text.length) {
-          resp.textContent += text[i++];
-          setTimeout(type, 12);
-        } else {
-          btn.disabled = false;
-          btn.textContent = 'ANALYZE →';
-        }
-      }
-      type();
-    } catch (err) {
-      resp.textContent = '⚠ Connection to AI API failed. Please check your internet connection.';
-      btn.disabled = false;
-      btn.textContent = 'ANALYZE →';
-    }
-  }
-
-  // Enter key support
-  document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('ai-input').addEventListener('keydown', e => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        queryAI();
-      }
-    });
-  });
 </script>
 </body>
 </html>
