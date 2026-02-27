@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bitcoin Mining — SignalsLayered</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #0f1628;
+    --bg3: #151e35;
+    --border: rgba(100,140,255,0.08);
+    --border2: rgba(100,140,255,0.18);
+    --text: #ffffff;
+    --muted: #4a5880;
+    --muted2: #a0aec0;
+    --accent: #4d9fff;
+    --red: #ff4d6a;
+    --yellow: #ffcb47;
+    --gold: #f59e0b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    line-height: 1.75;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(77,159,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(77,159,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    height: 56px;
+    background: rgba(10,14,26,0.95);
+    border-bottom: 1px solid var(--border2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+  }
+  .logo span {
+    color: #7a8ab8;
+    font-weight: 400;
+    font-size: 0.72rem;
+    margin-left: 4px;
+  }
+  .nav-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    background: rgba(77,159,255,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(77,159,255,0.25);
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .hero {
+    background: linear-gradient(135deg, #0a0e1a 0%, #1a1200 50%, #0a0e1a 100%);
+    padding: 80px 40px 70px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border2);
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 100%, rgba(245,158,11,0.12) 0%, transparent 70%);
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(245,158,11,0.1);
+    border: 1px solid rgba(245,158,11,0.3);
+    color: var(--gold);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 5px 16px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    position: relative;
+  }
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.05;
+    position: relative;
+    margin-bottom: 20px;
+  }
+  .hero h1 .accent { color: var(--gold); }
+  .hero-sub {
+    color: rgba(255,255,255,0.5);
+    font-size: 1.05rem;
+    font-weight: 400;
+    max-width: 560px;
+    margin: 0 auto 36px;
+    position: relative;
+  }
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    position: relative;
+  }
+  .meta-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .meta-item span { color: var(--muted2); }
+  .article-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 64px 24px 100px;
+    position: relative;
+    z-index: 1;
+  }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+  h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 32px 0 10px;
+  }
+  p {
+    color: rgba(255,255,255,0.75);
+    font-size: 1rem;
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+  .divider {
+    border: none;
+    height: 1px;
+    background: var(--border2);
+    margin: 52px 0;
+  }
+  .pull-quote {
+    border-left: 3px solid var(--gold);
+    padding: 18px 24px;
+    background: rgba(245,158,11,0.06);
+    margin: 32px 0;
+    border-radius: 0 8px 8px 0;
+  }
+  .pull-quote p {
+    color: rgba(255,255,255,0.85);
+    font-style: italic;
+    margin: 0;
+  }
+  .highlight-box {
+    background: var(--bg3);
+    border: 1px solid rgba(245,158,11,0.25);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 28px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .highlight-box::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%);
+  }
+  .highlight-box h3 {
+    color: var(--gold);
+    margin-top: 0;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+  }
+  /* STEPS */
+  .steps { display: grid; gap: 12px; margin: 24px 0; }
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 18px 22px;
+    transition: border-color 0.2s;
+  }
+  .step:hover { border-color: var(--gold); }
+  .step-num {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.8rem; color: #fff;
+    flex-shrink: 0;
+  }
+  .step-content strong { display: block; color: #fff; font-weight: 600; margin-bottom: 3px; }
+  .step-content span { color: var(--muted2); font-size: 0.88rem; }
+  /* ARROW LIST */
+  .arrow-list { list-style: none; margin: 20px 0; display: grid; gap: 10px; }
+  .arrow-list li {
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 0.95rem; color: rgba(255,255,255,0.75);
+  }
+  .arrow-list li::before {
+    content: '→'; color: var(--gold); font-weight: 700; font-size: 1rem;
+    margin-top: 2px; flex-shrink: 0;
+  }
+  /* CHECKLIST */
+  .checklist { list-style: none; margin: 24px 0; display: grid; gap: 12px; }
+  .checklist li {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: var(--bg3); border: 1px solid var(--border2);
+    border-radius: 12px; padding: 16px 20px;
+    transition: border-color 0.2s;
+  }
+  .checklist li:hover { border-color: var(--accent); }
+  .check-icon {
+    width: 22px; height: 22px;
+    background: rgba(0,192,118,0.15); border: 1px solid rgba(0,192,118,0.4);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .check-icon svg { width: 11px; height: 11px; stroke: #00c076; stroke-width: 2.5; fill: none; }
+  .checklist li div strong { display: block; color: #fff; font-weight: 600; margin-bottom: 3px; }
+  .checklist li div span { color: var(--muted2); font-size: 0.88rem; display: block; }
+  /* TWO COL */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 24px 0; }
+  .benefit-card {
+    border-radius: 12px; padding: 22px 20px;
+    border: 1px solid var(--border2); background: var(--bg3);
+    transition: border-color 0.2s;
+  }
+  .benefit-card:hover { border-color: var(--gold); }
+  .benefit-card .icon { font-size: 1.5rem; margin-bottom: 10px; display: block; }
+  .benefit-card h4 { font-weight: 700; font-size: 0.95rem; color: #fff; margin-bottom: 6px; }
+  .benefit-card p { font-size: 0.85rem; color: var(--muted2); margin: 0; }
+  /* STAT BOX */
+  .stat-box {
+    text-align: center;
+    background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(251,191,36,0.05));
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 16px; padding: 36px; margin: 40px 0;
+  }
+  .stat-box .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 12px;
+  }
+  .stat-box .equation {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(1.3rem, 3vw, 2rem); font-weight: 700; color: #fff;
+  }
+  .stat-box .equation .highlight { color: var(--gold); }
+  .stat-box .sub { margin-top: 10px; font-size: 0.85rem; color: var(--muted2); }
+  /* CONCLUSION */
+  .conclusion {
+    background: var(--bg3); border: 1px solid var(--border2);
+    border-radius: 16px; padding: 36px; margin: 40px 0;
+  }
+  /* DISCLAIMER */
+  .disclaimer {
+    background: rgba(255,203,71,0.06); border: 1px solid rgba(255,203,71,0.2);
+    border-radius: 10px; padding: 18px 22px;
+    font-size: 0.82rem; color: rgba(255,255,255,0.55); margin-top: 32px;
+  }
+  footer {
+    text-align: center; padding: 24px 32px;
+    border-top: 1px solid var(--border2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; color: var(--muted);
+    position: relative; z-index: 1;
+  }
+  footer a { color: var(--muted); text-decoration: none; margin: 0 10px; }
+  footer a:hover { color: var(--accent); }
+  .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-in.visible { opacity: 1; transform: none; }
+  @media (max-width: 640px) {
+    .two-col { grid-template-columns: 1fr; }
+    .hero { padding: 60px 20px 50px; }
+    .topbar { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="/" class="logo">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAEaklEQVR4nO2YW28VVRTHf2vP7fRc28JpC7UFbC00UEioBklMipcH4wMvPvut/A5+A30DowkRjBcUUQTKrbTQ2gs9Pbe57OXDHCqJpU1mIJrAeplJ9szav/mvy14Zmf70c+V/bOa/BtjLXgPmtVccUCS3i5cHKGCjOLeblwZo44RSfRDJqeKLBxQhiSLenHuX6U8+IImTXO5ePKCC4xg0Tnh8/SbGdUCznwVuXh4RQVVTMnGQJCLqq+CUS3jFApokiMmuQy5AESEJY8QoVOuEbgXHjWhZhTimOnYAtTYXYK4QR50uldERvMCn3QoZmhonqA8i4uAWCiRhiEi+LMqkoIiQRDEH3z7J4XNn2Vx4xMbiXwxNDfPr1wtotZ++gSqoEnZDgmIhM2Cmz1NrcQOffUcnuH3xMk7YYejEJIWVJfxqDXVcmk8a6NYW41PjeWokY4hFELVc/e4GG6Hh1KF+vHvznJw5jPFcwnaHYHOdMzNjnHn/dFrVGSkzF4lV6Phlqr7QbbYZGRnk7vwSbKxx/swEszNjXPlxnksXfsKJY8QxkIFR8gysraOzFGxIKdriw3PHGRiokMQxBd/lywvXud70KNkuwe1rmXthNgVVwfUwG2uEjxZpHT/FF98+YG6yQn2gxFffP2Cz2E9p+Q7m7i3oL2XaJjsg6aAiv1+jcfUWhXsP8ebe4+L9AJlv4gQlClcu0bj8C97+GrVaCTIeyblCjEC43mLrj/uIKn3nziL799O98A3h4grFyVGK43VAM+VffkBAXIMNE7ZuLhIur4MRxPepTo/h95ewOYeFPUNsjPQE0B3zXKMExzXUTozTXqwQb7UpHRlGHJPOg7uMW0+XdqufXQFVodHs4rkOrmP+me2EdDaQdJdON8ZzDcFwDbdeQySdB0UkfaYX4d5t+uEihHECCJ4rz4V8bqNWBccRzs8d4+TUMGMjNYwRPNdgJF0DSKxy+tgBAt/FFRgdLGCtYoyQWCWKLVFisarbVxQa7ZCx4TKj9RJhZJ9bQzsqKAKJtZSDgLnZQ/x2ewVjhL7ARRUC38EYw/zCGtNH6jxea3J6+iBGlLsLy9xZavDZx0eJYsvjtRajQ2V8z9DuxKhCtezzaLXFxMEqP9xYYX5xk8B3UPtvGXdUUDUNQTdM+PP+KvWBIp1uTKUY8Nb4Ph4uN7jzcJ3JsUFUlaSnTCHw6C8HfPTOG9RKPp0wZmZiH61OTOA5rDe6LK228Nx021Y35slWiNPL8x3F2quKiwWPZjskjBLmZg8TJ5ZLVx/gew7GCNILc8F36YQxvufguYZmO6JS9Bitl/j55irlPo8wSrCq+J5DGCWU+zzaYbJri9wTMLGKY9Jkb3diFCgGLsrT6lNEZDvvrOp2BFSVOLEEvoO16XNCeo4bSX0bs3sH37PNOD0HqlDs8wCwvVxJizpdf7qREdk+NYwIruNiVbc7gPbe02feyQX4rNkdkng3S1XO9/PsFf/18QLsNWBeew2Y114D5rX/PeDfaWvatPf4Wu8AAAAASUVORK5CYII=" style="height:32px;width:auto;" alt="Logo">
+    SignalsLayered <span>Trader Intelligence Platform</span>
+  </a>
+  <div class="nav-tag">Education & Analysis</div>
+</div>
+
+<div class="hero">
+  <div class="hero-badge">Bitcoin Basics</div>
+  <h1>Bitcoin <span class="accent">Mining</span></h1>
+  <p class="hero-sub">What is digital gold mining really about — and why is it the backbone of the entire Bitcoin network?</p>
+  <div class="hero-meta">
+    <div class="meta-item">📅 <span>February 2025</span></div>
+    <div class="meta-item">⏱ <span>6 min read</span></div>
+    <div class="meta-item">✍️ <span>SignalsLayered</span></div>
+  </div>
+</div>
+
+<div class="article-wrap">
+
+  <div class="fade-in">
+    <div class="section-label">The Basics</div>
+    <h2>What is Bitcoin Mining?</h2>
+    <p>Bitcoin Mining can be thought of as <strong>digital gold mining</strong>. Instead of shovels and pickaxes, powerful computers work around the clock solving complex cryptographic calculations — and are rewarded with newly created Bitcoins for doing so.</p>
+    <p>But mining is far more than just generating new coins. It is the mechanism that keeps the entire network alive — verifying every transaction, permanently recording it, and protecting the system against manipulation.</p>
+    <div class="pull-quote">
+      <p>"Mining is not just the creation of new Bitcoin — it is the security mechanism that makes Bitcoin what it is."</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="fade-in">
+    <div class="section-label">The Process</div>
+    <h2>How Does Mining Work?</h2>
+    <p>In mining, computers solve complex cryptographic puzzles. These tasks require enormous computational power — yet can be verified by the network almost instantly. The first miner to find the solution wins.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Transactions are collected</strong>
+          <span>Every Bitcoin transfer worldwide lands in the so-called mempool — a waiting area for unconfirmed transactions.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>A new block is formed</strong>
+          <span>Miners bundle many transactions into a block and begin solving the associated cryptographic puzzle.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Solution found — block is confirmed</strong>
+          <span>The first miner to solve the puzzle may add the block to the blockchain. The entire network verifies the solution immediately.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Reward is paid out</strong>
+          <span>As a reward, the miner receives newly generated Bitcoin plus all transaction fees included in the block.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="fade-in">
+    <div class="section-label">The Technology</div>
+    <h2>What is the Blockchain — and Why is it Secure?</h2>
+    <p>The blockchain is a public, digital ledger containing every Bitcoin transaction ever made. It is transparent — anyone can view it — yet completely tamper-proof.</p>
+    <p>Its security rests on a clever cryptographic mechanism: every new block contains a <strong>hash</strong> — a unique digital fingerprint of the previous block.</p>
+    <div class="highlight-box">
+      <h3>🔐 Why can no one forge the blockchain?</h3>
+      <p>If someone were to alter an older block, its hash would change — and all subsequent blocks would automatically become invalid. A successful attack would require more computing power than the entire rest of the network combined. In practice, this is simply impossible.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="fade-in">
+    <div class="section-label">Self-Regulation</div>
+    <h2>The Automatic Difficulty Adjustment</h2>
+    <p>To maintain stability and security, the difficulty of the cryptographic puzzles adjusts automatically. The target: a new block every <strong>10 minutes</strong> — no faster, no slower.</p>
+    <ul class="arrow-list">
+      <li>If total computing power increases, the puzzles become harder.</li>
+      <li>If computing power decreases, the puzzles become easier.</li>
+      <li>This mechanism operates fully automatically — without any central control.</li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+  <div class="fade-in">
+    <div class="section-label">Scarcity</div>
+    <h2>The Hard Cap of 21 Million Bitcoin</h2>
+    <p>A mathematically fixed mechanism guarantees there will <strong>never be more than 21 million Bitcoin</strong>. This limit is immutably written into the code — no government, bank, or company can change it.</p>
+    <ul class="arrow-list">
+      <li>More than 19.5 million Bitcoin are already in circulation today.</li>
+      <li>The issuance of new Bitcoin is cut in half every four years — the <strong>Halving</strong>.</li>
+      <li>The last Bitcoin is expected to be mined around the year 2140.</li>
+    </ul>
+  </div>
+
+  <div class="stat-box fade-in">
+    <div class="label">Mining Reward After the 2024 Halving</div>
+    <div class="equation">Block Reward = <span class="highlight">3.125 BTC</span></div>
+    <div class="sub">The reward halves every 210,000 blocks — approximately every 4 years — to ensure Bitcoin's permanent scarcity</div>
+  </div>
+
+  <div class="fade-in">
+    <div class="section-label">Sustainability</div>
+    <h2>Energy Consumption & Economic Benefits</h2>
+    <p>Mining requires energy — security here is created through computing power. But this energy demand can be met sustainably. Mining acts as a flexible energy consumer, most valuable when there is excess power in the grid.</p>
+    <div class="two-col">
+      <div class="benefit-card">
+        <span class="icon">⚡</span>
+        <h4>Utilize Surplus Energy</h4>
+        <p>When there is excess wind or hydropower, mining can productively use that electricity instead of wasting it.</p>
+      </div>
+      <div class="benefit-card">
+        <span class="icon">💰</span>
+        <h4>New Revenue Stream</h4>
+        <p>Energy that would otherwise go to waste is converted into Bitcoin — a sustainable and economically sound solution.</p>
+      </div>
+      <div class="benefit-card">
+        <span class="icon">🌡️</span>
+        <h4>Reuse Waste Heat</h4>
+        <p>Heat generated during mining can warm buildings, pools, or greenhouses — the energy gets used twice.</p>
+      </div>
+      <div class="benefit-card">
+        <span class="icon">🌱</span>
+        <h4>Renewable Energy</h4>
+        <p>Estimates suggest 50–70% of global mining energy already comes from renewable sources such as hydro and wind power.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="fade-in">
+    <div class="section-label">Overview</div>
+    <h2>What Bitcoin Mining Achieves</h2>
+    <ul class="checklist">
+      <li>
+        <div class="check-icon"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div><strong>Verify &amp; store transactions</strong><span>Every Bitcoin transfer is verified through mining and permanently recorded in the blockchain.</span></div>
+      </li>
+      <li>
+        <div class="check-icon"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div><strong>Generate new Bitcoin</strong><span>Miners are rewarded with newly created Bitcoin — this is how new coins enter circulation in a controlled manner.</span></div>
+      </li>
+      <li>
+        <div class="check-icon"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div><strong>Secure the network</strong><span>The collective computing power of all miners makes the network practically invulnerable to manipulation.</span></div>
+      </li>
+      <li>
+        <div class="check-icon"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div><strong>Ensure decentralization</strong><span>No single entity controls mining — distributed across thousands of independent miners worldwide.</span></div>
+      </li>
+      <li>
+        <div class="check-icon"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div><strong>Guarantee scarcity mathematically</strong><span>The mechanism ensures the 21-million cap is never exceeded — independent of any political decision.</span></div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="conclusion fade-in">
+    <div class="section-label">Conclusion</div>
+    <h2>Mining is the Heart of Bitcoin</h2>
+    <p>Bitcoin Mining is proof that a global financial system can function without central control. It creates trust through mathematics rather than institutions — making Bitcoin independent, transparent, and manipulation-resistant.</p>
+    <p style="margin-top:14px;">The energy mining consumes is not a flaw — it is the foundation of its security. As renewable energy grows, mining becomes increasingly sustainable and its value for the digital economy ever clearer.</p>
+  </div>
+
+  <div class="disclaimer fade-in">
+    ⚠️ <strong>Risk Disclaimer:</strong> This article is intended solely for informational and educational purposes and does not constitute investment or financial advice. Investments in cryptocurrencies are highly speculative and carry significant risk of loss.
+  </div>
+
+</div>
+
+<footer>
+  © 2026 SignalsLayered &nbsp;|&nbsp;
+  <a href="/">← Back to Dashboard</a> &nbsp;|&nbsp;
+  <a href="/privacy.html">Privacy Policy</a> &nbsp;|&nbsp;
+  <a href="/impressum.html">Impressum</a>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
