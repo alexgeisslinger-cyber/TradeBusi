@@ -1506,7 +1506,7 @@
 
       // Adjust animation speed based on content length
       const totalChars = articles.reduce((s, a) => s + (a.title || '').length, 0);
-      const duration = Math.max(40, Math.min(90, totalChars * 0.15));
+      const duration = Math.max(20, Math.min(90, totalChars * 0.15));
       track.style.animationDuration = duration + 's';
 
       setTimeout(loadTicker, 600_000); // refresh every 10 min
