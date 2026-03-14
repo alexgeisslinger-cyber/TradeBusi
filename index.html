@@ -1,0 +1,2744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SignalsLayered | Bitcoin Signals, BTC Market Data & Trend Analysis</title>
+<meta name="description" content="SignalsLayered is a Bitcoin market intelligence platform providing BTC signals, market analysis, and layered data insights to help traders understand Bitcoin trends and opportunities.">
+<meta name="keywords" content="Bitcoin signals, BTC market data, Bitcoin trend analysis, crypto market intelligence, Bitcoin fear greed index, BTC dominance">
+<meta name="author" content="SignalsLayered">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://signalslayered.com/">
+
+<!-- Open Graph -->
+<meta property="og:title" content="SignalsLayered | Bitcoin Signals, BTC Market Data & Trend Analysis">
+<meta property="og:description" content="SignalsLayered is a Bitcoin market intelligence platform providing BTC signals, market analysis, and layered data insights to help traders understand Bitcoin trends and opportunities.">
+<meta property="og:url" content="https://signalslayered.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SignalsLayered">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SignalsLayered | Bitcoin Signals, BTC Market Data & Trend Analysis">
+<meta name="twitter:description" content="SignalsLayered is a Bitcoin market intelligence platform providing BTC signals, market analysis, and layered data insights to help traders understand Bitcoin trends and opportunities.">
+<meta name="twitter:site" content="@SignalsLayered">
+
+<!-- Cookie Consent (CCM19) -->
+<script src="https://cloud.ccm19.de/app.js?apiKey=317076f5c5dcb898f0ff217d1811c09a054ad6cb87d94930&domain=69a6972fe9c9a5243a08af32" referrerpolicy="origin"></script>
+
+<!-- Google Analytics (loaded after consent via CCM19) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GML42ZYNTN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GML42ZYNTN');
+</script>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #0f1628;
+    --bg3: #151e35;
+    --border: rgba(100,140,255,0.08);
+    --border2: rgba(100,140,255,0.18);
+    --text: #ffffff;
+    --muted: #4a5880;
+    --muted2: #a0aec0;
+    --accent: #4d9fff;
+    --accent2: #7b5fff;
+    --red: #ff4d6a;
+    --yellow: #ffcb47;
+    --purple: #a78bfa;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-size: 106%;
+  }
+
+  /* GRID BACKGROUND */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(77,159,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(77,159,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* SCANLINE */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app { position: relative; z-index: 1; }
+
+  /* TOP BAR */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    height: 56px;
+    background: rgba(6,8,15,0.95);
+    border-bottom: 1px solid var(--border2);
+    backdrop-filter: blur(20px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .logo span { color: var(--muted2); font-weight: 400; font-size: 0.75rem; letter-spacing: 0.05em; margin-left: 12px; }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .live-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+  .live-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  .clock {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  /* HERO */
+  .hero {
+    padding: 16px 32px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    position: relative;
+  }
+
+  .hero-title {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.1;
+    color: var(--text);
+  }
+  .hero-title strong {
+    font-style: normal;
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    color: var(--accent);
+    display: block;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    letter-spacing: -0.02em;
+  }
+
+  .asset-selector {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .asset-btn {
+    padding: 8px 18px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--muted2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+  .asset-btn.active {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+    font-weight: 700;
+  }
+  .asset-btn:hover:not(.active) {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* MAIN GRID */
+  .main {
+    padding: 0 32px 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 16px;
+  }
+
+  /* SCORE CARD - spans full width */
+  .score-banner {
+    grid-column: 1 / -1;
+    background: var(--bg2);
+    border: 1px solid rgba(77,159,255,0.3);
+    border-radius: 16px;
+    padding: 32px 36px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.5s;
+  }
+
+  /* Animated background glow */
+  .score-banner::after {
+    content: '';
+    position: absolute;
+    top: -60px; left: -60px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(77,159,255,0.12) 0%, transparent 70%);
+    pointer-events: none;
+    transition: background 0.5s;
+  }
+
+  .score-banner::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 5px;
+    background: var(--accent);
+    border-radius: 4px 0 0 4px;
+    transition: background 0.5s;
+  }
+
+  .signal-score-wrap {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .signal-score-num {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: 5.5rem;
+    line-height: 1;
+    color: var(--accent);
+    letter-spacing: -0.04em;
+    text-shadow: 0 0 40px rgba(77,159,255,0.4);
+    transition: color 0.5s, text-shadow 0.5s;
+  }
+
+  .signal-score-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted2);
+    margin-bottom: 6px;
+  }
+
+  .signal-verdict {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 1.4rem;
+    color: var(--text);
+  }
+  .signal-verdict strong {
+    font-style: normal;
+    font-family: 'Inter', sans-serif;
+    color: var(--accent);
+    font-size: 1.1rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 4px;
+    transition: color 0.5s;
+  }
+
+  .ai-summary {
+    flex: 1;
+    min-width: 240px;
+    font-size: 0.83rem;
+    color: var(--muted2);
+    line-height: 1.6;
+    font-family: 'JetBrains Mono', monospace;
+    border-left: 1px solid var(--border);
+    padding-left: 24px;
+  }
+
+  .ai-generating {
+    display: inline-block;
+    color: var(--accent);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  /* METER BARS */
+  .score-meters {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 180px;
+  }
+  .meter-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .meter-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    width: 80px;
+    flex-shrink: 0;
+    letter-spacing: 0.05em;
+  }
+  .meter-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--bg3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .meter-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 1s ease;
+  }
+  .meter-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    width: 28px;
+    text-align: right;
+  }
+
+  /* PANEL CARDS */
+  .panel {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel-title {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--muted2);
+  }
+
+  .panel-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    padding: 2px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.06em;
+  }
+  .badge-green { background: rgba(0,229,160,0.12); color: var(--accent); }
+  .badge-red { background: rgba(255,68,85,0.12); color: var(--red); }
+  .badge-yellow { background: rgba(255,184,0,0.12); color: var(--yellow); }
+  .badge-purple { background: rgba(153,102,255,0.12); color: var(--purple); }
+
+  .panel-body { padding: 16px 20px; flex: 1; }
+
+  /* PREDICTION ITEMS */
+  .pred-item {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .pred-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .pred-question {
+    font-size: 0.78rem;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .pred-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .pred-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--bg3);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .pred-fill-yes {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--accent);
+    transition: width 1.2s ease;
+  }
+
+  .pred-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+  }
+  .pred-yes { color: var(--accent); }
+  .pred-vol {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+  }
+  .pred-delta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+  }
+  .delta-up { color: var(--accent); }
+  .delta-down { color: var(--red); }
+
+  /* REDDIT ITEMS */
+  .reddit-item {
+    margin-bottom: 14px;
+    padding: 12px;
+    background: var(--bg3);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .reddit-item:hover { border-color: var(--border2); }
+
+  .reddit-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .reddit-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--purple);
+    letter-spacing: 0.04em;
+  }
+  .reddit-score {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    margin-left: auto;
+  }
+  .reddit-text {
+    font-size: 0.76rem;
+    color: var(--muted2);
+    line-height: 1.45;
+  }
+  .sent-tag {
+    display: inline-block;
+    margin-top: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    padding: 2px 6px;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+  }
+  .sent-bull { background: rgba(0,229,160,0.1); color: var(--accent); }
+  .sent-bear { background: rgba(255,68,85,0.1); color: var(--red); }
+  .sent-neut { background: rgba(90,96,128,0.2); color: var(--muted2); }
+
+  /* EVENTS */
+  .event-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+    align-items: flex-start;
+  }
+  .event-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    white-space: nowrap;
+    padding-top: 2px;
+    min-width: 50px;
+  }
+  .event-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .event-body {}
+  .event-title {
+    font-size: 0.77rem;
+    color: var(--text);
+    line-height: 1.35;
+    margin-bottom: 3px;
+  }
+  .event-impact {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+  }
+
+  /* SENTIMENT DONUT */
+  .sentiment-wrap {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 4px 0 16px;
+  }
+  .donut-svg { flex-shrink: 0; }
+
+  .sent-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sent-leg-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+  }
+  .sent-leg-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+  .sent-leg-val { color: var(--text); font-weight: 600; }
+  .sent-leg-label { color: var(--muted); }
+
+  /* FEAR GREED */
+  .fg-display {
+    text-align: center;
+    padding: 8px 0 16px;
+  }
+  .fg-num {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 3.5rem;
+    line-height: 1;
+  }
+  .fg-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    margin-top: 4px;
+    margin-bottom: 12px;
+  }
+  .fg-bar-wrap {
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--red) 0%, var(--yellow) 50%, var(--accent) 100%);
+    position: relative;
+    margin: 0 8px;
+  }
+  .fg-indicator {
+    position: absolute;
+    top: -4px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 8px rgba(0,0,0,0.5);
+    transform: translateX(-50%);
+    transition: left 1.5s ease;
+  }
+
+  /* AI QUERY BOX */
+  .ai-box {
+    grid-column: 1 / -1;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .ai-box-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ai-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .ai-box-title {
+    font-weight: 800;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .ai-box-sub {
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+
+  .ai-query-area {
+    display: flex;
+    gap: 0;
+  }
+
+  .ai-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    padding: 16px 20px;
+    resize: none;
+    min-height: 64px;
+  }
+  .ai-input::placeholder { color: var(--muted); }
+
+  .ai-send-btn {
+    padding: 16px 24px;
+    background: var(--accent);
+    border: none;
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    align-self: stretch;
+  }
+  .ai-send-btn:hover { opacity: 0.85; }
+  .ai-send-btn:disabled { opacity: 0.4; cursor: default; }
+
+  .ai-response {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--muted2);
+    line-height: 1.7;
+    min-height: 80px;
+    white-space: pre-wrap;
+  }
+
+  .ai-cursor {
+    display: inline-block;
+    width: 8px; height: 14px;
+    background: var(--accent);
+    animation: blink 0.8s infinite;
+    vertical-align: text-bottom;
+    margin-left: 2px;
+  }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  .ai-suggested {
+    display: flex;
+    gap: 8px;
+    padding: 0 20px 16px;
+    flex-wrap: wrap;
+  }
+  .sugg-btn {
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--muted2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .sugg-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* FADE IN ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .panel { animation: fadeUp 0.5s ease both; }
+  .panel:nth-child(1) { animation-delay: 0.05s; }
+  .panel:nth-child(2) { animation-delay: 0.12s; }
+  .panel:nth-child(3) { animation-delay: 0.19s; }
+  .panel:nth-child(4) { animation-delay: 0.26s; }
+  .panel:nth-child(5) { animation-delay: 0.33s; }
+  .score-banner { animation: fadeUp 0.4s ease both; }
+  .ai-box { animation: fadeUp 0.6s ease 0.4s both; }
+
+  .tf-btn {
+    padding: 4px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--muted2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+  .tf-btn.active {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+    font-weight: 700;
+  }
+  .tf-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+
+  /* SKELETON LOADER */
+  .pred-skeleton {
+    height: 62px;
+    background: linear-gradient(90deg, var(--bg3) 25%, rgba(255,255,255,0.04) 50%, var(--bg3) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: 8px;
+  }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .poly-error {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--red);
+    padding: 12px;
+    background: rgba(255,68,85,0.07);
+    border-radius: 8px;
+    border: 1px solid rgba(255,68,85,0.2);
+    line-height: 1.5;
+  }
+
+  .poly-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-decoration: none;
+    display: block;
+    margin-top: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .poly-link:hover { color: var(--accent); }
+
+  .refresh-btn {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--muted2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    padding: 3px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 12px;
+  }
+  .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  @media (max-width: 900px) {
+    .main { grid-template-columns: 1fr 1fr; padding: 0 16px 32px; }
+    .hero { padding: 24px 16px 16px; }
+    .topbar { padding: 0 16px; }
+    .score-banner { gap: 20px; }
+    .ai-summary { border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 16px; width: 100%; }
+  }
+  @media (max-width: 600px) {
+    /* Topbar */
+    .topbar { padding: 0 12px; height: 48px; }
+    .logo { font-size: 0.85rem; gap: 7px; }
+    .logo img { height: 26px !important; }
+    .logo span { display: none; }
+    .clock { display: none; }
+
+    /* Hero */
+    .hero { padding: 16px 12px 12px; flex-direction: column; align-items: flex-start; }
+    .hero-title { font-size: 1rem; gap: 6px; }
+    .hero p { position: static !important; transform: none !important; width: 100% !important; max-width: 100% !important; text-align: left !important; margin: 8px 0 0 0 !important; }
+
+    /* Score banner */
+    .score-banner { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .signal-score-num { font-size: 3rem; }
+    .meters { gap: 10px; }
+
+    /* Main grid – single column, override ALL spans */
+    .main {
+      grid-template-columns: 1fr !important;
+      padding: 0 12px 40px;
+      gap: 12px;
+    }
+    .main > * {
+      grid-column: 1 / -1 !important;
+    }
+
+    /* Panels */
+    .panel { min-width: 0; }
+    .panel-body { padding: 12px; }
+
+    /* Report buttons stack vertically */
+    .main > div:first-child {
+      flex-direction: column !important;
+      align-items: stretch !important;
+    }
+
+    /* AI input */
+    .ai-input { font-size: 0.9rem; }
+    .sugg-btn { font-size: 0.68rem; padding: 5px 10px; }
+
+    /* TradingView chart height */
+    .chart-container { height: 320px !important; }
+  }
+  /* NEWS TICKER */
+  .ticker-wrap {
+    background: rgba(15,22,40,0.98);
+    border-bottom: 1px solid var(--border2);
+    overflow: hidden;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 90;
+  }
+  .ticker-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--accent);
+    background: var(--bg2);
+    border-right: 1px solid var(--border2);
+    padding: 0 14px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.1em;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .ticker-track {
+    display: flex;
+    animation: ticker-scroll 60s linear infinite;
+    white-space: nowrap;
+  }
+  .ticker-track:hover { animation-play-state: paused; }
+  .ticker-item {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    color: var(--muted2);
+    padding: 0 32px;
+    border-right: 1px solid var(--border);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+  .ticker-item:hover { color: #fff; }
+  .ticker-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: var(--accent);
+  }
+  @keyframes ticker-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="logo" style="display:flex;align-items:center;gap:10px;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAEaklEQVR4nO2YW28VVRTHf2vP7fRc28JpC7UFbC00UEioBklMipcH4wMvPvut/A5+A30DowkRjBcUUQTKrbTQ2gs9Pbe57OXDHCqJpU1mIJrAeplJ9szav/mvy14Zmf70c+V/bOa/BtjLXgPmtVccUCS3i5cHKGCjOLeblwZo44RSfRDJqeKLBxQhiSLenHuX6U8+IImTXO5ePKCC4xg0Tnh8/SbGdUCznwVuXh4RQVVTMnGQJCLqq+CUS3jFApokiMmuQy5AESEJY8QoVOuEbgXHjWhZhTimOnYAtTYXYK4QR50uldERvMCn3QoZmhonqA8i4uAWCiRhiEi+LMqkoIiQRDEH3z7J4XNn2Vx4xMbiXwxNDfPr1wtotZ++gSqoEnZDgmIhM2Cmz1NrcQOffUcnuH3xMk7YYejEJIWVJfxqDXVcmk8a6NYW41PjeWokY4hFELVc/e4GG6Hh1KF+vHvznJw5jPFcwnaHYHOdMzNjnHn/dFrVGSkzF4lV6Phlqr7QbbYZGRnk7vwSbKxx/swEszNjXPlxnksXfsKJY8QxkIFR8gysraOzFGxIKdriw3PHGRiokMQxBd/lywvXud70KNkuwe1rmXthNgVVwfUwG2uEjxZpHT/FF98+YG6yQn2gxFffP2Cz2E9p+Q7m7i3oL2XaJjsg6aAiv1+jcfUWhXsP8ebe4+L9AJlv4gQlClcu0bj8C97+GrVaCTIeyblCjEC43mLrj/uIKn3nziL799O98A3h4grFyVGK43VAM+VffkBAXIMNE7ZuLhIur4MRxPepTo/h95ewOYeFPUNsjPQE0B3zXKMExzXUTozTXqwQb7UpHRlGHJPOg7uMW0+XdqufXQFVodHs4rkOrmP+me2EdDaQdJdON8ZzDcFwDbdeQySdB0UkfaYX4d5t+uEihHECCJ4rz4V8bqNWBccRzs8d4+TUMGMjNYwRPNdgJF0DSKxy+tgBAt/FFRgdLGCtYoyQWCWKLVFisarbVxQa7ZCx4TKj9RJhZJ9bQzsqKAKJtZSDgLnZQ/x2ewVjhL7ARRUC38EYw/zCGtNH6jxea3J6+iBGlLsLy9xZavDZx0eJYsvjtRajQ2V8z9DuxKhCtezzaLXFxMEqP9xYYX5xk8B3UPtvGXdUUDUNQTdM+PP+KvWBIp1uTKUY8Nb4Ph4uN7jzcJ3JsUFUlaSnTCHw6C8HfPTOG9RKPp0wZmZiH61OTOA5rDe6LK228Nx021Y35slWiNPL8x3F2quKiwWPZjskjBLmZg8TJ5ZLVx/gew7GCNILc8F36YQxvufguYZmO6JS9Bitl/j55irlPo8wSrCq+J5DGCWU+zzaYbJri9wTMLGKY9Jkb3diFCgGLsrT6lNEZDvvrOp2BFSVOLEEvoO16XNCeo4bSX0bs3sH37PNOD0HqlDs8wCwvVxJizpdf7qREdk+NYwIruNiVbc7gPbe02feyQX4rNkdkng3S1XO9/PsFf/18QLsNWBeew2Y114D5rX/PeDfaWvatPf4Wu8AAAAASUVORK5CYII=" style="height:34px;width:auto;" alt="Logo">SignalsLayered <span>Trader Intelligence Platform</span></div>
+    <div class="topbar-right">
+      <!-- TOOLS DROPDOWN -->
+      <div style="position:relative;" id="tools-menu">
+        <button onclick="toggleTools()" style="
+          font-family:'JetBrains Mono',monospace; font-size:0.75rem; font-weight:700;
+          color:#0a0e1a; background:var(--accent); border:none;
+          padding:8px 18px; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;
+          transition: all 0.2s; letter-spacing:0.05em;
+          box-shadow: 0 0 16px rgba(77,159,255,0.3);
+        " onmouseover="this.style.background='#6db3ff';this.style.boxShadow='0 0 24px rgba(77,159,255,0.5)'"
+           onmouseout="this.style.background='var(--accent)';this.style.boxShadow='0 0 16px rgba(77,159,255,0.3)'">
+          🛠 TOOLS <span id="tools-arrow" style="transition:transform 0.2s;font-size:0.6rem;">▼</span>
+        </button>
+        <div id="tools-dropdown" style="
+          display:none; position:absolute; top:calc(100% + 10px); right:0;
+          background:var(--bg2); border:1px solid var(--border2); border-radius:12px;
+          padding:8px; min-width:240px; z-index:200; box-shadow:0 8px 32px rgba(0,0,0,0.5);
+        ">
+          <button onclick="openTool('converter')" style="
+            width:100%; text-align:left; background:none; border:none; cursor:pointer;
+            padding:12px 16px; border-radius:8px; color:var(--text); font-family:'Inter',sans-serif;
+            font-size:0.83rem; display:flex; align-items:center; gap:12px; transition:background 0.15s;
+          " onmouseover="this.style.background='rgba(77,159,255,0.08)'" onmouseout="this.style.background='none'">
+            🔢 <span><strong>BTC Converter</strong><br><span style="font-size:0.75rem;color:var(--muted2);">Convert BTC ↔ USD live</span></span>
+          </button>
+          <div style="height:1px;background:var(--border);margin:4px 8px;"></div>
+          <button onclick="openTool('historical')" style="
+            width:100%; text-align:left; background:none; border:none; cursor:pointer;
+            padding:12px 16px; border-radius:8px; color:var(--text); font-family:'Inter',sans-serif;
+            font-size:0.83rem; display:flex; align-items:center; gap:12px; transition:background 0.15s;
+          " onmouseover="this.style.background='rgba(77,159,255,0.08)'" onmouseout="this.style.background='none'">
+            📅 <span><strong>Historical Value</strong><br><span style="font-size:0.75rem;color:var(--muted2);">What would BTC be worth today?</span></span>
+          </button>
+          <div style="height:1px;background:var(--border);margin:4px 8px;"></div>
+          <button onclick="openTool('dca')" style="
+            width:100%; text-align:left; background:none; border:none; cursor:pointer;
+            padding:12px 16px; border-radius:8px; color:var(--text); font-family:'Inter',sans-serif;
+            font-size:0.83rem; display:flex; align-items:center; gap:12px; transition:background 0.15s;
+          " onmouseover="this.style.background='rgba(77,159,255,0.08)'" onmouseout="this.style.background='none'">
+            📈 <span><strong>DCA Calculator</strong><br><span style="font-size:0.75rem;color:var(--muted2);">What if I invested regularly?</span></span>
+          </button>
+          <div style="height:1px;background:var(--border);margin:4px 8px;"></div>
+          <button onclick="openTool('satoshi')" style="
+            width:100%; text-align:left; background:none; border:none; cursor:pointer;
+            padding:12px 16px; border-radius:8px; color:var(--text); font-family:'Inter',sans-serif;
+            font-size:0.83rem; display:flex; align-items:center; gap:12px; transition:background 0.15s;
+          " onmouseover="this.style.background='rgba(77,159,255,0.08)'" onmouseout="this.style.background='none'">
+            ₿ <span><strong>Satoshi Converter</strong><br><span style="font-size:0.75rem;color:var(--muted2);">BTC ↔ Satoshi ↔ USD</span></span>
+          </button>
+        </div>
+      </div>
+      <div class="live-badge"><div class="live-dot"></div>LIVE DATA</div>
+      <div class="clock" id="clock">--:--:--</div>
+    </div>
+  </div>
+
+  <!-- TOOLS MODAL -->
+  <div id="tools-modal" style="
+    display:none; position:fixed; inset:0; z-index:999;
+    background:rgba(0,0,0,0.7); backdrop-filter:blur(4px);
+    align-items:center; justify-content:center;
+  " onclick="if(event.target===this)closeModal()">
+    <div style="
+      background:var(--bg2); border:1px solid var(--border2); border-radius:16px;
+      padding:32px; width:100%; max-width:460px; margin:16px;
+      position:relative;
+    ">
+      <button onclick="closeModal()" style="
+        position:absolute; top:16px; right:16px; background:none; border:none;
+        color:var(--muted2); font-size:1.2rem; cursor:pointer;
+      ">✕</button>
+
+      <!-- BTC CONVERTER -->
+      <div id="tool-converter">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">🔢 BTC Converter</div>
+        <h3 style="font-size:1.2rem;font-weight:800;margin-bottom:20px;">BTC ↔ USD</h3>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <label style="font-size:0.78rem;color:var(--muted2);font-family:'Inter',sans-serif;">Bitcoin (BTC)</label>
+            <input id="btc-input" type="number" placeholder="0.00" oninput="convertBTC('btc')" style="
+              width:100%; margin-top:4px; padding:12px 16px; background:var(--bg3);
+              border:1px solid var(--border2); border-radius:8px; color:var(--text);
+              font-family:'JetBrains Mono',monospace; font-size:1rem; outline:none;
+            ">
+          </div>
+          <div style="text-align:center;color:var(--muted2);font-size:1.2rem;">⇅</div>
+          <div>
+            <label style="font-size:0.78rem;color:var(--muted2);font-family:'Inter',sans-serif;">US Dollar (USD)</label>
+            <input id="usd-input" type="number" placeholder="0.00" oninput="convertBTC('usd')" style="
+              width:100%; margin-top:4px; padding:12px 16px; background:var(--bg3);
+              border:1px solid var(--border2); border-radius:8px; color:var(--text);
+              font-family:'JetBrains Mono',monospace; font-size:1rem; outline:none;
+            ">
+          </div>
+          <div id="btc-price-info" style="text-align:center;font-size:0.78rem;color:var(--muted2);font-family:'JetBrains Mono',monospace;margin-top:4px;">
+            Loading BTC price...
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORICAL VALUE -->
+      <div id="tool-historical" style="display:none;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">📅 Historical Value</div>
+        <h3 style="font-size:1.2rem;font-weight:800;margin-bottom:20px;">What would it be worth today?</h3>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <label style="font-size:0.78rem;color:var(--muted2);font-family:'Inter',sans-serif;">Purchase Date</label>
+            <input id="hist-date" type="date" style="
+              width:100%; margin-top:4px; padding:12px 16px; background:var(--bg3);
+              border:1px solid var(--border2); border-radius:8px; color:var(--text);
+              font-family:'JetBrains Mono',monospace; font-size:0.9rem; outline:none;
+            ">
+          </div>
+          <div>
+            <label style="font-size:0.78rem;color:var(--muted2);font-family:'Inter',sans-serif;">Amount of BTC</label>
+            <input id="hist-btc" type="number" placeholder="e.g. 0.5" style="
+              width:100%; margin-top:4px; padding:12px 16px; background:var(--bg3);
+              border:1px solid var(--border2); border-radius:8px; color:var(--text);
+              font-family:'JetBrains Mono',monospace; font-size:1rem; outline:none;
+            ">
+          </div>
+          <button onclick="calcHistorical()" style="
+            padding:12px; background:var(--accent); border:none; border-radius:8px;
+            color:#fff; font-family:'JetBrains Mono',monospace; font-size:0.85rem;
+            font-weight:700; cursor:pointer; transition:opacity 0.2s;
+          " onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+            Calculate →
+          </button>
+          <div id="hist-result" style="display:none;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:16px;text-align:center;">
+            <div id="hist-result-text" style="font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--muted2);line-height:1.8;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DCA CALCULATOR -->
+      <div id="tool-dca" style="display:none;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">📈 DCA Calculator</div>
+        <h3 style="font-size:1.2rem;font-weight:800;margin-bottom:20px;">Dollar Cost Averaging</h3>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;gap:12px;">
+            <div style="flex:1;">
+              <label style="font-size:0.78rem;color:var(--muted2);font-family:'Inter',sans-serif;">Start Date</label>
+              <input id="dca-start" type="date" style="width:100%;margin-top:4px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.85rem;outline:none;">
+            </div>
+            <div style="flex:1;">
+              <label style="font-size:0.78rem;color:var(--muted2);font-family:'Inter',sans-serif;">End Date</label>
+              <input id="dca-end" type="date" style="width:100%;margin-top:4px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.85rem;outline:none;">
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;">
+            <div style="flex:1;">
+              <label style="font-size:0.78rem;color:var(--muted2);font-family:'Inter',sans-serif;">Amount per interval (USD)</label>
+              <input id="dca-amount" type="number" placeholder="e.g. 100" style="width:100%;margin-top:4px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.85rem;outline:none;">
+            </div>
+            <div style="flex:1;">
+              <label style="font-size:0.78rem;color:var(--muted2);font-family:'Inter',sans-serif;">Interval</label>
+              <select id="dca-interval" style="width:100%;margin-top:4px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.85rem;outline:none;">
+                <option value="7">Weekly</option>
+                <option value="30" selected>Monthly</option>
+                <option value="90">Quarterly</option>
+              </select>
+            </div>
+          </div>
+          <button onclick="calcDCA()" style="padding:12px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:0.85rem;font-weight:700;cursor:pointer;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+            Calculate →
+          </button>
+          <div id="dca-result" style="display:none;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:20px;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+              <div style="text-align:center;">
+                <div style="font-size:0.72rem;color:var(--muted2);font-family:'JetBrains Mono',monospace;margin-bottom:4px;">TOTAL INVESTED</div>
+                <div id="dca-invested" style="font-size:1.1rem;font-weight:800;color:var(--text);font-family:'JetBrains Mono',monospace;"></div>
+              </div>
+              <div style="text-align:center;">
+                <div style="font-size:0.72rem;color:var(--muted2);font-family:'JetBrains Mono',monospace;margin-bottom:4px;">CURRENT VALUE</div>
+                <div id="dca-value" style="font-size:1.1rem;font-weight:800;font-family:'JetBrains Mono',monospace;"></div>
+              </div>
+              <div style="text-align:center;">
+                <div style="font-size:0.72rem;color:var(--muted2);font-family:'JetBrains Mono',monospace;margin-bottom:4px;">TOTAL BTC</div>
+                <div id="dca-btc" style="font-size:1.1rem;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace;"></div>
+              </div>
+              <div style="text-align:center;">
+                <div style="font-size:0.72rem;color:var(--muted2);font-family:'JetBrains Mono',monospace;margin-bottom:4px;">RETURN</div>
+                <div id="dca-return" style="font-size:1.1rem;font-weight:800;font-family:'JetBrains Mono',monospace;"></div>
+              </div>
+            </div>
+            <div id="dca-avg-price" style="text-align:center;font-size:0.78rem;color:var(--muted2);font-family:'JetBrains Mono',monospace;padding-top:12px;border-top:1px solid var(--border);"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SATOSHI CONVERTER -->
+      <div id="tool-satoshi" style="display:none;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">₿ Satoshi Converter</div>
+        <h3 style="font-size:1.2rem;font-weight:800;margin-bottom:6px;">BTC ↔ Satoshi ↔ USD</h3>
+        <p style="font-size:0.75rem;color:var(--muted2);font-family:'Inter',sans-serif;margin-bottom:20px;">1 BTC = 100,000,000 Satoshi</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div>
+            <label style="font-size:0.78rem;color:var(--muted2);font-family:'Inter',sans-serif;">Bitcoin (BTC)</label>
+            <input id="sat-btc" type="number" placeholder="0.00000000" oninput="convertSat('btc')" style="width:100%;margin-top:4px;padding:12px 16px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:1rem;outline:none;">
+          </div>
+          <div>
+            <label style="font-size:0.78rem;color:var(--muted2);font-family:'Inter',sans-serif;">Satoshi (SATS)</label>
+            <input id="sat-sats" type="number" placeholder="0" oninput="convertSat('sats')" style="width:100%;margin-top:4px;padding:12px 16px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:1rem;outline:none;">
+          </div>
+          <div>
+            <label style="font-size:0.78rem;color:var(--muted2);font-family:'Inter',sans-serif;">US Dollar (USD)</label>
+            <input id="sat-usd" type="number" placeholder="0.00" oninput="convertSat('usd')" style="width:100%;margin-top:4px;padding:12px 16px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:1rem;outline:none;">
+          </div>
+          <div id="sat-price-info" style="text-align:center;font-size:0.78rem;color:var(--muted2);font-family:'JetBrains Mono',monospace;margin-top:4px;">Loading BTC price...</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BTC PRICE TICKER -->
+
+  <!-- BREAKING NEWS TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker-label">⚡ BREAKING</div>
+    <div style="overflow:hidden;flex:1;">
+      <div class="ticker-track" id="ticker-track">
+        <div class="ticker-item"><span class="ticker-dot"></span>Loading latest news...</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-title">
+      <strong>Market Analysis</strong>
+      <span style="font-size:0.85rem;font-weight:400;opacity:0.6;letter-spacing:0.08em;">All Signals. One Score.</span>
+    </div>
+    <p style="font-family:'Inter',sans-serif; font-size:0.82rem; color:#6a7fa8; line-height:1.6; margin:0; width:480px; text-align:center; flex-shrink:0; position:absolute; left:50%; transform:translateX(-50%);">
+      SignalsLayered analyzes multiple layers of Bitcoin market data to reveal powerful signals, trends, and insights. Our platform helps traders and investors understand BTC movements and discover potential opportunities through data-driven analysis.
+    </p>
+    <div class="asset-selector">
+      <button class="asset-btn active">BTC / USD</button>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="main">
+
+    <!-- REPORT BUTTONS -->
+    <div style="grid-column: span 3; display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+      <a href="/bitcoin.html" style="text-decoration:none; flex:1; max-width:320px; min-width:240px;">
+        <div style="
+          background: var(--bg2);
+          border: 1px solid var(--border2);
+          border-radius: 14px;
+          padding: 18px 28px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          cursor: pointer;
+          transition: border-color 0.2s, background 0.2s;
+          text-align: center;
+          height: 100%;
+        " onmouseover="this.style.borderColor='var(--accent)';this.style.background='rgba(77,159,255,0.06)'" onmouseout="this.style.borderColor='var(--border2)';this.style.background='var(--bg2)'">
+          <span style="font-family:'Inter',sans-serif; font-size:1.05rem; font-weight:700; color:var(--accent); letter-spacing:-0.01em;">
+            What is Bitcoin, exactly?
+          </span>
+          <span style="font-family:'Inter',sans-serif; font-size:0.82rem; font-weight:400; color:var(--muted2);">
+            The only report you'll ever need on it.
+          </span>
+        </div>
+      </a>
+      <a href="/mining.html" style="text-decoration:none; flex:1; max-width:320px; min-width:240px;">
+        <div style="
+          background: var(--bg2);
+          border: 1px solid var(--border2);
+          border-radius: 14px;
+          padding: 18px 28px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          cursor: pointer;
+          transition: border-color 0.2s, background 0.2s;
+          text-align: center;
+          height: 100%;
+        " onmouseover="this.style.borderColor='#f59e0b';this.style.background='rgba(245,158,11,0.06)'" onmouseout="this.style.borderColor='var(--border2)';this.style.background='var(--bg2)'">
+          <span style="font-family:'Inter',sans-serif; font-size:1.05rem; font-weight:700; color:#f59e0b; letter-spacing:-0.01em;">
+            How does Bitcoin Mining work?
+          </span>
+          <span style="font-family:'Inter',sans-serif; font-size:0.82rem; font-weight:400; color:var(--muted2);">
+            The backbone of the entire Bitcoin network.
+          </span>
+        </div>
+      </a>
+    </div>
+
+    <!-- SCORE BANNER -->
+    <div class="score-banner" id="score-banner">
+      <div class="signal-score-wrap">
+        <div>
+          <div class="signal-score-num" id="score-num">72</div>
+        </div>
+        <div>
+          <div class="signal-score-label">▲ SIGNAL SCORE</div>
+          <div class="signal-verdict">
+            <strong id="verdict-label">BULLISH</strong>
+            <span id="verdict-text">Majority of signals positive</span>
+          </div>
+          <div style="margin-top:10px;">
+            <span id="score-badge" style="
+              display:inline-block;
+              background:rgba(77,159,255,0.12);
+              border:1px solid rgba(77,159,255,0.3);
+              border-radius:20px;
+              padding:4px 12px;
+              font-family:'JetBrains Mono',monospace;
+              font-size:0.65rem;
+              color:var(--accent);
+              letter-spacing:0.08em;
+            ">● LIVE · Updated just now</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="score-meters">
+        <div class="meter-row">
+          <div class="meter-label">PREDICTION</div>
+          <div class="meter-bar"><div class="meter-fill" id="m-pred" style="width:68%;background:var(--accent)"></div></div>
+          <div class="meter-val" style="color:var(--accent)" id="mv-pred">68%</div>
+        </div>
+        <div class="meter-row">
+          <div class="meter-label">SENTIMENT</div>
+          <div class="meter-bar"><div class="meter-fill" id="m-sent" style="width:74%;background:var(--purple)"></div></div>
+          <div class="meter-val" style="color:var(--purple)" id="mv-sent">74%</div>
+        </div>
+        <div class="meter-row">
+          <div class="meter-label">POLITICS</div>
+          <div class="meter-bar"><div class="meter-fill" id="m-pol" style="width:55%;background:var(--yellow)"></div></div>
+          <div class="meter-val" style="color:var(--yellow)" id="mv-pol">55%</div>
+        </div>
+        <div class="meter-row">
+          <div class="meter-label">MACRO</div>
+          <div class="meter-bar"><div class="meter-fill" id="m-macro" style="width:81%;background:var(--accent2)"></div></div>
+          <div class="meter-val" style="color:var(--accent2)" id="mv-macro">81%</div>
+        </div>
+        <div class="meter-row">
+          <div class="meter-label">WHALES</div>
+          <div class="meter-bar"><div class="meter-fill" id="m-whale" style="width:50%;background:#a78bfa"></div></div>
+          <div class="meter-val" style="color:#a78bfa" id="mv-whale">50%</div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <!-- PANEL: BITCOIN CHART (TRADINGVIEW) -->
+    <div class="panel" style="grid-column: span 2;">
+      <div class="panel-header">
+        <div class="panel-title">Bitcoin / USD — Live Chart</div>
+        <span class="panel-badge badge-green">● LIVE · TRADINGVIEW</span>
+      </div>
+      <div class="chart-container" style="height:500px; border-radius: 0 0 12px 12px; overflow:hidden;">
+        <div class="tradingview-widget-container" style="height:100%;width:100%">
+          <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
+          <div class="tradingview-widget-copyright" style="display:none!important;height:0!important;overflow:hidden;"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+          {
+            "allow_symbol_change": true,
+            "calendar": false,
+            "details": false,
+            "hide_side_toolbar": true,
+            "hide_top_toolbar": false,
+            "hide_legend": false,
+            "hide_volume": false,
+            "hotlist": false,
+            "interval": "60",
+            "locale": "en",
+            "save_image": true,
+            "style": "1",
+            "symbol": "COINBASE:BTCUSD",
+            "theme": "dark",
+            "timezone": "Etc/UTC",
+            "backgroundColor": "#0f1628",
+            "gridColor": "rgba(100, 140, 255, 0.06)",
+            "watchlist": [],
+            "withdateranges": true,
+            "compareSymbols": [],
+            "studies": [],
+            "autosize": true
+          }
+          </script>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: POLITICAL EVENTS & NEWS -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Political & Economic Events</div>
+        <span class="panel-badge badge-yellow" id="news-badge">⟳ LOADING...</span>
+      </div>
+      <div class="panel-body" id="news-panel">
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div class="pred-skeleton"></div>
+          <div class="pred-skeleton"></div>
+          <div class="pred-skeleton"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: PREDICTION MARKETS (LIVE) -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Prediction Markets</div>
+        <span class="panel-badge badge-green" id="poly-badge">⟳ LOADING...</span>
+      </div>
+      <div class="panel-body" id="pred-panel">
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div class="pred-skeleton"></div>
+          <div class="pred-skeleton"></div>
+          <div class="pred-skeleton"></div>
+          <div class="pred-skeleton"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: FEAR & GREED -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Fear & Greed Index</div>
+        <span class="panel-badge badge-purple" id="sentiment-badge">⟳ LOADING...</span>
+      </div>
+      <div class="panel-body" id="reddit-panel">
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div class="pred-skeleton"></div>
+          <div class="pred-skeleton"></div>
+          <div class="pred-skeleton"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: MACRO + DOMINANCE (same grid cell) -->
+    <div style="display:flex;flex-direction:column;gap:16px;">
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Macro Indicators</div>
+          <span class="panel-badge badge-green" id="macro-badge">⟳ LOADING...</span>
+        </div>
+        <div class="panel-body" id="macro-panel">
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div class="pred-skeleton"></div>
+            <div class="pred-skeleton"></div>
+            <div class="pred-skeleton"></div>
+            <div class="pred-skeleton"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">BTC Dominance</div>
+          <span class="panel-badge badge-green" id="dom-badge">⟳ LOADING...</span>
+        </div>
+        <div class="panel-body" id="dom-panel">
+          <div class="pred-skeleton"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Network Stats</div>
+          <span class="panel-badge badge-green" id="network-badge">⟳ LOADING...</span>
+        </div>
+        <div class="panel-body" id="network-panel">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div class="pred-skeleton"></div>
+            <div class="pred-skeleton"></div>
+            <div class="pred-skeleton"></div>
+            <div class="pred-skeleton"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WHALE TRACKER PANEL -->
+      <div class="panel" style="grid-column: span 3;">
+        <div class="panel-header">
+          <div class="panel-title">🐋 Whale Tracker — Large BTC Movements</div>
+          <span class="panel-badge badge-green" id="whale-badge">⟳ LOADING...</span>
+        </div>
+        <div class="panel-body" id="whale-panel">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div class="pred-skeleton"></div>
+            <div class="pred-skeleton"></div>
+            <div class="pred-skeleton"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<!-- DISCLAIMER BANNER -->
+<div style="background:rgba(255,180,0,0.06);border-top:1px solid rgba(255,180,0,0.15);border-bottom:1px solid rgba(255,180,0,0.15);padding:14px 32px;text-align:center;position:relative;z-index:1;">
+  <span style="font-family:'Inter',sans-serif;font-size:0.75rem;color:#a89060;line-height:1.6;">
+    ⚠️ <strong style="color:#c8a84b;">Disclaimer:</strong> The information on this website is for <strong style="color:#c8a84b;">informational purposes only</strong> and does not constitute financial or investment advice. Cryptocurrency markets are highly volatile — you may lose all of your invested capital. Past performance is not indicative of future results. Always do your own research. <a href="/disclaimer.html" style="color:#c8a84b;text-decoration:underline;">Full Disclaimer →</a>
+  </span>
+</div>
+
+<!-- FOOTER -->
+<div style="text-align:center; padding:24px 32px; border-top:1px solid rgba(100,140,255,0.1); position:relative; z-index:1;">
+  <span style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#4a5880;">
+    © 2026 SignalsLayered · For informational purposes only · Not financial advice &nbsp;|&nbsp;
+    <a href="/about.html" style="color:#4a5880; text-decoration:none;" onmouseover="this.style.color='#4d9fff'" onmouseout="this.style.color='#4a5880'">About</a>
+    &nbsp;|&nbsp;
+    <a href="/privacy.html" style="color:#4a5880; text-decoration:none;" onmouseover="this.style.color='#4d9fff'" onmouseout="this.style.color='#4a5880'">Privacy Policy</a>
+    &nbsp;|&nbsp;
+    <a href="/disclaimer.html" style="color:#4a5880; text-decoration:none;" onmouseover="this.style.color='#4d9fff'" onmouseout="this.style.color='#4a5880'">Disclaimer</a>
+    &nbsp;|&nbsp;
+    <a href="/impressum.html" style="color:#4a5880; text-decoration:none;" onmouseover="this.style.color='#4d9fff'" onmouseout="this.style.color='#4a5880'">Impressum</a>
+  </span>
+</div>
+
+<script>
+  // ── TOOLS MENU ────────────────────────────────────────────────────────
+  let btcPrice = null;
+
+  function toggleTools() {
+    const dd = document.getElementById('tools-dropdown');
+    const arrow = document.getElementById('tools-arrow');
+    const open = dd.style.display === 'block';
+    dd.style.display = open ? 'none' : 'block';
+    arrow.style.transform = open ? '' : 'rotate(180deg)';
+  }
+
+  document.addEventListener('click', function(e) {
+    const menu = document.getElementById('tools-menu');
+    if (!menu.contains(e.target)) {
+      document.getElementById('tools-dropdown').style.display = 'none';
+      document.getElementById('tools-arrow').style.transform = '';
+    }
+  });
+
+  function openTool(tool) {
+    document.getElementById('tools-dropdown').style.display = 'none';
+    document.getElementById('tools-arrow').style.transform = '';
+    document.getElementById('tool-converter').style.display = tool === 'converter' ? 'block' : 'none';
+    document.getElementById('tool-historical').style.display = tool === 'historical' ? 'block' : 'none';
+    document.getElementById('tool-dca').style.display = tool === 'dca' ? 'block' : 'none';
+    document.getElementById('tool-satoshi').style.display = tool === 'satoshi' ? 'block' : 'none';
+    document.getElementById('tools-modal').style.display = 'flex';
+    if (tool === 'converter') fetchBTCPrice();
+    if (tool === 'satoshi') fetchSatPrice();
+    if (tool === 'dca') {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('dca-end').value = today;
+    }
+  }
+
+  let satPrice = null;
+  async function fetchSatPrice() {
+    try {
+      const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
+      const data = await res.json();
+      satPrice = parseFloat(data.price);
+      const satUSD = (satPrice / 1e8).toFixed(8);
+      document.getElementById('sat-price-info').textContent = `1 SAT = $${satUSD} · 1 BTC = $${satPrice.toLocaleString('en-US', {maximumFractionDigits:2})}`;
+    } catch(e) {
+      document.getElementById('sat-price-info').textContent = 'Could not load BTC price';
+    }
+  }
+
+  function convertSat(from) {
+    if (!satPrice) return;
+    const btcInput = document.getElementById('sat-btc');
+    const satsInput = document.getElementById('sat-sats');
+    const usdInput = document.getElementById('sat-usd');
+    if (from === 'btc') {
+      const btc = parseFloat(btcInput.value) || 0;
+      satsInput.value = btc ? Math.round(btc * 1e8) : '';
+      usdInput.value = btc ? (btc * satPrice).toFixed(2) : '';
+    } else if (from === 'sats') {
+      const sats = parseFloat(satsInput.value) || 0;
+      btcInput.value = sats ? (sats / 1e8).toFixed(8) : '';
+      usdInput.value = sats ? ((sats / 1e8) * satPrice).toFixed(2) : '';
+    } else if (from === 'usd') {
+      const usd = parseFloat(usdInput.value) || 0;
+      btcInput.value = usd ? (usd / satPrice).toFixed(8) : '';
+      satsInput.value = usd ? Math.round((usd / satPrice) * 1e8) : '';
+    }
+  }
+
+  function closeModal() {
+    document.getElementById('tools-modal').style.display = 'none';
+  }
+
+  async function fetchBTCPrice() {
+    try {
+      const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
+      const data = await res.json();
+      btcPrice = parseFloat(data.price);
+      document.getElementById('btc-price-info').textContent = `1 BTC = $${btcPrice.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+    } catch(e) {
+      document.getElementById('btc-price-info').textContent = 'Could not load BTC price';
+    }
+  }
+
+  function convertBTC(from) {
+    if (!btcPrice) return;
+    if (from === 'btc') {
+      const btc = parseFloat(document.getElementById('btc-input').value);
+      document.getElementById('usd-input').value = btc ? (btc * btcPrice).toFixed(2) : '';
+    } else {
+      const usd = parseFloat(document.getElementById('usd-input').value);
+      document.getElementById('btc-input').value = usd ? (usd / btcPrice).toFixed(8) : '';
+    }
+  }
+
+  async function calcHistorical() {
+    const date = document.getElementById('hist-date').value;
+    const amount = parseFloat(document.getElementById('hist-btc').value);
+    if (!date || !amount) return;
+
+    const resultBox = document.getElementById('hist-result');
+    const resultText = document.getElementById('hist-result-text');
+    resultText.innerHTML = 'Loading...';
+    resultBox.style.display = 'block';
+
+    try {
+      const target = new Date(date);
+      const targetTs = Math.floor(target.getTime() / 1000);
+
+      // Kraken OHLC API - free, no key needed, daily candles
+      // We fetch since target date with daily interval (1440 min)
+      const [krakenRes, currentRes] = await Promise.all([
+        fetch(`https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=1440&since=${targetTs - 86400}`),
+        fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT')
+      ]);
+
+      if (!krakenRes.ok) throw new Error('Could not fetch historical data');
+      const krakenData = await krakenRes.json();
+      const currentPrice = parseFloat((await currentRes.json()).price);
+
+      if (krakenData.error?.length) throw new Error(krakenData.error[0]);
+
+      const candles = krakenData.result?.XXBTZUSD || krakenData.result?.XBTUSD;
+      if (!candles || candles.length === 0) throw new Error('No price data for this date.');
+
+      // Find candle closest to target date
+      // Kraken candle format: [time, open, high, low, close, vwap, volume, count]
+      let closest = candles[0];
+      let minDiff = Math.abs(candles[0][0] - targetTs);
+      for (const c of candles) {
+        const diff = Math.abs(c[0] - targetTs);
+        if (diff < minDiff) { minDiff = diff; closest = c; }
+      }
+
+      const priceAtDate = parseFloat(closest[4]); // close price
+      const valueAtDate = amount * priceAtDate;
+      const valueToday = amount * currentPrice;
+      const change = ((currentPrice - priceAtDate) / priceAtDate * 100).toFixed(1);
+      const profit = valueToday - valueAtDate;
+      const isUp = profit >= 0;
+
+      resultText.innerHTML = `
+        <span style="color:var(--muted2)">BTC price on ${date}:</span> <strong style="color:var(--text)">$${priceAtDate.toLocaleString('en-US', {maximumFractionDigits:2})}</strong><br>
+        <span style="color:var(--muted2)">Value then:</span> <strong style="color:var(--text)">$${valueAtDate.toLocaleString('en-US', {maximumFractionDigits:2})}</strong><br>
+        <span style="color:var(--muted2)">BTC price today:</span> <strong style="color:var(--text)">$${currentPrice.toLocaleString('en-US', {maximumFractionDigits:2})}</strong><br>
+        <span style="color:var(--muted2)">Value today:</span> <strong style="color:var(--text)">$${valueToday.toLocaleString('en-US', {maximumFractionDigits:2})}</strong><br>
+        <span style="color:var(--muted2)">Return:</span> <strong style="color:${isUp ? '#22c55e' : 'var(--red)'}">${isUp ? '+' : ''}${change}% (${isUp ? '+' : '-'}$${Math.abs(profit).toLocaleString('en-US', {maximumFractionDigits:2})})</strong>
+      `;
+    } catch(e) {
+      resultText.innerHTML = `<span style="color:var(--red)">⚠ ${e.message || 'Could not load data.'}</span>`;
+    }
+  }
+
+  function formatDate(dateStr) {
+    const [y, m, d] = dateStr.split('-');
+    return `${d}-${m}-${y}`;
+  }
+
+  async function calcDCA() {
+    const startDate = document.getElementById('dca-start').value;
+    const endDate = document.getElementById('dca-end').value;
+    const amount = parseFloat(document.getElementById('dca-amount').value);
+    const intervalDays = parseInt(document.getElementById('dca-interval').value);
+
+    if (!startDate || !endDate || !amount) return;
+
+    const resultBox = document.getElementById('dca-result');
+    resultBox.style.display = 'block';
+    document.getElementById('dca-invested').textContent = 'Loading...';
+    document.getElementById('dca-value').textContent = '...';
+    document.getElementById('dca-btc').textContent = '...';
+    document.getElementById('dca-return').textContent = '...';
+    document.getElementById('dca-avg-price').textContent = 'Fetching historical prices...';
+
+    try {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+
+      // Fetch all daily candles from Binance directly in browser (no server needed)
+      // Binance allows browser requests, max 1000 candles per call
+      const allPrices = [];
+      let startMs = start.getTime();
+      const endMs = end.getTime();
+
+      while (startMs < endMs) {
+        const url = `https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&startTime=${startMs}&endTime=${endMs}&limit=1000`;
+        const r = await fetch(url);
+        if (!r.ok) throw new Error(`Could not fetch data (HTTP ${r.status})`);
+        const data = await r.json();
+        if (!data.length) break;
+        for (const c of data) allPrices.push([c[0], parseFloat(c[4])]);
+        startMs = data[data.length - 1][0] + 86400000;
+        if (data.length < 1000) break;
+      }
+
+      if (allPrices.length === 0) throw new Error('No price data available. Data starts from Aug 2017.');
+
+      // Get current price
+      const currentRes = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
+      const currentPrice = parseFloat((await currentRes.json()).price);
+
+      // Build list of purchase dates
+      const dates = [];
+      let d = new Date(start);
+      while (d <= end) {
+        dates.push(new Date(d));
+        d.setDate(d.getDate() + intervalDays);
+      }
+
+      // For each purchase date find closest price
+      let totalInvested = 0;
+      let totalBTC = 0;
+
+      for (const date of dates) {
+        const ts = date.getTime();
+        let closest = allPrices[0];
+        let minDiff = Math.abs(allPrices[0][0] - ts);
+        for (const p of allPrices) {
+          const diff = Math.abs(p[0] - ts);
+          if (diff < minDiff) { minDiff = diff; closest = p; }
+        }
+        totalBTC += amount / closest[1];
+        totalInvested += amount;
+      }
+
+      const currentValue = totalBTC * currentPrice;
+      const returnPct = ((currentValue - totalInvested) / totalInvested * 100).toFixed(1);
+      const profit = currentValue - totalInvested;
+      const isUp = profit >= 0;
+      const avgPrice = totalInvested / totalBTC;
+
+      document.getElementById('dca-invested').textContent = '$' + totalInvested.toLocaleString('en-US', {maximumFractionDigits:0});
+      document.getElementById('dca-value').textContent = '$' + currentValue.toLocaleString('en-US', {maximumFractionDigits:0});
+      document.getElementById('dca-value').style.color = isUp ? '#22c55e' : 'var(--red)';
+      document.getElementById('dca-btc').textContent = totalBTC.toFixed(6) + ' BTC';
+      document.getElementById('dca-return').textContent = (isUp ? '+' : '') + returnPct + '%';
+      document.getElementById('dca-return').style.color = isUp ? '#22c55e' : 'var(--red)';
+      document.getElementById('dca-avg-price').textContent = `Avg. buy price: $${avgPrice.toLocaleString('en-US', {maximumFractionDigits:2})} · ${dates.length} purchases made`;
+
+    } catch(e) {
+      document.getElementById('dca-invested').textContent = 'Error';
+      document.getElementById('dca-avg-price').textContent = e.message || 'Could not load data.';
+    }
+  }
+  // ─────────────────────────────────────────────────────────────────────
+
+  // Clock
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('clock').textContent =
+      now.toLocaleTimeString('en-US') + ' UTC+1';
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // ── POLYMARKET LIVE DATA ──────────────────────────────────────────────
+  // Schlüsselwörter für Crypto-relevante Märkte
+  const CRYPTO_KEYWORDS = ['bitcoin','btc'];
+
+  function isCryptoRelevant(question) {
+    const q = (question || '').toLowerCase();
+    return CRYPTO_KEYWORDS.some(k => q.includes(k));
+  }
+
+  function formatVolume(v) {
+    const n = parseFloat(v) || 0;
+    if (n >= 1_000_000) return `$${(n/1_000_000).toFixed(1)}M`;
+    if (n >= 1_000) return `$${(n/1_000).toFixed(0)}K`;
+    return `$${n.toFixed(0)}`;
+  }
+
+  function renderPredictions(items) {
+    const panel = document.getElementById('pred-panel');
+    if (!items || items.length === 0) {
+      panel.innerHTML = `<div class="poly-error">No crypto markets found.<br><button class="refresh-btn" onclick="loadPolymarket()">↻ Retry</button></div>`;
+      return;
+    }
+
+    let html = '';
+
+    items.forEach(item => {
+      const vol = formatVolume(item.volume24hr || 0);
+      const link = item.url || 'https://polymarket.com';
+
+      if (item.type === 'multi' && item.markets && item.markets.length > 0) {
+        // ── MULTIPLE CHOICE ──
+        const uid = 'multi_' + Math.random().toString(36).substr(2,6);
+        html += `
+          <div class="pred-item">
+            <div class="pred-question" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="
+              const el = document.getElementById('${uid}');
+              const arrow = document.getElementById('${uid}_arrow');
+              const open = el.style.display !== 'none';
+              el.style.display = open ? 'none' : 'flex';
+              arrow.style.transform = open ? 'rotate(-90deg)' : 'rotate(0deg)';
+            ">
+              <span>${item.question}</span>
+              <span id="${uid}_arrow" style="font-size:1rem;color:var(--accent);transition:transform 0.2s;margin-left:10px;flex-shrink:0;transform:rotate(-90deg);">▼</span>
+            </div>
+            <a class="poly-link" href="${link}" target="_blank" rel="noopener">↗ polymarket.com</a>
+            <div id="${uid}" style="margin-top:10px;display:none;flex-direction:column;gap:6px;">`;
+
+        item.markets.map(sub => {
+          let price = 0;
+          try {
+            const prices = JSON.parse(sub.outcomePrices || '[0]');
+            price = parseFloat(prices[0]) || 0;
+          } catch(e) {}
+          return { question: sub.question, price };
+        })
+        .filter(s => s.price > 0)
+        .sort((a, b) => {
+          // Extract price value from label for numeric sort (e.g. "$80k", "$90,000", "dip to $60k")
+          const extractPrice = str => {
+            const m = str.match(/\$[\d,]+k?/i);
+            if (!m) return 0;
+            let n = parseFloat(m[0].replace(/[$,]/g, ''));
+            if (m[0].toLowerCase().includes('k')) n *= 1000;
+            return n;
+          };
+          const pa = extractPrice(a.question);
+          const pb = extractPrice(b.question);
+          if (pa && pb) return pb - pa; // descending by price
+          return b.price - a.price;    // fallback: descending by probability
+        })
+        .forEach(sub => {
+          const pct = (sub.price * 100).toFixed(0);
+          const barColor = sub.price > 0.5 ? 'var(--accent)' : sub.price > 0.25 ? 'var(--yellow)' : 'var(--muted)';
+          // Clean up label: remove "Will BTC reach / dip to" prefix
+          let label = (sub.question || '')
+            .replace(/^Will (Bitcoin|BTC) (reach|dip to|drop to|fall to|hit|exceed|go above|go below)\s*/i, '')
+            .replace(/^Will .* be (above|below|at|over|under)\s*/i, '')
+            .replace(/\?$/, '')
+            .trim();
+
+          html += `
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted2);min-width:90px;flex-shrink:0;">${label}</div>
+                <div style="flex:1;height:4px;background:var(--bg3);border-radius:2px;">
+                  <div style="height:4px;border-radius:2px;background:${barColor};width:${pct}%"></div>
+                </div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:${barColor};min-width:32px;text-align:right;">${pct}%</div>
+              </div>`;
+        });
+
+        html += `
+            </div>
+            <div class="pred-labels" style="margin-top:8px;">
+              <span class="pred-vol">Vol 24h: ${vol}</span>
+            </div>
+          </div>`;
+
+      } else {
+        // ── BINARY YES/NO ──
+        let yesPrice = 0.5;
+        try {
+          const prices = JSON.parse(item.outcomePrices || '[0.5,0.5]');
+          yesPrice = parseFloat(prices[0]) || 0.5;
+        } catch(e) {}
+        const yes = (yesPrice * 100).toFixed(0);
+        const no = (100 - yes);
+        const yesColor = yes >= 50 ? 'var(--accent)' : 'var(--red)';
+        const arrow = yes >= 50
+          ? `<span class="pred-delta delta-up">▲ BULLISH</span>`
+          : `<span class="pred-delta delta-down">▼ BEARISH</span>`;
+
+        html += `
+          <div class="pred-item">
+            <div class="pred-question">${item.question}</div>
+            <a class="poly-link" href="${link}" target="_blank" rel="noopener">↗ polymarket.com</a>
+            <div class="pred-bar-wrap" style="margin-top:8px">
+              <div class="pred-bar"><div class="pred-fill-yes" style="width:${yes}%;background:${yesColor}"></div></div>
+              ${arrow}
+            </div>
+            <div class="pred-labels">
+              <span class="pred-yes" style="color:${yesColor}">YES ${yes}%</span>
+              <span>NO ${no}%</span>
+              <span class="pred-vol">Vol 24h: ${vol}</span>
+            </div>
+          </div>`;
+      }
+    });
+
+    html += `<button class="refresh-btn" onclick="loadPolymarket()">↻ Refresh</button>`;
+    panel.innerHTML = html;
+  }
+
+  async function loadPolymarket() {
+    const panel = document.getElementById('pred-panel');
+    const badge = document.getElementById('poly-badge');
+
+    panel.innerHTML = `<div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="pred-skeleton"></div><div class="pred-skeleton"></div>
+      <div class="pred-skeleton"></div><div class="pred-skeleton"></div>
+    </div>`;
+    badge.textContent = '⟳ LOADING...';
+    badge.className = 'panel-badge badge-yellow';
+
+    try {
+      const res = await fetch('/api/polymarket');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      if (!Array.isArray(data) || data.length === 0) throw new Error('No markets');
+
+      // Sort by end date - soonest first
+      data.sort((a, b) => {
+        const dateA = new Date(a.endDate || a.end_date || '9999-12-31');
+        const dateB = new Date(b.endDate || b.end_date || '9999-12-31');
+        return dateA - dateB;
+      });
+
+      // Find "end of month" BTC price direction bet for Signal Score
+      const EOM_KEYWORDS = ['end of', 'end of month', 'higher', 'above', 'price', 'month'];
+      let predScoreSet = false;
+
+      for (const item of data) {
+        const q = (item.question || '').toLowerCase();
+        const matchesEOM = EOM_KEYWORDS.filter(k => q.includes(k)).length >= 2;
+        if (!matchesEOM) continue;
+
+        // Binary market: use outcomePrices[0] (Yes probability)
+        if (item.type === 'binary' && item.outcomePrices) {
+          const yesProb = parseFloat(item.outcomePrices[0]) * 100;
+          if (!isNaN(yesProb)) {
+            liveScores.prediction = Math.round(yesProb);
+            predScoreSet = true;
+            console.log(`Signal Score prediction from: "${item.question}" → ${Math.round(yesProb)}%`);
+            break;
+          }
+        }
+
+        // Multi market: look for "yes" or "higher" outcome
+        if (item.type === 'multi' && item.markets) {
+          const yesMkt = item.markets.find(m => {
+            const o = (m.outcome || '').toLowerCase();
+            return o.includes('yes') || o.includes('higher') || o.includes('above');
+          });
+          if (yesMkt) {
+            const prob = parseFloat(yesMkt.probability || yesMkt.lastTradePrice || 0) * 100;
+            if (!isNaN(prob) && prob > 0) {
+              liveScores.prediction = Math.round(prob);
+              predScoreSet = true;
+              console.log(`Signal Score prediction from: "${item.question}" → ${Math.round(prob)}%`);
+              break;
+            }
+          }
+        }
+      }
+
+      if (!predScoreSet) {
+        // Fallback: average of all binary markets
+        const binaries = data.filter(d => d.type === 'binary' && d.outcomePrices);
+        if (binaries.length > 0) {
+          const avg = binaries.reduce((s, d) => s + parseFloat(d.outcomePrices[0]) * 100, 0) / binaries.length;
+          if (!isNaN(avg)) liveScores.prediction = Math.round(avg);
+        }
+      }
+
+      updateSignalScore();
+      renderPredictions(data);
+      badge.textContent = '● LIVE · POLYMARKET';
+      badge.className = 'panel-badge badge-green';
+      setTimeout(loadPolymarket, 120_000);
+
+    } catch (err) {
+      console.error('Polymarket error:', err);
+      badge.textContent = '⚠ OFFLINE';
+      badge.className = 'panel-badge badge-red';
+      panel.innerHTML = `<div class="poly-error">⚠ Polymarket API unavailable.<br><button class="refresh-btn" onclick="loadPolymarket()">↻ Retry</button></div>`;
+    }
+  }
+
+  // ── FEAR & GREED INDEX (ALTERNATIVE.ME) ──────────────────────────────
+  async function loadSentiment() {
+    const panel = document.getElementById('reddit-panel');
+    const badge = document.getElementById('sentiment-badge');
+
+    panel.innerHTML = `<div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="pred-skeleton"></div><div class="pred-skeleton"></div><div class="pred-skeleton"></div>
+    </div>`;
+    badge.textContent = '⟳ LOADING...';
+    badge.className = 'panel-badge badge-yellow';
+
+    try {
+      // Fetch last 8 days (today + 7 days history)
+      const res = await fetch('https://api.alternative.me/fng/?limit=30&format=json');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      const entries = data.data || [];
+      if (entries.length === 0) throw new Error('No data');
+
+      // Aktueller Wert
+      const current = entries[0];
+      const score = parseInt(current.value);
+      const label = current.value_classification;
+
+      // Farbe je nach Score
+      const scoreColor = score >= 60 ? 'var(--accent)' : score >= 40 ? 'var(--yellow)' : 'var(--red)';
+
+      // Sentiment Meter updaten
+      document.getElementById('m-sent').style.width = score + '%';
+      document.getElementById('mv-sent').textContent = score + '%';
+
+      // Feed into live signal score
+      liveScores.sentiment = score;
+      updateSignalScore();
+
+      // Chart Daten (älteste zuerst)
+      const chartData = [...entries].reverse();
+
+      let html = `
+        <!-- Current Score -->
+        <div style="text-align:center; padding: 8px 0 20px;">
+          <div style="font-family:'Inter',sans-serif; font-weight:800; font-size:3.5rem; line-height:1; color:${scoreColor}">${score}</div>
+          <div style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.14em; color:${scoreColor}; margin-top:6px; opacity:0.85;">${label}</div>
+        </div>
+
+        <!-- Gauge Bar -->
+        <div style="margin: 0 4px 24px;">
+          <div style="height:6px; border-radius:3px; background:linear-gradient(90deg, #ff4d6a 0%, #ffcb47 50%, #4d9fff 100%); position:relative;">
+            <div style="position:absolute; top:50%; left:${Math.min(96, Math.max(4, score))}%; transform:translate(-50%,-50%); width:14px; height:14px; border-radius:50%; background:#fff; border:2px solid ${scoreColor}; box-shadow:0 0 6px ${scoreColor}55;"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-top:6px;">
+            <span style="font-family:'JetBrains Mono',monospace; font-size:0.58rem; color:var(--red);">FEAR</span>
+            <span style="font-family:'JetBrains Mono',monospace; font-size:0.58rem; color:var(--muted);">NEUTRAL</span>
+            <span style="font-family:'JetBrains Mono',monospace; font-size:0.58rem; color:var(--accent);">GREED</span>
+          </div>
+        </div>
+
+        <!-- Comparison: Last Week / Last Month -->
+        ${(() => {
+          const lastWeek = entries[7] ? parseInt(entries[7].value) : null;
+          const lastMonth = entries[29] ? parseInt(entries[29].value) : null;
+          const weekColor = lastWeek ? (lastWeek >= 60 ? 'var(--accent)' : lastWeek >= 40 ? 'var(--yellow)' : 'var(--red)') : 'var(--muted)';
+          const monthColor = lastMonth ? (lastMonth >= 60 ? 'var(--accent)' : lastMonth >= 40 ? 'var(--yellow)' : 'var(--red)') : 'var(--muted)';
+          const weekDiff = lastWeek ? score - lastWeek : null;
+          const monthDiff = lastMonth ? score - lastMonth : null;
+          const diffStr = d => d === null ? '' : ` <span style="color:${d >= 0 ? 'var(--accent)' : 'var(--red)'};">${d >= 0 ? '+' : ''}${d}</span>`;
+          return `
+          <div style="display:flex;gap:8px;margin-bottom:20px;">
+            <div style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--muted);margin-bottom:4px;">LAST WEEK</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:${weekColor};">${lastWeek ?? '—'}${diffStr(weekDiff)}</div>
+            </div>
+            <div style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--muted);margin-bottom:4px;">LAST MONTH</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:${monthColor};">${lastMonth ?? '—'}${diffStr(monthDiff)}</div>
+            </div>
+          </div>`;
+        })()}
+
+        <!-- 7-Day History label -->
+        <div style="font-family:'JetBrains Mono',monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin-bottom:10px;">7-Day History</div>
+
+        <!-- Clean bar chart -->
+        <div style="display:flex; align-items:flex-end; gap:4px; height:64px; padding:0 2px;">
+          ${chartData.map((e, i) => {
+            const v = parseInt(e.value);
+            const c = v >= 60 ? 'var(--accent)' : v >= 40 ? 'var(--yellow)' : 'var(--red)';
+            const heightPct = Math.max(8, v);
+            const d = new Date(parseInt(e.timestamp) * 1000);
+            const dayLabel = i === chartData.length - 1 ? 'Now' : d.toLocaleDateString('en-US', { weekday: 'short' });
+            return `
+              <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end;">
+                <div style="font-family:'JetBrains Mono',monospace; font-size:0.55rem; color:${c};">${v}</div>
+                <div style="width:100%; height:${heightPct}%; background:${c}; border-radius:3px 3px 0 0; opacity:${i === chartData.length-1 ? '1' : '0.55'}; min-height:4px;"></div>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:0.52rem; color:var(--muted); white-space:nowrap;">${dayLabel}</div>
+              </div>`;
+          }).join('')}
+        </div>
+
+        <!-- Interpretation -->
+        ${(() => {
+          let msg, color;
+          if (score >= 75) {
+            msg = '⚠️ Extreme Greed – markets may be overheated. Historically a signal to be cautious.';
+            color = 'var(--red)';
+          } else if (score >= 55) {
+            msg = '📈 Greed – bullish momentum present. Watch for potential pullbacks.';
+            color = 'var(--accent)';
+          } else if (score >= 45) {
+            msg = '⚖️ Neutral – no clear directional bias from sentiment.';
+            color = 'var(--muted2)';
+          } else if (score >= 25) {
+            msg = '📉 Fear – investors are cautious. Historically a buying opportunity.';
+            color = 'var(--yellow)';
+          } else {
+            msg = '🩸 Extreme Fear – panic in the market. Often marks local bottoms.';
+            color = 'var(--yellow)';
+          }
+          return `<div style="margin-top:16px;padding:10px 14px;background:var(--bg3);border-radius:8px;border-left:3px solid ${color};">
+            <div style="font-size:0.72rem;color:var(--muted2);font-family:'Inter',sans-serif;line-height:1.5;">${msg}</div>
+          </div>`;
+        })()}
+
+        <!-- Score Trend -->
+        ${(() => {
+          const yesterday = entries[1] ? parseInt(entries[1].value) : score;
+          const diff = score - yesterday;
+          const trend = diff > 3 ? '↑ Improving' : diff < -3 ? '↓ Deteriorating' : '→ Stable';
+          const trendColor = diff > 3 ? 'var(--accent)' : diff < -3 ? 'var(--red)' : 'var(--muted2)';
+          const weekScore = entries[7] ? parseInt(entries[7].value) : score;
+          const weekDiff = score - weekScore;
+          const weekTrend = weekDiff > 0 ? `+${weekDiff} vs last week` : `${weekDiff} vs last week`;
+          const weekColor = weekDiff > 0 ? 'var(--accent)' : weekDiff < 0 ? 'var(--red)' : 'var(--muted)';
+          return `
+          <div style="margin-top:10px;display:flex;gap:8px;">
+            <div style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--muted);margin-bottom:4px;">TREND (24H)</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;font-weight:700;color:${trendColor};">${trend}</div>
+            </div>
+            <div style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--muted);margin-bottom:4px;">7D CHANGE</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;font-weight:700;color:${weekColor};">${weekTrend}</div>
+            </div>
+          </div>`;
+        })()}
+
+        <!-- Historical Performance at this level -->
+        ${(() => {
+          let perfMsg, perfColor, action;
+          if (score >= 75) {
+            perfMsg = 'Historically, BTC averaged −8% over the next 30 days from this zone.';
+            action = '💡 Contrarian signal: Consider reducing exposure or taking partial profits.';
+            perfColor = 'var(--red)';
+          } else if (score >= 55) {
+            perfMsg = 'Historically, BTC averaged +5% over the next 30 days from this zone.';
+            action = '💡 Momentum is positive but risk is elevated. Trail stop-losses.';
+            perfColor = 'var(--accent)';
+          } else if (score >= 45) {
+            perfMsg = 'Mixed historical performance from neutral territory. No edge.';
+            action = '💡 Wait for a clearer signal before making large moves.';
+            perfColor = 'var(--muted2)';
+          } else if (score >= 25) {
+            perfMsg = 'Historically, BTC averaged +18% over the next 30 days from this zone.';
+            action = '💡 "Be greedy when others are fearful." — Warren Buffett';
+            perfColor = 'var(--yellow)';
+          } else {
+            perfMsg = 'Historically, BTC averaged +27% over the next 30 days from Extreme Fear.';
+            action = '💡 Extreme Fear has marked major bottoms in 2018, 2020 and 2022.';
+            perfColor = 'var(--yellow)';
+          }
+          return `
+          <div style="margin-top:10px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">Historical Performance</div>
+            <div style="font-size:0.72rem;color:${perfColor};font-family:'Inter',sans-serif;line-height:1.5;margin-bottom:8px;">${perfMsg}</div>
+            <div style="font-size:0.72rem;color:var(--muted2);font-family:'Inter',sans-serif;line-height:1.5;border-top:1px solid var(--border);padding-top:8px;">${action}</div>
+          </div>`;
+        })()}
+
+        <button class="refresh-btn" style="margin-top:16px;" onclick="loadSentiment()">↻ Refresh</button>`;
+
+      panel.innerHTML = html;
+      badge.textContent = '● LIVE · ALTERNATIVE.ME';
+      badge.className = 'panel-badge badge-purple';
+
+      setTimeout(loadSentiment, 3_600_000); // Once per hour
+
+    } catch(err) {
+      console.error('Fear & Greed Fehler:', err);
+      badge.textContent = '⚠ OFFLINE';
+      badge.className = 'panel-badge badge-red';
+      panel.innerHTML = `<div class="poly-error">⚠ Fear & Greed API unavailable.<br><button class="refresh-btn" onclick="loadSentiment()">↻ Retry</button></div>`;
+    }
+  }
+
+  // ── LIVE SIGNAL SCORE ────────────────────────────────────────────────
+  // Stores latest live values from each API
+  const liveScores = {
+    sentiment: null,   // from Alternative.me (0-100)
+    prediction: null,  // from Polymarket avg (0-100)
+    politics: 55,      // static for now
+    macro: 60,         // from Yahoo Finance
+    whale: 50          // from Whale Alert RSS
+  };
+
+  function updateSignalScore() {
+    const s   = liveScores.sentiment ?? 55;
+    const p   = liveScores.prediction ?? 55;
+    const pol = liveScores.politics;
+    const m   = liveScores.macro;
+    const w   = liveScores.whale;
+
+    // Weighted average: Prediction 30%, Sentiment 30%, Politics 20%, Macro 10%, Whales 10%
+    const raw = p * 0.30 + s * 0.30 + pol * 0.20 + m * 0.10 + w * 0.10;
+    const score = isNaN(raw) ? 55 : Math.round(raw);
+
+    // Update score display
+    document.getElementById('score-num').textContent = score;
+
+    // Color & verdict
+    let color, verdict, verdictText;
+    if (score >= 70) {
+      color = 'var(--accent)'; verdict = 'BULLISH'; verdictText = 'Majority of signals positive';
+    } else if (score >= 55) {
+      color = 'var(--yellow)'; verdict = 'NEUTRAL'; verdictText = 'Mixed signal situation';
+    } else if (score >= 40) {
+      color = 'var(--yellow)'; verdict = 'CAUTION'; verdictText = 'Signals turning negative';
+    } else {
+      color = 'var(--red)'; verdict = 'BEARISH'; verdictText = 'Majority of signals negative';
+    }
+
+    document.getElementById('score-num').style.color = color;
+    document.getElementById('verdict-label').textContent = verdict;
+    document.getElementById('verdict-label').style.color = color;
+    document.getElementById('verdict-text').textContent = verdictText;
+
+    // Dynamic glow on score number
+    const glowColor = score >= 70 ? 'rgba(77,159,255,0.5)' : score >= 40 ? 'rgba(255,203,71,0.5)' : 'rgba(239,68,68,0.5)';
+    const borderColor = score >= 70 ? 'rgba(77,159,255,0.4)' : score >= 40 ? 'rgba(255,203,71,0.3)' : 'rgba(239,68,68,0.3)';
+    const bgGlow = score >= 70 ? 'rgba(77,159,255,0.12)' : score >= 40 ? 'rgba(255,203,71,0.08)' : 'rgba(239,68,68,0.1)';
+    document.getElementById('score-num').style.textShadow = `0 0 40px ${glowColor}`;
+    document.getElementById('score-banner').style.borderColor = borderColor;
+    document.getElementById('score-badge').style.background = bgGlow;
+    document.getElementById('score-badge').style.borderColor = borderColor;
+    document.getElementById('score-badge').style.color = color;
+
+    // Update meters
+    document.getElementById('m-pred').style.width = p + '%';
+    document.getElementById('mv-pred').textContent = Math.round(p) + '%';
+    document.getElementById('m-pol').style.width = pol + '%';
+    document.getElementById('mv-pol').textContent = pol + '%';
+    document.getElementById('m-macro').style.width = m + '%';
+    document.getElementById('mv-macro').textContent = m + '%';
+    document.getElementById('m-whale').style.width = w + '%';
+    document.getElementById('mv-whale').textContent = w + '%';
+  }
+  // ─────────────────────────────────────────────────────────────────────
+
+  // Chart is handled by TradingView widget directly
+  function loadChart() { /* TradingView handles this */ }
+  function setTimeframe(btn, tf) { /* Not used with TradingView */ }
+  // ─────────────────────────────────────────────────────────────────────
+
+  // ── BREAKING NEWS TICKER (COINTELEGRAPH RSS) ─────────────────────────
+  async function loadTicker() {
+    try {
+      const res = await fetch('/api/politics');
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      const articles = (data.items || []).slice(0, 15);
+      if (articles.length === 0) throw new Error();
+
+      const track = document.getElementById('ticker-track');
+      // Duplicate items for seamless loop
+      const items = [...articles, ...articles];
+      track.innerHTML = items.map(a => {
+        const title = a.title || '';
+        // Validate URL - must start with http
+        const url = (a.link && a.link.startsWith('http')) ? a.link : `https://cointelegraph.com/search?query=${encodeURIComponent(title)}`;
+        const isBull = /approval|adopt|legal|reserve|etf|bullish|surge|rally/i.test(title);
+        const isBear = /ban|crash|reject|crackdown|sanction|restrict|illegal/i.test(title);
+        const dotColor = isBull ? 'var(--accent)' : isBear ? 'var(--red)' : 'var(--yellow)';
+        return `<a class="ticker-item" href="${url}" target="_blank" rel="noopener">
+          <span class="ticker-dot" style="background:${dotColor}"></span>${title}
+        </a>`;
+      }).join('');
+
+      // Adjust animation speed based on content length
+      const totalChars = articles.reduce((s, a) => s + (a.title || '').length, 0);
+      const duration = Math.max(40, Math.min(90, totalChars * 0.15));
+      track.style.animationDuration = duration + 's';
+
+      setTimeout(loadTicker, 600_000); // refresh every 10 min
+    } catch(e) {
+      console.error('Ticker error:', e);
+    }
+  }
+
+  // ── POLITICAL & ECONOMIC EVENTS (CALENDAR) ───────────────────────────
+  async function loadNews() {
+    const panel = document.getElementById('news-panel');
+    const badge = document.getElementById('news-badge');
+
+    try {
+      const res = await fetch('/api/events');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      if (!Array.isArray(data) || data.length === 0) throw new Error('No events');
+
+      let html = '';
+      data.forEach(ev => {
+        const impact = (ev.impact || '').toUpperCase();
+        const impactColor = impact === 'HIGH' ? 'var(--red)' : impact === 'MEDIUM' ? 'var(--yellow)' : 'var(--muted)';
+        const date = ev.date ? new Date(ev.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit' }) : 'Soon';
+        const time = ev.time || '';
+        const forecast = ev.forecast ? `<span style="color:var(--muted2)">Forecast: ${ev.forecast}</span>` : '';
+        const previous = ev.previous ? `<span style="color:var(--muted)">Prev: ${ev.previous}</span>` : '';
+
+        html += `
+          <div class="event-item">
+            <div class="event-date">${date}${time ? '<br><span style="font-size:0.6rem;opacity:0.6">'+time+'</span>' : ''}</div>
+            <div class="event-dot" style="background:${impactColor}"></div>
+            <div class="event-body">
+              <div class="event-title">${ev.name || ev.title}</div>
+              <div class="event-impact" style="display:flex;gap:10px;flex-wrap:wrap;">
+                <span>Impact: <span style="color:${impactColor}">${impact}</span></span>
+                ${forecast}
+                ${previous}
+              </div>
+            </div>
+          </div>`;
+      });
+
+      html += `<button class="refresh-btn" onclick="loadNews()">↻ Refresh</button>`;
+      panel.innerHTML = html;
+      badge.textContent = '● LIVE · CALENDAR';
+      badge.className = 'panel-badge badge-yellow';
+
+      setTimeout(loadNews, 600_000);
+
+    } catch(err) {
+      console.error('Events error:', err);
+      badge.textContent = '⚠ OFFLINE';
+      badge.className = 'panel-badge badge-red';
+      panel.innerHTML = `<div class="poly-error">⚠ Events unavailable.<br><button class="refresh-btn" onclick="loadNews()">↻ Retry</button></div>`;
+    }
+  }
+  // ─────────────────────────────────────────────────────────────────────
+  // ─────────────────────────────────────────────────────────────────────
+
+  // On load
+  // ── MACRO INDICATORS (YAHOO FINANCE) ─────────────────────────────────
+  async function loadMacro() {
+    const panel = document.getElementById('macro-panel');
+    const badge = document.getElementById('macro-badge');
+
+    const tickers = [
+      { symbol: '%5EGSPC', key: 'sp500',  label: 'S&P 500',     invert: false },
+      { symbol: 'DX-Y.NYB',key: 'dxy',    label: 'DXY',          invert: true  },
+      { symbol: 'GC%3DF',  key: 'gold',   label: 'Gold',         invert: false },
+      { symbol: '%5ETNX',  key: 'yields', label: 'US 10Y Yield', invert: true  },
+    ];
+
+    const impacts = {
+      sp500:  { up: '📈 Risk-on → BTC positive', down: '📉 Risk-off → BTC pressure' },
+      dxy:    { up: '💵 Strong USD → BTC pressure', down: '💵 Weak USD → BTC positive' },
+      gold:   { up: '🥇 Safe haven demand up', down: '🥇 Risk appetite up' },
+      yields: { up: '📊 High yields → risk-off', down: '📊 Lower yields → BTC positive' }
+    };
+
+    // Fetch directly from browser - Yahoo Finance allows browser requests
+    const fetchTicker = async (t) => {
+      try {
+        const url = `https://query1.finance.yahoo.com/v8/finance/chart/${t.symbol}?interval=1d&range=5d`;
+        const r = await fetch(url);
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const data = await r.json();
+        const result = data?.chart?.result?.[0];
+        if (!result) throw new Error('No data');
+        const closes = result.indicators?.quote?.[0]?.close?.filter(v => v != null);
+        if (!closes || closes.length < 2) throw new Error('Not enough data');
+        const price = closes[closes.length - 1];
+        const prev  = closes[closes.length - 2];
+        const change = price - prev;
+        const changePct = (change / prev) * 100;
+        return { ...t, price, change, changePct };
+      } catch(e) {
+        return { ...t, error: e.message };
+      }
+    };
+
+    try {
+      const data = await Promise.all(tickers.map(fetchTicker));
+
+      let bullishCount = 0;
+      let validCount = 0;
+      let html = '<div style="display:flex;flex-direction:column;gap:8px;">';
+
+      data.forEach(item => {
+        if (item.error) {
+          html += `
+            <div style="padding:10px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);">
+              <div style="display:flex;justify-content:space-between;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--muted2)">${item.label}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--muted)">Unavailable</span>
+              </div>
+            </div>`;
+          return;
+        }
+
+        validCount++;
+        const isUp = item.changePct >= 0;
+        const isBullishForBTC = item.invert ? !isUp : isUp;
+        if (isBullishForBTC) bullishCount++;
+
+        const color = isBullishForBTC ? 'var(--accent)' : 'var(--red)';
+        const arrow = isUp ? '▲' : '▼';
+        const sign  = isUp ? '+' : '';
+        const impactText = impacts[item.key]?.[isUp ? 'up' : 'down'] || '';
+
+        let priceStr;
+        if (item.key === 'yields') priceStr = `${item.price.toFixed(2)}%`;
+        else if (item.key === 'gold') priceStr = `$${item.price.toLocaleString('en-US', {maximumFractionDigits:0})}`;
+        else if (item.key === 'sp500') priceStr = item.price.toLocaleString('en-US', {maximumFractionDigits:0});
+        else priceStr = item.price.toFixed(2);
+
+        html += `
+          <div style="padding:10px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);border-left:3px solid ${color};">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--muted2);font-weight:600;">${item.label}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:${color};font-weight:700;">${priceStr} ${arrow} ${sign}${item.changePct.toFixed(2)}%</span>
+            </div>
+            <div style="margin-top:5px;font-size:0.7rem;color:var(--muted);font-family:'Inter',sans-serif;">${impactText}</div>
+          </div>`;
+      });
+
+      html += '</div>';
+      panel.innerHTML = html;
+
+      const macroScore = validCount > 0 ? Math.round((bullishCount / validCount) * 100) : 60;
+      liveScores.macro = macroScore;
+      updateSignalScore();
+
+      const env = macroScore >= 60 ? 'BULLISH ENV.' : macroScore >= 40 ? 'NEUTRAL ENV.' : 'BEARISH ENV.';
+      badge.textContent = '● ' + env;
+      badge.className = macroScore >= 60 ? 'panel-badge badge-green' : macroScore >= 40 ? 'panel-badge badge-yellow' : 'panel-badge badge-red';
+
+      setTimeout(loadMacro, 300_000);
+
+    } catch(err) {
+      console.error('Macro error:', err);
+      badge.textContent = '⚠ OFFLINE';
+      badge.className = 'panel-badge badge-red';
+      panel.innerHTML = `<div class="poly-error">⚠ Macro data unavailable.<br><button class="refresh-btn" onclick="loadMacro()">↻ Retry</button></div>`;
+    }
+  }
+
+  // ── BTC DOMINANCE (COINGECKO) ─────────────────────────────────────────
+  async function loadDominance() {
+    const panel = document.getElementById('dom-panel');
+    const badge = document.getElementById('dom-badge');
+
+    try {
+      const res = await fetch('https://api.coingecko.com/api/v3/global');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      const mcapPct = data.data?.market_cap_percentage;
+      const dom = mcapPct?.btc;
+      const totalMcap = data.data?.total_market_cap?.usd;
+      const marketCapChange = data.data?.market_cap_change_percentage_24h_usd;
+
+      if (!dom) throw new Error('No data');
+
+      const domVal = dom.toFixed(1);
+      const domColor = dom >= 55 ? '#f7931a' : dom >= 45 ? 'var(--yellow)' : 'var(--red)';
+      const domLabel = dom >= 55 ? 'BTC DOMINANT' : dom >= 45 ? 'BALANCED' : 'ALTSEASON';
+      const totalStr = totalMcap ? '$' + (totalMcap / 1e12).toFixed(2) + 'T' : '—';
+      const changeColor = marketCapChange >= 0 ? 'var(--accent)' : 'var(--red)';
+      const changeSign = marketCapChange >= 0 ? '+' : '';
+
+      // Coin breakdown
+      const coins = [
+        { symbol: 'BTC', key: 'btc', color: '#f7931a' },
+        { symbol: 'ETH', key: 'eth', color: '#627eea' },
+        { symbol: 'BNB', key: 'bnb', color: '#f3ba2f' },
+        { symbol: 'XRP', key: 'xrp', color: '#e84142' },
+        { symbol: 'SOL', key: 'sol', color: '#9945ff' },
+      ];
+      const knownPct = coins.reduce((sum, c) => sum + (mcapPct?.[c.key] || 0), 0);
+      const otherPct = Math.max(0, 100 - knownPct);
+
+      panel.innerHTML = `
+        <div style="text-align:center;padding:8px 0 16px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:3rem;font-weight:800;color:${domColor};line-height:1;">${domVal}<span style="font-size:1.5rem;">%</span></div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;color:${domColor};margin-top:4px;">${domLabel}</div>
+        </div>
+
+        <!-- Stacked dominance bar -->
+        <div style="height:10px;border-radius:5px;overflow:hidden;margin-bottom:10px;display:flex;">
+          ${coins.map(c => {
+            const pct = (mcapPct?.[c.key] || 0).toFixed(1);
+            return `<div style="width:${pct}%;background:${c.color};transition:width 1s ease;" title="${c.symbol}: ${pct}%"></div>`;
+          }).join('')}
+          <div style="flex:1;background:var(--bg3);" title="Others: ${otherPct.toFixed(1)}%"></div>
+        </div>
+
+        <!-- Legend -->
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;">
+          ${coins.map(c => {
+            const pct = (mcapPct?.[c.key] || 0).toFixed(1);
+            return `<div style="display:flex;align-items:center;gap:4px;">
+              <div style="width:8px;height:8px;border-radius:2px;background:${c.color};flex-shrink:0;"></div>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--muted2);">${c.symbol} <span style="color:var(--text);font-weight:600;">${pct}%</span></span>
+            </div>`;
+          }).join('')}
+          <div style="display:flex;align-items:center;gap:4px;">
+            <div style="width:8px;height:8px;border-radius:2px;background:var(--bg3);border:1px solid var(--border2);flex-shrink:0;"></div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--muted2);">Others <span style="color:var(--text);font-weight:600;">${otherPct.toFixed(1)}%</span></span>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:0.7rem;">
+            <span style="color:var(--muted)">Total Market Cap</span>
+            <span style="color:var(--text)">${totalStr}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:0.7rem;">
+            <span style="color:var(--muted)">24h Market Change</span>
+            <span style="color:${changeColor}">${changeSign}${marketCapChange?.toFixed(2)}%</span>
+          </div>
+          <div style="margin-top:8px;padding:10px;background:var(--bg3);border-radius:8px;border-left:3px solid ${domColor};">
+            <div style="font-size:0.72rem;color:var(--muted2);font-family:'Inter',sans-serif;">
+              ${dom >= 55 ? '💪 High BTC dominance – capital concentrated in Bitcoin, altcoins under pressure.' : dom >= 45 ? '⚖️ Balanced market – capital spread between BTC and altcoins.' : '🌊 Low BTC dominance – altseason conditions, capital rotating into altcoins.'}
+            </div>
+          </div>
+        </div>`;
+
+      badge.textContent = '● LIVE · COINGECKO';
+      badge.className = 'panel-badge badge-green';
+
+      setTimeout(loadDominance, 300_000); // every 5 min
+
+    } catch(err) {
+      console.error('Dominance error:', err);
+      badge.textContent = '⚠ OFFLINE';
+      badge.className = 'panel-badge badge-red';
+      panel.innerHTML = `<div class="poly-error">⚠ Data unavailable.<br><button class="refresh-btn" onclick="loadDominance()">↻ Retry</button></div>`;
+    }
+  }
+  // ─────────────────────────────────────────────────────────────────────
+  // ── BITCOIN NETWORK STATS (MEMPOOL.SPACE) ────────────────────────────
+  async function loadNetwork() {
+    const panel = document.getElementById('network-panel');
+    const badge = document.getElementById('network-badge');
+
+    try {
+      const [statsRes, feesRes, blocksRes] = await Promise.all([
+        fetch('https://mempool.space/api/v1/mining/hashrate/1m'),
+        fetch('https://mempool.space/api/v1/fees/recommended'),
+        fetch('https://mempool.space/api/blocks/tip/height')
+      ]);
+
+      if (!statsRes.ok || !feesRes.ok || !blocksRes.ok) throw new Error('API error');
+
+      const stats = await statsRes.json();
+      const fees = await feesRes.json();
+      const blockHeight = await blocksRes.json();
+
+      // Hashrate in EH/s
+      const hashrateRaw = stats.currentHashrate || 0;
+      const hashrate = (hashrateRaw / 1e18).toFixed(1);
+
+      // Difficulty
+      const difficulty = stats.currentDifficulty
+        ? (stats.currentDifficulty / 1e12).toFixed(2) + ' T'
+        : '—';
+
+      const rows = [
+        {
+          label: 'Block Height',
+          value: '#' + blockHeight.toLocaleString('en-US'),
+          icon: '⛏',
+          color: 'var(--accent)'
+        },
+        {
+          label: 'Hashrate',
+          value: hashrate + ' EH/s',
+          icon: '⚡',
+          color: 'var(--accent)'
+        },
+        {
+          label: 'Difficulty',
+          value: difficulty,
+          icon: '🔒',
+          color: 'var(--muted2)'
+        },
+        {
+          label: 'Fast Fee',
+          value: fees.fastestFee + ' sat/vB',
+          icon: '🚀',
+          color: fees.fastestFee > 50 ? 'var(--red)' : fees.fastestFee > 20 ? 'var(--yellow)' : 'var(--accent)'
+        },
+        {
+          label: 'Standard Fee',
+          value: fees.halfHourFee + ' sat/vB',
+          icon: '📦',
+          color: 'var(--muted2)'
+        },
+      ];
+
+      const explanations = {
+        'Block Height': 'Every block added to the Bitcoin blockchain since its launch gets a number. The block height tells you how many blocks have been added since the Genesis Block. Since a new block is created roughly every 10 minutes, this number reflects how far the blockchain has grown over time.',
+        'Hashrate': 'This measures the total computing power of the Bitcoin network. The higher the hashrate, the more secure the network — a successful attack would require an enormous amount of computing power.',
+        'Difficulty': 'Mining difficulty determines how hard it is to find a valid block. It automatically adjusts every two weeks to ensure that, on average, one block is found every 10 minutes. As the hashrate rises, difficulty typically rises with it.',
+        'Fast Fee': 'The fast fee is the amount you pay to get your transaction confirmed as quickly as possible — usually within the next block. When this fee is low, it means the network is currently under little load.',
+        'Standard Fee': 'The standard fee is for users who are not in a hurry. Transactions with this fee are confirmed within a reasonable timeframe but may take a few blocks longer. When Standard and Fast fees are identical, there is no backlog in the network and there is no need to pay a premium for speed.'
+      };
+
+      let html = '<div style="display:flex;flex-direction:column;gap:8px;">';
+      rows.forEach((r, i) => {
+        const uid = 'net_exp_' + i;
+        const exp = explanations[r.label] || '';
+        html += `
+          <div style="background:var(--bg3);border-radius:8px;border:1px solid var(--border);overflow:hidden;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;cursor:pointer;" onclick="
+              const el = document.getElementById('${uid}');
+              const arrow = document.getElementById('${uid}_a');
+              const open = el.style.display !== 'none';
+              el.style.display = open ? 'none' : 'block';
+              arrow.style.transform = open ? 'rotate(-90deg)' : 'rotate(0deg)';
+            ">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--muted2);">${r.icon} ${r.label}</span>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:${r.color};font-weight:600;">${r.value}</span>
+                <span id="${uid}_a" style="font-size:0.7rem;color:var(--muted);transition:transform 0.2s;transform:rotate(-90deg);">▼</span>
+              </div>
+            </div>
+            <div id="${uid}" style="display:none;padding:8px 12px 10px;border-top:1px solid var(--border);">
+              <div style="font-size:0.72rem;color:var(--muted2);font-family:'Inter',sans-serif;line-height:1.5;">${exp}</div>
+            </div>
+          </div>`;
+      });
+      html += '</div>';
+
+      panel.innerHTML = html;
+      badge.textContent = '● LIVE · MEMPOOL.SPACE';
+      badge.className = 'panel-badge badge-green';
+
+      setTimeout(loadNetwork, 60_000); // every 1 minute
+
+    } catch(err) {
+      console.error('Network stats error:', err);
+      badge.textContent = '⚠ OFFLINE';
+      badge.className = 'panel-badge badge-red';
+      panel.innerHTML = `<div class="poly-error">⚠ Network data unavailable.<br><button class="refresh-btn" onclick="loadNetwork()">↻ Retry</button></div>`;
+    }
+  }
+  // ─────────────────────────────────────────────────────────────────────
+
+  // ── WHALE TRACKER (MEMPOOL.SPACE) ────────────────────────────────────
+  async function loadWhale() {
+    const panel = document.getElementById('whale-panel');
+    const badge = document.getElementById('whale-badge');
+
+    try {
+      const priceRes = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
+      const btcPrice = parseFloat((await priceRes.json()).price);
+
+      // Get latest block hashes
+      const blocksRes = await fetch('https://mempool.space/api/blocks');
+      if (!blocksRes.ok) throw new Error('Could not fetch blocks');
+      const blocks = await blocksRes.json();
+
+      // Fetch transactions from last 3 blocks and find largest
+      const allTxs = [];
+      for (const block of blocks.slice(0, 3)) {
+        try {
+          const txRes = await fetch(`https://mempool.space/api/block/${block.id}/txs/0`);
+          if (!txRes.ok) continue;
+          const txs = await txRes.json();
+          for (const tx of txs) {
+            const value = tx.vout.reduce((sum, o) => sum + (o.value || 0), 0);
+            if (value >= 100_000_000) { // >= 1 BTC
+              allTxs.push({ txid: tx.txid, value, blockId: block.id, blockHeight: block.height });
+            }
+          }
+        } catch(e) { continue; }
+      }
+
+      // Sort by value descending, take top 8
+      const whales = allTxs.sort((a, b) => b.value - a.value).slice(0, 8);
+
+      // Score based on total whale volume
+      const totalBTC = whales.reduce((s, t) => s + t.value / 100_000_000, 0);
+      const whaleScore = Math.min(75, Math.round(45 + totalBTC / 100));
+      liveScores.whale = whaleScore;
+      updateSignalScore();
+
+      const scoreLabel = whaleScore >= 60 ? 'ACTIVE' : whaleScore >= 45 ? 'MODERATE' : 'QUIET';
+      badge.textContent = `● WHALE ACTIVITY: ${scoreLabel}`;
+      badge.className = whaleScore >= 60 ? 'panel-badge badge-green' : 'panel-badge badge-yellow';
+
+      if (whales.length === 0) {
+        panel.innerHTML = `<div style="text-align:center;padding:24px;color:var(--muted2);font-family:'JetBrains Mono',monospace;font-size:0.78rem;">🐋 No large transactions found in recent blocks.</div>`;
+        return;
+      }
+
+      let html = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;">`;
+
+      for (const tx of whales) {
+        const btc = (tx.value / 100_000_000).toFixed(2);
+        const usd = (tx.value / 100_000_000 * btcPrice).toLocaleString('en-US', { maximumFractionDigits: 0 });
+        const shortTx = tx.txid.slice(0, 8) + '...' + tx.txid.slice(-6);
+        const emoji = tx.value >= 10_000_000_000 ? '🐳' : '🐋';
+
+        html += `
+          <a href="https://mempool.space/tx/${tx.txid}" target="_blank" style="text-decoration:none;">
+            <div style="
+              background:var(--bg3);border:1px solid var(--border);border-left:3px solid #a78bfa;
+              border-radius:8px;padding:12px 14px;transition:opacity 0.2s;
+            " onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;font-weight:700;color:#a78bfa;">${emoji} ${btc} BTC</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:#22c55e;">~$${usd}</span>
+              </div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--muted);">TX: ${shortTx} · Block #${tx.blockHeight}</div>
+            </div>
+          </a>`;
+      }
+
+      html += `</div>
+        <div style="margin-top:12px;font-family:'Inter',sans-serif;font-size:0.7rem;color:var(--muted);text-align:center;">
+          Largest transactions from last 3 confirmed blocks · <a href="https://mempool.space" target="_blank" style="color:var(--accent);text-decoration:none;">View all on mempool.space →</a>
+        </div>`;
+
+      panel.innerHTML = html;
+      setTimeout(loadWhale, 120_000); // refresh every 2 min
+
+    } catch(err) {
+      console.error('Whale error:', err);
+      badge.textContent = '⚠ OFFLINE';
+      badge.className = 'panel-badge badge-red';
+      panel.innerHTML = `<div class="poly-error">⚠ Whale data unavailable.<br><button class="refresh-btn" onclick="loadWhale()">↻ Retry</button></div>`;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadPolymarket();
+    loadSentiment();
+    loadChart();
+    loadTicker();
+    loadNews();
+    loadMacro();
+    loadDominance();
+    loadNetwork();
+    loadWhale();
+  });
+  // ─────────────────────────────────────────────────────────────────────
+
+  // Asset switch
+  const assetData = {
+    'BTC': {
+      score: 72, verdict: 'BULLISH', verdictText: 'Majority of signals positive',
+      pred: 68, sent: 74, pol: 55, macro: 81,
+      color: 'var(--accent)',
+      summary: 'Prediction Markets signal 68% probability for bullish movement. Sentiment positive. Political uncertainty (regulation debate) pressures Politics score. Macro environment supportive through Fed pause expectations.',
+      fg: 72, fgLabel: 'GREED', fgColor: 'var(--accent)'
+    },
+    'ETH': {
+      score: 58, verdict: 'NEUTRAL', verdictText: 'Mixed signal situation',
+      pred: 52, sent: 61, pol: 48, macro: 71,
+      color: 'var(--purple)',
+      summary: 'ETH zeigt schwächere Signale als BTC. ETF-Inflows hinter Erwartungen. Community-Sentiment verhaltener. MiCA-Implementierung könnte mittelfristig positiv wirken. Kurzfristig: abwarten.',
+      fg: 54, fgLabel: 'NEUTRAL', fgColor: 'var(--yellow)'
+    },
+    'SPX': {
+      score: 79, verdict: 'BULLISH', verdictText: 'Strong macroeconomic support',
+      pred: 82, sent: 68, pol: 72, macro: 88,
+      color: 'var(--accent2)',
+      summary: 'S&P 500 profitiert von Fed-Pause-Erwartungen (81%). Earnings Season übertrifft Erwartungen. Prediction Markets bullish. Politik-Score erholt durch konstruktive Haushalts­signale aus Washington.',
+      fg: 79, fgLabel: 'GREED', fgColor: 'var(--accent)'
+    },
+    'GOLD': {
+      score: 83, verdict: 'STARK BULLISH', verdictText: 'Safe haven demand',
+      pred: 79, sent: 82, pol: 88, macro: 84,
+      color: 'var(--yellow)',
+      summary: 'Gold profitiert von geopolitischer Unsicherheit und Dollar-Schwäche. Zentralbank-Käufe auf Rekordniveau. Prediction Markets und Sentiment stark bullish. Politik-Risiken (Handelskonflikte) treiben Safe-Haven-Nachfrage.',
+      fg: 83, fgLabel: 'EXTREME GREED', fgColor: 'var(--red)'
+    },
+    'EUR/USD': {
+      score: 45, verdict: 'BEARISH', verdictText: 'Dollar strength dominates',
+      pred: 41, sent: 38, pol: 55, macro: 46,
+      color: 'var(--red)',
+      summary: 'EUR/USD unter Druck durch relative Stärke der US-Wirtschaft. EZB-Zinssenkungserwartungen belasten Euro. Prediction Markets mehrheitlich short. Politisch: EU-Wachstumsschwäche als strukturelles Thema.',
+      fg: 35, fgLabel: 'FEAR', fgColor: 'var(--red)'
+    }
+  };
+
+  function switchAsset(btn, asset) {
+    document.querySelectorAll('.asset-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const d = assetData[asset];
+    document.getElementById('score-num').textContent = d.score;
+    document.getElementById('score-num').style.color = d.color;
+    document.getElementById('verdict-label').textContent = d.verdict;
+    document.getElementById('verdict-text').textContent = d.verdictText;
+    document.getElementById('ai-summary-text').textContent = d.summary;
+    document.getElementById('m-pred').style.width = d.pred + '%';
+    document.getElementById('mv-pred').textContent = d.pred + '%';
+    document.getElementById('m-sent').style.width = d.sent + '%';
+    document.getElementById('mv-sent').textContent = d.sent + '%';
+    document.getElementById('m-pol').style.width = d.pol + '%';
+    document.getElementById('mv-pol').textContent = d.pol + '%';
+    document.getElementById('m-macro').style.width = d.macro + '%';
+    document.getElementById('mv-macro').textContent = d.macro + '%';
+    document.getElementById('ai-response').textContent = '← Ask a question for ' + asset + '-specific AI analysis.';
+  }
+
+</script>
+</body>
+</html>
