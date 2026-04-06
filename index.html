@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SignalsLayered | Bitcoin Signals, BTC Market Data &amp; Trend Analysis</title>
-<meta name="description" content="SignalsLayered ist eine Bitcoin Intelligence Plattform – BTC-Signale, Makro-Indikatoren, Whale-Tracking und mehr in einem Score.">
+<meta name="description" content="SignalsLayered is a Bitcoin Intelligence Platform – BTC signals, macro indicators, whale tracking and more in one score.">
 <meta name="keywords" content="Bitcoin signals, BTC market data, Bitcoin trend analysis, crypto market intelligence, Bitcoin fear greed index, BTC dominance">
 <meta name="author" content="SignalsLayered">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://signalslayered.com/">
 <meta property="og:title" content="SignalsLayered | Bitcoin Intelligence Platform">
-<meta property="og:description" content="Alle Bitcoin-Signale. Ein Score. Jetzt.">
+<meta property="og:description" content="All Bitcoin signals. One score. Now.">
 <meta property="og:url" content="https://signalslayered.com/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
@@ -160,6 +160,18 @@ body {
   animation: pulseDot 2s ease-in-out infinite;
 }
 @keyframes pulseDot { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.15;transform:scale(.4);} }
+
+/* Language toggle button */
+.lang-btn {
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid var(--border3);
+  color: var(--muted2);
+  font-family: var(--f-mono); font-size: 0.52rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  cursor: pointer; transition: border-color 0.2s, color 0.2s;
+}
+.lang-btn:hover { border-color: var(--sky); color: var(--sky); }
 
 /* Nav Tools dropdown */
 #tools-menu { position: relative; }
@@ -738,14 +750,15 @@ body {
       <span class="nav-logo-text">Signals<em>Layered</em></span>
     </a>
     <div class="nav-links">
-      <a href="#dashboard" class="nav-link">Dashboard</a>
-      <a href="#berichte" class="nav-link">Berichte</a>
+      <a href="#dashboard" class="nav-link" data-en="Dashboard" data-de="Dashboard">Dashboard</a>
+      <a href="#berichte" class="nav-link" data-en="Reports" data-de="Berichte">Reports</a>
       <a href="#signal-score" class="nav-link">Signal Score</a>
       <a href="/about.html" class="nav-link">About</a>
     </div>
     <div class="nav-right">
       <div class="live-pill"><div class="pulse-dot"></div>Live</div>
       <div class="nav-clock" id="clock">--:--:--</div>
+      <button class="lang-btn" id="lang-btn" onclick="toggleLang()">DE</button>
       <div id="tools-menu">
         <button class="nav-tools-btn" onclick="toggleTools()">&#9881; Tools</button>
         <div id="tools-dropdown">
@@ -756,12 +769,12 @@ body {
           <div class="t-sep"></div>
           <button class="t-opt" onclick="openTool('historical')">
             <span>&#128197;</span>
-            <span><b>Historical Value</b><small>Was wäre BTC heute wert?</small></span>
+            <span><b>Historical Value</b><small data-en="What would BTC be worth today?" data-de="Was wäre BTC heute wert?">What would BTC be worth today?</small></span>
           </button>
           <div class="t-sep"></div>
           <button class="t-opt" onclick="openTool('dca')">
             <span>&#128200;</span>
-            <span><b>DCA Calculator</b><small>Was wenn ich regelmäßig kaufe?</small></span>
+            <span><b>DCA Calculator</b><small data-en="What if I buy regularly?" data-de="Was wenn ich regelmäßig kaufe?">What if I buy regularly?</small></span>
           </button>
           <div class="t-sep"></div>
           <button class="t-opt" onclick="openTool('satoshi')">
@@ -788,36 +801,36 @@ body {
     </div>
     <div id="tool-historical" style="display:none;">
       <div class="m-eye">Historical Value</div>
-      <h3 class="m-h3">Was wäre es heute wert?</h3>
-      <div class="f"><label>Kaufdatum</label><input id="hist-date" type="date"></div>
-      <div class="f"><label>Menge BTC</label><input id="hist-btc" type="number" placeholder="z.B. 0.5"></div>
-      <button class="m-btn" onclick="calcHistorical()">Berechnen &rarr;</button>
+      <h3 class="m-h3" data-en="What would it be worth today?" data-de="Was wäre es heute wert?">What would it be worth today?</h3>
+      <div class="f"><label data-en="Purchase date" data-de="Kaufdatum">Purchase date</label><input id="hist-date" type="date"></div>
+      <div class="f"><label data-en="Amount BTC" data-de="Menge BTC">Amount BTC</label><input id="hist-btc" type="number" placeholder="e.g. 0.5"></div>
+      <button class="m-btn" onclick="calcHistorical()" data-en="Calculate &rarr;" data-de="Berechnen &rarr;">Calculate &rarr;</button>
       <div class="m-res" id="hist-result"><div id="hist-result-text"></div></div>
     </div>
     <div id="tool-dca" style="display:none;">
       <div class="m-eye">DCA Calculator</div>
       <h3 class="m-h3">Dollar Cost Averaging</h3>
       <div class="f-row">
-        <div class="f"><label>Startdatum</label><input id="dca-start" type="date"></div>
-        <div class="f"><label>Enddatum</label><input id="dca-end" type="date"></div>
+        <div class="f"><label data-en="Start date" data-de="Startdatum">Start date</label><input id="dca-start" type="date"></div>
+        <div class="f"><label data-en="End date" data-de="Enddatum">End date</label><input id="dca-end" type="date"></div>
       </div>
       <div class="f-row">
-        <div class="f"><label>Betrag pro Intervall (USD)</label><input id="dca-amount" type="number" placeholder="z.B. 100"></div>
-        <div class="f"><label>Intervall</label>
+        <div class="f"><label data-en="Amount per interval (USD)" data-de="Betrag pro Intervall (USD)">Amount per interval (USD)</label><input id="dca-amount" type="number" placeholder="e.g. 100"></div>
+        <div class="f"><label data-en="Interval" data-de="Intervall">Interval</label>
           <select id="dca-interval">
-            <option value="7">Wöchentlich</option>
-            <option value="30" selected>Monatlich</option>
-            <option value="90">Quartalsweise</option>
+            <option value="7" data-en="Weekly" data-de="Wöchentlich">Weekly</option>
+            <option value="30" selected data-en="Monthly" data-de="Monatlich">Monthly</option>
+            <option value="90" data-en="Quarterly" data-de="Quartalsweise">Quarterly</option>
           </select>
         </div>
       </div>
-      <button class="m-btn" onclick="calcDCA()">Berechnen &rarr;</button>
+      <button class="m-btn" onclick="calcDCA()" data-en="Calculate &rarr;" data-de="Berechnen &rarr;">Calculate &rarr;</button>
       <div class="m-res" id="dca-result" style="text-align:left;">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-          <div style="text-align:center;"><div style="font-size:.56rem;color:var(--muted2);margin-bottom:3px;">INVESTIERT</div><div id="dca-invested" style="font-size:.9rem;font-weight:700;"></div></div>
-          <div style="text-align:center;"><div style="font-size:.56rem;color:var(--muted2);margin-bottom:3px;">WERT</div><div id="dca-value" style="font-size:.9rem;font-weight:700;"></div></div>
+          <div style="text-align:center;"><div style="font-size:.56rem;color:var(--muted2);margin-bottom:3px;" data-en="INVESTED" data-de="INVESTIERT">INVESTED</div><div id="dca-invested" style="font-size:.9rem;font-weight:700;"></div></div>
+          <div style="text-align:center;"><div style="font-size:.56rem;color:var(--muted2);margin-bottom:3px;" data-en="VALUE" data-de="WERT">VALUE</div><div id="dca-value" style="font-size:.9rem;font-weight:700;"></div></div>
           <div style="text-align:center;"><div style="font-size:.56rem;color:var(--muted2);margin-bottom:3px;">BTC</div><div id="dca-btc" style="font-size:.9rem;font-weight:700;color:var(--amber);"></div></div>
-          <div style="text-align:center;"><div style="font-size:.56rem;color:var(--muted2);margin-bottom:3px;">RENDITE</div><div id="dca-return" style="font-size:.9rem;font-weight:700;"></div></div>
+          <div style="text-align:center;"><div style="font-size:.56rem;color:var(--muted2);margin-bottom:3px;" data-en="RETURN" data-de="RENDITE">RETURN</div><div id="dca-return" style="font-size:.9rem;font-weight:700;"></div></div>
         </div>
         <div id="dca-avg-price" style="text-align:center;font-size:.64rem;color:var(--muted2);border-top:1px solid var(--border);padding-top:8px;"></div>
       </div>
@@ -825,7 +838,7 @@ body {
     <div id="tool-satoshi" style="display:none;">
       <div class="m-eye">Satoshi Converter</div>
       <h3 class="m-h3">BTC &harr; Satoshi &harr; USD</h3>
-      <p style="font-size:.66rem;color:var(--muted2);font-family:var(--f-mono);margin-bottom:14px;">1 BTC = 100.000.000 Satoshi</p>
+      <p style="font-size:.66rem;color:var(--muted2);font-family:var(--f-mono);margin-bottom:14px;">1 BTC = 100,000,000 Satoshi</p>
       <div class="f"><label>Bitcoin (BTC)</label><input id="sat-btc" type="number" placeholder="0.00000000" oninput="convertSat('btc')"></div>
       <div class="f"><label>Satoshi (SATS)</label><input id="sat-sats" type="number" placeholder="0" oninput="convertSat('sats')"></div>
       <div class="f"><label>US Dollar (USD)</label><input id="sat-usd" type="number" placeholder="0.00" oninput="convertSat('usd')"></div>
@@ -845,15 +858,15 @@ body {
       Bitcoin Intelligence,<br>
       <em>Layered.</em>
     </h1>
-    <p class="hero-sub">
-      SignalsLayered aggregiert On-Chain-Daten, Makro-Indikatoren, Whale-Bewegungen, Prediction Markets und Marktstimmung zu einem einzigen intelligenten Signal Score.
+    <p class="hero-sub" data-en="SignalsLayered aggregates on-chain data, macro indicators, whale movements, prediction markets and market sentiment into a single intelligent Signal Score." data-de="SignalsLayered aggregiert On-Chain-Daten, Makro-Indikatoren, Whale-Bewegungen, Prediction Markets und Marktstimmung zu einem einzigen intelligenten Signal Score.">
+      SignalsLayered aggregates on-chain data, macro indicators, whale movements, prediction markets and market sentiment into a single intelligent Signal Score.
     </p>
     <div class="hero-cta">
-      <a href="#dashboard" class="btn-primary">Dashboard öffnen &nbsp;&#8594;</a>
-      <a href="#signal-score" class="btn-secondary">Wie es funktioniert</a>
+      <a href="#dashboard" class="btn-primary" data-en="Open Dashboard &nbsp;→" data-de="Dashboard öffnen &nbsp;→">Open Dashboard &nbsp;&#8594;</a>
+      <a href="#signal-score" class="btn-secondary" data-en="How it works" data-de="Wie es funktioniert">How it works</a>
     </div>
     <div class="hero-sources">
-      <span class="sources-label">Daten von</span>
+      <span class="sources-label" data-en="Data from" data-de="Daten von">Data from</span>
       <div class="sources-list">
         <span class="source-badge">Polymarket</span>
         <span class="source-badge">Alternative.me</span>
@@ -872,22 +885,22 @@ body {
     <div class="kpi-item">
       <div class="kpi-label">BTC / USD</div>
       <div class="kpi-val" id="kpi-price">$&mdash;</div>
-      <div class="kpi-chg" id="kpi-change">Laden&hellip;</div>
+      <div class="kpi-chg" id="kpi-change">Loading&hellip;</div>
     </div>
     <div class="kpi-item">
       <div class="kpi-label">Market Cap</div>
       <div class="kpi-val" id="kpi-mcap">$&mdash;</div>
-      <div class="kpi-chg" id="kpi-vol">24h Volumen</div>
+      <div class="kpi-chg" id="kpi-vol">24h Volume</div>
     </div>
     <div class="kpi-item">
       <div class="kpi-label">BTC Dominance</div>
       <div class="kpi-val" id="kpi-dom">&mdash;%</div>
-      <div class="kpi-chg">vs. Altcoins</div>
+      <div class="kpi-chg" data-en="vs. Altcoins" data-de="vs. Altcoins">vs. Altcoins</div>
     </div>
     <div class="kpi-item">
       <div class="kpi-label">Fear &amp; Greed</div>
       <div class="kpi-val" id="kpi-fg">&mdash;</div>
-      <div class="kpi-chg" id="kpi-fg-lbl">Laden&hellip;</div>
+      <div class="kpi-chg" id="kpi-fg-lbl">Loading&hellip;</div>
     </div>
     <div class="kpi-item">
       <div class="kpi-label">Signal Score</div>
@@ -902,7 +915,7 @@ body {
   <div class="ticker-lbl">&#9889; Live News</div>
   <div class="ticker-scroll">
     <div class="ticker-track" id="ticker-track">
-      <a class="ticker-item"><span class="tdot" style="background:var(--sky)"></span>Marktdaten werden geladen&hellip;</a>
+      <a class="ticker-item"><span class="tdot" style="background:var(--sky)"></span>Loading market data&hellip;</a>
     </div>
   </div>
 </div>
@@ -911,8 +924,8 @@ body {
 <section class="score-section" id="signal-score">
   <div class="container">
     <div class="eyebrow">Signal Intelligence</div>
-    <h2 class="section-title">Der Signal Score erklärt</h2>
-    <p class="section-sub">Vier Datenschichten. Ein Wert. SignalsLayered verdichtet komplexe Marktdaten zu einem einzelnen, interpretierbaren Score zwischen 0 und 100.</p>
+    <h2 class="section-title" data-en="The Signal Score, Explained" data-de="Der Signal Score erklärt">The Signal Score, Explained</h2>
+    <p class="section-sub" data-en="Four data layers. One value. SignalsLayered condenses complex market data into a single, interpretable score between 0 and 100." data-de="Vier Datenschichten. Ein Wert. SignalsLayered verdichtet komplexe Marktdaten zu einem einzelnen, interpretierbaren Score zwischen 0 und 100.">Four data layers. One value. SignalsLayered condenses complex market data into a single, interpretable score between 0 and 100.</p>
 
     <div class="score-layout" id="score-banner">
       <!-- Left: Gauge + verdict -->
@@ -929,8 +942,8 @@ body {
             </div>
           </div>
           <div class="score-verdict-label" id="verdict-label">BULLISH</div>
-          <div class="score-verdict-sub" id="verdict-text">Mehrheit der Signale positiv</div>
-          <div class="score-live-badge" id="score-badge">&#11044; LIVE &middot; Wird laufend aktualisiert</div>
+          <div class="score-verdict-sub" id="verdict-text">Majority of signals positive</div>
+          <div class="score-live-badge" id="score-badge">&#11044; LIVE &middot; Updated continuously</div>
         </div>
       </div>
 
@@ -943,12 +956,12 @@ body {
             <span class="m-val" style="color:var(--violet)" id="mv-sent">74%</span>
           </div>
           <div class="meter-row">
-            <span class="m-lbl">Politik</span>
+            <span class="m-lbl" data-en="Politics" data-de="Politik">Politics</span>
             <div class="m-track"><div class="m-fill" id="m-pol" style="width:55%;background:var(--yellow)"></div></div>
             <span class="m-val" style="color:var(--yellow)" id="mv-pol">55%</span>
           </div>
           <div class="meter-row">
-            <span class="m-lbl">Makro</span>
+            <span class="m-lbl">Macro</span>
             <div class="m-track"><div class="m-fill" id="m-macro" style="width:81%;background:var(--sky)"></div></div>
             <span class="m-val" style="color:var(--sky)" id="mv-macro">81%</span>
           </div>
@@ -958,9 +971,9 @@ body {
             <span class="m-val" style="color:var(--amber)" id="mv-whale">50%</span>
           </div>
         </div>
-        <div class="score-info-lbl">Was der Score bedeutet</div>
-        <div class="score-info-body" id="ai-summary-text">
-          SignalsLayered analysiert mehrere Schichten von Bitcoin-Marktdaten — Sentiment, Prediction Markets, Makro-Indikatoren und On-Chain Whale-Aktivität — und verdichtet sie zu einem einzigen Signal Score. Höhere Werte signalisieren stärkere bullische Bedingungen über alle beobachteten Datenschichten hinweg.
+        <div class="score-info-lbl" data-en="What the Score means" data-de="Was der Score bedeutet">What the Score means</div>
+        <div class="score-info-body" id="ai-summary-text" data-en="SignalsLayered analyzes multiple layers of Bitcoin market data — sentiment, prediction markets, macro indicators and on-chain whale activity — and condenses them into a single Signal Score. Higher values signal stronger bullish conditions across all observed data layers." data-de="SignalsLayered analysiert mehrere Schichten von Bitcoin-Marktdaten — Sentiment, Prediction Markets, Makro-Indikatoren und On-Chain Whale-Aktivität — und verdichtet sie zu einem einzigen Signal Score. Höhere Werte signalisieren stärkere bullische Bedingungen über alle beobachteten Datenschichten hinweg.">
+          SignalsLayered analyzes multiple layers of Bitcoin market data — sentiment, prediction markets, macro indicators and on-chain whale activity — and condenses them into a single Signal Score. Higher values signal stronger bullish conditions across all observed data layers.
         </div>
       </div>
     </div>
@@ -971,38 +984,38 @@ body {
 <section class="section section-alt">
   <div class="container">
     <div class="eyebrow">Intelligence Layers</div>
-    <h2 class="section-title">Was wir tracken</h2>
-    <p class="section-sub">Sechs Datendimensionen, die zusammen ein vollständiges Bild des Bitcoin-Marktes ergeben.</p>
+    <h2 class="section-title" data-en="What We Track" data-de="Was wir tracken">What We Track</h2>
+    <p class="section-sub" data-en="Six data dimensions that together paint a complete picture of the Bitcoin market." data-de="Sechs Datendimensionen, die zusammen ein vollständiges Bild des Bitcoin-Marktes ergeben.">Six data dimensions that together paint a complete picture of the Bitcoin market.</p>
     <div class="feature-grid">
       <div class="feat-card">
         <div class="feat-icon">📈</div>
-        <div class="feat-title">BTC Kurs &amp; Chart</div>
-        <div class="feat-desc">Live TradingView-Chart mit Candlestick-Daten, Volumen und technischen Indikatoren direkt von Coinbase.</div>
+        <div class="feat-title" data-en="BTC Price &amp; Chart" data-de="BTC Kurs &amp; Chart">BTC Price &amp; Chart</div>
+        <div class="feat-desc" data-en="Live TradingView chart with candlestick data, volume and technical indicators directly from Coinbase." data-de="Live TradingView-Chart mit Candlestick-Daten, Volumen und technischen Indikatoren direkt von Coinbase.">Live TradingView chart with candlestick data, volume and technical indicators directly from Coinbase.</div>
       </div>
       <div class="feat-card">
         <div class="feat-icon">😨</div>
         <div class="feat-title">Fear &amp; Greed Index</div>
-        <div class="feat-desc">Der bekannteste Stimmungsindikator im Krypto-Markt — täglich aktualisiert, mit 7- und 30-Tage-Verlauf.</div>
+        <div class="feat-desc" data-en="The most well-known sentiment indicator in the crypto market — updated daily, with 7- and 30-day history." data-de="Der bekannteste Stimmungsindikator im Krypto-Markt — täglich aktualisiert, mit 7- und 30-Tage-Verlauf.">The most well-known sentiment indicator in the crypto market — updated daily, with 7- and 30-day history.</div>
       </div>
       <div class="feat-card">
         <div class="feat-icon">🐋</div>
         <div class="feat-title">Whale Tracker</div>
-        <div class="feat-desc">Echtzeit-Monitoring großer Bitcoin-Transaktionen aus den zuletzt bestätigten Blöcken via Mempool.space.</div>
+        <div class="feat-desc" data-en="Real-time monitoring of large Bitcoin transactions from recently confirmed blocks via Mempool.space." data-de="Echtzeit-Monitoring großer Bitcoin-Transaktionen aus den zuletzt bestätigten Blöcken via Mempool.space.">Real-time monitoring of large Bitcoin transactions from recently confirmed blocks via Mempool.space.</div>
       </div>
       <div class="feat-card">
         <div class="feat-icon">🏛️</div>
-        <div class="feat-title">Makro-Indikatoren</div>
-        <div class="feat-desc">S&P 500, DXY, Gold und US 10Y Yield — die vier wichtigsten externen Treiber für den Bitcoin-Kurs.</div>
+        <div class="feat-title" data-en="Macro Indicators" data-de="Makro-Indikatoren">Macro Indicators</div>
+        <div class="feat-desc" data-en="S&amp;P 500, DXY, Gold and US 10Y Yield — the four most important external drivers for the Bitcoin price." data-de="S&amp;P 500, DXY, Gold und US 10Y Yield — die vier wichtigsten externen Treiber für den Bitcoin-Kurs.">S&amp;P 500, DXY, Gold and US 10Y Yield — the four most important external drivers for the Bitcoin price.</div>
       </div>
       <div class="feat-card">
         <div class="feat-icon">🔮</div>
         <div class="feat-title">Prediction Markets</div>
-        <div class="feat-desc">Live-Wahrscheinlichkeiten von Polymarket und Kalshi — was der Markt über Bitcoin wirklich denkt.</div>
+        <div class="feat-desc" data-en="Live probabilities from Polymarket and Kalshi — what the market really thinks about Bitcoin." data-de="Live-Wahrscheinlichkeiten von Polymarket und Kalshi — was der Markt über Bitcoin wirklich denkt.">Live probabilities from Polymarket and Kalshi — what the market really thinks about Bitcoin.</div>
       </div>
       <div class="feat-card">
         <div class="feat-icon">⛓️</div>
-        <div class="feat-title">Netzwerk-Statistiken</div>
-        <div class="feat-desc">Hashrate, Difficulty, Block Height und aktuelle Transaction Fees — direkt vom Bitcoin-Netzwerk.</div>
+        <div class="feat-title" data-en="Network Statistics" data-de="Netzwerk-Statistiken">Network Statistics</div>
+        <div class="feat-desc" data-en="Hashrate, difficulty, block height and current transaction fees — directly from the Bitcoin network." data-de="Hashrate, Difficulty, Block Height und aktuelle Transaction Fees — direkt vom Bitcoin-Netzwerk.">Hashrate, difficulty, block height and current transaction fees — directly from the Bitcoin network.</div>
       </div>
     </div>
   </div>
@@ -1012,8 +1025,8 @@ body {
 <section class="dash-section" id="dashboard">
   <div class="container-wide">
     <div class="eyebrow">Live Intelligence</div>
-    <h2 class="section-title">Echtzeit-Dashboard</h2>
-    <p class="section-sub">Alle Daten live. Automatisch aktualisiert. Keine Anmeldung erforderlich.</p>
+    <h2 class="section-title" data-en="Live Dashboard" data-de="Echtzeit-Dashboard">Live Dashboard</h2>
+    <p class="section-sub" data-en="All data live. Automatically updated. No login required." data-de="Alle Daten live. Automatisch aktualisiert. Keine Anmeldung erforderlich.">All data live. Automatically updated. No login required.</p>
 
     <div class="dash-grid">
 
@@ -1028,7 +1041,7 @@ body {
             <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
             <div class="tradingview-widget-copyright" style="display:none!important;height:0!important;overflow:hidden;"></div>
             <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
-            {"allow_symbol_change":true,"calendar":false,"details":false,"hide_side_toolbar":true,"hide_top_toolbar":false,"hide_legend":false,"hide_volume":false,"hotlist":false,"interval":"60","locale":"de","save_image":true,"style":"1","symbol":"COINBASE:BTCUSD","theme":"dark","timezone":"Etc/UTC","backgroundColor":"#09121F","gridColor":"rgba(56,189,248,0.04)","watchlist":[],"withdateranges":true,"compareSymbols":[],"studies":[],"autosize":true}
+            {"allow_symbol_change":true,"calendar":false,"details":false,"hide_side_toolbar":true,"hide_top_toolbar":false,"hide_legend":false,"hide_volume":false,"hotlist":false,"interval":"60","locale":"en","save_image":true,"style":"1","symbol":"COINBASE:BTCUSD","theme":"dark","timezone":"Etc/UTC","backgroundColor":"#09121F","gridColor":"rgba(56,189,248,0.04)","watchlist":[],"withdateranges":true,"compareSymbols":[],"studies":[],"autosize":true}
             </script>
           </div>
         </div>
@@ -1048,12 +1061,12 @@ body {
               <span class="dm-val" style="color:var(--violet)">74%</span>
             </div>
             <div class="dm-row">
-              <span class="dm-lbl">Politik</span>
+              <span class="dm-lbl" data-en="Politics" data-de="Politik">Politics</span>
               <div class="dm-track"><div class="dm-fill" style="width:55%;background:var(--yellow)"></div></div>
               <span class="dm-val" style="color:var(--yellow)">55%</span>
             </div>
             <div class="dm-row">
-              <span class="dm-lbl">Makro</span>
+              <span class="dm-lbl">Macro</span>
               <div class="dm-track"><div class="dm-fill" style="width:81%;background:var(--sky)"></div></div>
               <span class="dm-val" style="color:var(--sky)">81%</span>
             </div>
@@ -1064,10 +1077,10 @@ body {
             </div>
           </div>
           <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
-            <div style="font-family:var(--f-mono);font-size:.48rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);margin-bottom:8px;">Score-Formel</div>
+            <div style="font-family:var(--f-mono);font-size:.48rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);margin-bottom:8px;" data-en="Score Formula" data-de="Score-Formel">Score Formula</div>
             <div style="font-family:var(--f-mono);font-size:.62rem;color:var(--muted2);line-height:1.65;">
-              Sentiment &times; 40% &nbsp;+&nbsp; Politik &times; 25%<br>
-              + Makro &times; 20% &nbsp;+&nbsp; Whales &times; 15%
+              Sentiment &times; 40% &nbsp;+&nbsp; <span data-en="Politics" data-de="Politik">Politics</span> &times; 25%<br>
+              + Macro &times; 20% &nbsp;+&nbsp; Whales &times; 15%
             </div>
           </div>
         </div>
@@ -1077,7 +1090,7 @@ body {
       <div class="dash-panel dp-fg">
         <div class="ph">
           <span class="pt">Fear &amp; Greed Index</span>
-          <span class="bdg blo" id="sentiment-badge">Laden&hellip;</span>
+          <span class="bdg blo" id="sentiment-badge">Loading&hellip;</span>
         </div>
         <div class="pb" id="reddit-panel">
           <div class="sk"></div><div class="sk"></div><div class="sk"></div>
@@ -1088,7 +1101,7 @@ body {
       <div class="dash-panel dp-dom">
         <div class="ph">
           <span class="pt">BTC Dominance</span>
-          <span class="bdg blo" id="dom-badge">Laden&hellip;</span>
+          <span class="bdg blo" id="dom-badge">Loading&hellip;</span>
         </div>
         <div class="pb" id="dom-panel"><div class="sk"></div></div>
       </div>
@@ -1096,8 +1109,8 @@ body {
       <!-- Network Stats -->
       <div class="dash-panel dp-net">
         <div class="ph">
-          <span class="pt">Netzwerk-Statistiken</span>
-          <span class="bdg blo" id="network-badge">Laden&hellip;</span>
+          <span class="pt" data-en="Network Statistics" data-de="Netzwerk-Statistiken">Network Statistics</span>
+          <span class="bdg blo" id="network-badge">Loading&hellip;</span>
         </div>
         <div class="pb" id="network-panel">
           <div class="sk"></div><div class="sk"></div><div class="sk"></div>
@@ -1107,8 +1120,8 @@ body {
       <!-- Macro Indicators -->
       <div class="dash-panel dp-macro">
         <div class="ph">
-          <span class="pt">Makro-Indikatoren</span>
-          <span class="bdg blo" id="macro-badge">Laden&hellip;</span>
+          <span class="pt" data-en="Macro Indicators" data-de="Makro-Indikatoren">Macro Indicators</span>
+          <span class="bdg blo" id="macro-badge">Loading&hellip;</span>
         </div>
         <div class="pb" id="macro-panel">
           <div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div>
@@ -1119,7 +1132,7 @@ body {
       <div class="dash-panel dp-whale">
         <div class="ph">
           <span class="pt">Whale Tracker</span>
-          <span class="bdg blo" id="whale-badge">Laden&hellip;</span>
+          <span class="bdg blo" id="whale-badge">Loading&hellip;</span>
         </div>
         <div class="pb" id="whale-panel">
           <div class="sk"></div><div class="sk"></div><div class="sk"></div>
@@ -1130,7 +1143,7 @@ body {
       <div class="dash-panel dp-pred">
         <div class="ph">
           <span class="pt">Prediction Markets</span>
-          <span class="bdg blo" id="poly-badge">Laden&hellip;</span>
+          <span class="bdg blo" id="poly-badge">Loading&hellip;</span>
         </div>
         <div class="pb" id="pred-panel">
           <div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div>
@@ -1140,8 +1153,8 @@ body {
       <!-- Political & Economic Events -->
       <div class="dash-panel dp-events">
         <div class="ph">
-          <span class="pt">Politische &amp; Wirtschaftliche Events</span>
-          <span class="bdg blo" id="news-badge">Laden&hellip;</span>
+          <span class="pt" data-en="Political &amp; Economic Events" data-de="Politische &amp; Wirtschaftliche Events">Political &amp; Economic Events</span>
+          <span class="bdg blo" id="news-badge">Loading&hellip;</span>
         </div>
         <div class="pb" id="news-panel">
           <div class="sk"></div><div class="sk"></div><div class="sk"></div>
@@ -1152,24 +1165,24 @@ body {
   </div>
 </section>
 
-<!-- ══ BERICHTE ═════════════════════════════════════ -->
+<!-- ══ REPORTS ═════════════════════════════════════ -->
 <section class="section section-dark" id="berichte">
   <div class="container">
     <div class="eyebrow">Deep Reports</div>
-    <h2 class="section-title">Bitcoin verstehen</h2>
-    <p class="section-sub">Fundierte Berichte zu den wichtigsten Grundlagen des Bitcoin-Netzwerks — für Einsteiger und Fortgeschrittene.</p>
+    <h2 class="section-title" data-en="Understanding Bitcoin" data-de="Bitcoin verstehen">Understanding Bitcoin</h2>
+    <p class="section-sub" data-en="In-depth reports on the most important foundations of the Bitcoin network — for beginners and advanced users alike." data-de="Fundierte Berichte zu den wichtigsten Grundlagen des Bitcoin-Netzwerks — für Einsteiger und Fortgeschrittene.">In-depth reports on the most important foundations of the Bitcoin network — for beginners and advanced users alike.</p>
     <div class="reports-grid">
       <a href="/bitcoin.html" class="report-card">
-        <span class="rc-tag">Deep Report &middot; Grundlagen</span>
-        <span class="rc-title">Was ist Bitcoin, eigentlich?</span>
-        <span class="rc-sub">Der einzige Report über Bitcoin, den du je brauchen wirst. Von den Grundlagen bis zur Technologie.</span>
-        <span class="rc-cta">Report lesen</span>
+        <span class="rc-tag" data-en="Deep Report &middot; Fundamentals" data-de="Deep Report &middot; Grundlagen">Deep Report &middot; Fundamentals</span>
+        <span class="rc-title" data-en="What is Bitcoin, anyway?" data-de="Was ist Bitcoin, eigentlich?">What is Bitcoin, anyway?</span>
+        <span class="rc-sub" data-en="The only report about Bitcoin you'll ever need. From the basics to the technology." data-de="Der einzige Report über Bitcoin, den du je brauchen wirst. Von den Grundlagen bis zur Technologie.">The only report about Bitcoin you'll ever need. From the basics to the technology.</span>
+        <span class="rc-cta" data-en="Read Report" data-de="Report lesen">Read Report</span>
       </a>
       <a href="/mining.html" class="report-card">
-        <span class="rc-tag">Deep Report &middot; Netzwerk</span>
-        <span class="rc-title">Wie funktioniert Bitcoin Mining?</span>
-        <span class="rc-sub">Das Rückgrat des gesamten Bitcoin-Netzwerks — Proof of Work, Hashrate und Difficulty verständlich erklärt.</span>
-        <span class="rc-cta">Report lesen</span>
+        <span class="rc-tag" data-en="Deep Report &middot; Network" data-de="Deep Report &middot; Netzwerk">Deep Report &middot; Network</span>
+        <span class="rc-title" data-en="How does Bitcoin Mining work?" data-de="Wie funktioniert Bitcoin Mining?">How does Bitcoin Mining work?</span>
+        <span class="rc-sub" data-en="The backbone of the entire Bitcoin network — Proof of Work, hashrate and difficulty explained clearly." data-de="Das Rückgrat des gesamten Bitcoin-Netzwerks — Proof of Work, Hashrate und Difficulty verständlich erklärt.">The backbone of the entire Bitcoin network — Proof of Work, hashrate and difficulty explained clearly.</span>
+        <span class="rc-cta" data-en="Read Report" data-de="Report lesen">Read Report</span>
       </a>
     </div>
   </div>
@@ -1179,22 +1192,22 @@ body {
 <section class="cta-section">
   <div class="cta-orb"></div>
   <div class="cta-inner">
-    <div class="eyebrow" style="justify-content:center;">Kostenlos &amp; ohne Anmeldung</div>
-    <h2 class="cta-title">Den Bitcoin-Markt im Blick.<br><span class="grad-text">Jederzeit.</span></h2>
-    <p class="cta-sub">SignalsLayered aggregiert alle relevanten Signale in Echtzeit — komplett kostenlos, ohne Account, ohne Paywall.</p>
-    <a href="#dashboard" class="btn-primary">Zum Dashboard &nbsp;&#8594;</a>
+    <div class="eyebrow" style="justify-content:center;" data-en="Free &amp; no sign-up required" data-de="Kostenlos &amp; ohne Anmeldung">Free &amp; no sign-up required</div>
+    <h2 class="cta-title" id="cta-title-el">The Bitcoin market at a glance.<br><span class="grad-text">Anytime.</span></h2>
+    <p class="cta-sub" data-en="SignalsLayered aggregates all relevant signals in real time — completely free, no account, no paywall." data-de="SignalsLayered aggregiert alle relevanten Signale in Echtzeit — komplett kostenlos, ohne Account, ohne Paywall.">SignalsLayered aggregates all relevant signals in real time — completely free, no account, no paywall.</p>
+    <a href="#dashboard" class="btn-primary" data-en="Go to Dashboard &nbsp;→" data-de="Zum Dashboard &nbsp;→">Go to Dashboard &nbsp;&#8594;</a>
     <div class="cta-sources">
-      <span class="cta-trust">Keine Anmeldung</span>
-      <span class="cta-trust">Keine Paywall</span>
-      <span class="cta-trust">Live-Daten</span>
+      <span class="cta-trust" data-en="No sign-up" data-de="Keine Anmeldung">No sign-up</span>
+      <span class="cta-trust" data-en="No Paywall" data-de="Keine Paywall">No Paywall</span>
+      <span class="cta-trust" data-en="Live Data" data-de="Live-Daten">Live Data</span>
       <span class="cta-trust">Open Intelligence</span>
     </div>
   </div>
 </section>
 
 <!-- ══ DISCLAIMER ═══════════════════════════════════ -->
-<div class="disclaimer">
-  <strong>Disclaimer:</strong> Die Informationen auf dieser Website dienen ausschließlich <strong>Informationszwecken</strong> und stellen keine Finanz- oder Anlageberatung dar. Kryptomärkte sind hochvolatil — Sie können Ihr gesamtes eingesetztes Kapital verlieren. Vergangene Wertentwicklungen sind kein Indikator für zukünftige Ergebnisse. <a href="/disclaimer.html">Vollständiger Disclaimer &rarr;</a>
+<div class="disclaimer" id="disclaimer-el">
+  <strong>Disclaimer:</strong> The information on this website is for <strong>informational purposes only</strong> and does not constitute financial or investment advice. Crypto markets are highly volatile — you may lose your entire invested capital. Past performance is not indicative of future results. <a href="/disclaimer.html">Full Disclaimer &rarr;</a>
 </div>
 
 <!-- ══ FOOTER ════════════════════════════════════════ -->
@@ -1205,41 +1218,186 @@ body {
         <div class="footer-logo-mark">SL</div>
         <span class="footer-logo-text">SignalsLayered</span>
       </div>
-      <p class="footer-tagline">Bitcoin Intelligence Platform. Alle Signale. Ein Score. Echtzeit.</p>
+      <p class="footer-tagline" data-en="Bitcoin Intelligence Platform. All signals. One score. Real-time." data-de="Bitcoin Intelligence Platform. Alle Signale. Ein Score. Echtzeit.">Bitcoin Intelligence Platform. All signals. One score. Real-time.</p>
     </div>
     <div>
-      <div class="footer-col-title">Produkt</div>
+      <div class="footer-col-title" data-en="Product" data-de="Produkt">Product</div>
       <div class="footer-links">
         <a href="#dashboard" class="footer-link">Live Dashboard</a>
         <a href="#signal-score" class="footer-link">Signal Score</a>
         <a href="#berichte" class="footer-link">Deep Reports</a>
-        <a href="#was-wir-tracken" class="footer-link">Was wir tracken</a>
+        <a href="#was-wir-tracken" class="footer-link" data-en="What We Track" data-de="Was wir tracken">What We Track</a>
       </div>
     </div>
     <div>
-      <div class="footer-col-title">Berichte</div>
+      <div class="footer-col-title" data-en="Reports" data-de="Berichte">Reports</div>
       <div class="footer-links">
-        <a href="/bitcoin.html" class="footer-link">Was ist Bitcoin?</a>
+        <a href="/bitcoin.html" class="footer-link" data-en="What is Bitcoin?" data-de="Was ist Bitcoin?">What is Bitcoin?</a>
         <a href="/mining.html" class="footer-link">Bitcoin Mining</a>
       </div>
     </div>
     <div>
-      <div class="footer-col-title">Rechtliches</div>
+      <div class="footer-col-title" data-en="Legal" data-de="Rechtliches">Legal</div>
       <div class="footer-links">
         <a href="/about.html" class="footer-link">About</a>
-        <a href="/privacy.html" class="footer-link">Datenschutz</a>
+        <a href="/privacy.html" class="footer-link" data-en="Privacy" data-de="Datenschutz">Privacy</a>
         <a href="/disclaimer.html" class="footer-link">Disclaimer</a>
-        <a href="/impressum.html" class="footer-link">Impressum</a>
+        <a href="/impressum.html" class="footer-link" data-en="Imprint" data-de="Impressum">Imprint</a>
       </div>
     </div>
   </div>
   <div class="footer-bottom">
-    <span>&copy; 2026 SignalsLayered &middot; Nur zu Informationszwecken &middot; Keine Finanzberatung</span>
-    <span><a href="/privacy.html">Datenschutz</a> &nbsp;&middot;&nbsp; <a href="/impressum.html">Impressum</a> &nbsp;&middot;&nbsp; <a href="/disclaimer.html">Disclaimer</a></span>
+    <span id="footer-copy">© 2026 SignalsLayered &middot; For informational purposes only &middot; No financial advice</span>
+    <span><a href="/privacy.html" data-en="Privacy" data-de="Datenschutz">Privacy</a> &nbsp;&middot;&nbsp; <a href="/impressum.html" data-en="Imprint" data-de="Impressum">Imprint</a> &nbsp;&middot;&nbsp; <a href="/disclaimer.html">Disclaimer</a></span>
   </div>
 </footer>
 
 <script>
+// ══ LANGUAGE ═══════════════════════════════════════
+window.lang = localStorage.getItem('sl-lang') || 'en';
+
+const LANG = {
+  en: {
+    v_bull:'BULLISH', v_neut:'NEUTRAL', v_caut:'CAUTION', v_bear:'BEARISH',
+    vt_bull:'Majority of signals positive', vt_neut:'Mixed signal landscape',
+    vt_caut:'Signals turning negative', vt_bear:'Majority of signals negative',
+    loading:'Loading\u2026', refresh:'\u21BB Refresh', retry:'\u21BB Retry',
+    lw:'LAST WEEK', lm:'LAST MONTH', hist7:'7-Day History', today:'Today',
+    fg75_i:'Extreme Greed \u2014 market may be overheated.',
+    fg75_a:'Consider reducing risk or taking partial profits.',
+    fg55_i:'Greed \u2014 bullish momentum present.',
+    fg55_a:'Positive, but elevated risk. Set trailing stop-losses.',
+    fg45_i:'Neutral \u2014 no clear directional bias.',
+    fg45_a:'Wait for a clearer signal.',
+    fg25_i:'Fear \u2014 investors are cautious. Historically a buying opportunity.',
+    fg25_a:'"Be greedy when others are fearful." \u2014 Warren Buffett',
+    fg0_i:'Extreme Fear \u2014 panic in the market. Often marks local bottoms.',
+    fg0_a:'Extreme fear marked major bottoms in 2018, 2020 and 2022.',
+    mac_bull:'Bullish Environment', mac_neut:'Neutral Environment', mac_bear:'Bearish Environment',
+    imp_sp_u:'Risk-on \u2192 BTC positive', imp_sp_d:'Risk-off \u2192 BTC pressure',
+    imp_dx_u:'Strong USD \u2192 BTC pressure', imp_dx_d:'Weak USD \u2192 BTC positive',
+    imp_go_u:'Safe-haven demand elevated', imp_go_d:'Risk appetite rising',
+    imp_yi_u:'High rates \u2192 risk-off', imp_yi_d:'Falling rates \u2192 BTC positive',
+    expl_bh:'Each block gets a sequential number. Shows how far the chain has grown since the genesis block.',
+    expl_hr:'Total computing power of the Bitcoin network. Higher hashrate = more secure.',
+    expl_di:'How hard it is to find a valid block. Adjusts every 2,016 blocks (~2 weeks).',
+    expl_ff:'Pay this fee for confirmation in the next block.',
+    expl_sf:'Confirmation within a few blocks.',
+    wh_act:'ACTIVE', wh_mod:'MODERATE', wh_qui:'QUIET',
+    wh_lbl:'Whale Activity: ',
+    wh_no:'No large transactions in recent blocks.',
+    wh_foot:'Last 3 confirmed blocks \u00B7 ',
+    dom_dom:'BTC DOMINANT', dom_bal:'BALANCED', dom_alt:'ALTSEASON',
+    dom_h:'High BTC dominance \u2014 capital concentrated in Bitcoin.',
+    dom_b:'Balanced market \u2014 capital spread across BTC and altcoins.',
+    dom_l:'Low BTC dominance \u2014 altseason conditions.',
+    dom_24h:'24h Change', dom_mc:'Total Market Cap',
+    ev_soon:'Soon', ev_imp:'Impact: ', ev_fc:'Forecast: ', ev_pr:'Previous: ',
+    pred_yes:'YES', pred_no:'NO',
+    hist_on:'BTC on ', hist_then:'Value then: ', hist_btoday:'BTC today: ',
+    hist_vtoday:'Value today: ', hist_ret:'Return: ',
+    dca_buys:' purchases', dca_avg:'Avg. buy price: ',
+    dca_no:'No data. Binance starts from Aug 2017.',
+    price_na:'Price unavailable',
+    score_live:'\u25CF LIVE \u00B7 Updated continuously',
+    tz:' UTC', locale:'en-US',
+    date_opts:{month:'short',day:'2-digit'},
+    disc:'<strong>Disclaimer:</strong> The information on this website is for <strong>informational purposes only</strong> and does not constitute financial or investment advice. Crypto markets are highly volatile \u2014 you may lose your entire invested capital. Past performance is not indicative of future results. <a href="/disclaimer.html">Full Disclaimer \u2192</a>',
+    foot_copy:'\u00A9 2026 SignalsLayered \u00B7 For informational purposes only \u00B7 No financial advice',
+    cta_title:'The Bitcoin market at a glance.<br><span class="grad-text">Anytime.</span>',
+  },
+  de: {
+    v_bull:'BULLISH', v_neut:'NEUTRAL', v_caut:'VORSICHT', v_bear:'BEARISH',
+    vt_bull:'Mehrheit der Signale positiv', vt_neut:'Gemischte Signallage',
+    vt_caut:'Signale werden negativ', vt_bear:'Mehrheit der Signale negativ',
+    loading:'Laden\u2026', refresh:'\u21BB Aktualisieren', retry:'\u21BB Neu laden',
+    lw:'LETZTE WOCHE', lm:'LETZTER MONAT', hist7:'7-Tage-Verlauf', today:'Heute',
+    fg75_i:'Extreme Gier \u2014 Markt m\u00f6glicherweise \u00fcberhitzt.',
+    fg75_a:'Risikoreduzierung oder partielle Gewinnmitnahme erw\u00e4gen.',
+    fg55_i:'Gier \u2014 bullisches Momentum vorhanden.',
+    fg55_a:'Positiv, aber erh\u00f6htes Risiko. Trailing Stop-Losses setzen.',
+    fg45_i:'Neutral \u2014 kein klarer Richtungsbias.',
+    fg45_a:'Auf ein klareres Signal warten.',
+    fg25_i:'Angst \u2014 Anleger sind vorsichtig. Historisch eine Kaufgelegenheit.',
+    fg25_a:'"Gierig sein, wenn andere \u00e4ngstlich sind." \u2014 Warren Buffett',
+    fg0_i:'Extreme Angst \u2014 Panik im Markt. Markiert oft lokale B\u00f6den.',
+    fg0_a:'Extreme Angst hat 2018, 2020 und 2022 gro\u00dfe B\u00f6den markiert.',
+    mac_bull:'Bullish Umfeld', mac_neut:'Neutrales Umfeld', mac_bear:'Bearish Umfeld',
+    imp_sp_u:'Risk-on \u2192 BTC positiv', imp_sp_d:'Risk-off \u2192 BTC Druck',
+    imp_dx_u:'Starker USD \u2192 BTC Druck', imp_dx_d:'Schwacher USD \u2192 BTC positiv',
+    imp_go_u:'Safe-Haven-Nachfrage hoch', imp_go_d:'Risikobereitschaft steigt',
+    imp_yi_u:'Hohe Zinsen \u2192 Risk-off', imp_yi_d:'Fallende Zinsen \u2192 BTC positiv',
+    expl_bh:'Jeder Block erh\u00e4lt eine fortlaufende Nummer. Zeigt, wie weit die Chain seit dem Genesis Block gewachsen ist.',
+    expl_hr:'Gesamte Rechenleistung des Bitcoin-Netzwerks. H\u00f6here Hashrate = sicherer.',
+    expl_di:'Wie schwer es ist, einen g\u00fcltigen Block zu finden. Passt sich alle 2016 Bl\u00f6cke (~2 Wochen) an.',
+    expl_ff:'Diese Geb\u00fchr zahlen f\u00fcr Best\u00e4tigung im n\u00e4chsten Block.',
+    expl_sf:'Best\u00e4tigung innerhalb weniger Bl\u00f6cke.',
+    wh_act:'AKTIV', wh_mod:'MODERAT', wh_qui:'RUHIG',
+    wh_lbl:'Whale-Aktivit\u00e4t: ',
+    wh_no:'Keine gro\u00dfen Transaktionen in den letzten Bl\u00f6cken.',
+    wh_foot:'Letzte 3 best\u00e4tigte Bl\u00f6cke \u00B7 ',
+    dom_dom:'BTC DOMINANT', dom_bal:'AUSGEWOGEN', dom_alt:'ALTSEASON',
+    dom_h:'Hohe BTC Dominanz \u2014 Kapital konzentriert sich in Bitcoin.',
+    dom_b:'Ausgewogener Markt \u2014 Kapital verteilt auf BTC und Altcoins.',
+    dom_l:'Niedrige BTC Dominanz \u2014 Altseason-Bedingungen.',
+    dom_24h:'24h Ver\u00e4nderung', dom_mc:'Total Market Cap',
+    ev_soon:'Bald', ev_imp:'Einfluss: ', ev_fc:'Prognose: ', ev_pr:'Vorherige: ',
+    pred_yes:'JA', pred_no:'NEIN',
+    hist_on:'BTC am ', hist_then:'Wert damals: ', hist_btoday:'BTC heute: ',
+    hist_vtoday:'Wert heute: ', hist_ret:'Rendite: ',
+    dca_buys:' K\u00e4ufe', dca_avg:'\u00d8 Kaufpreis: ',
+    dca_no:'Keine Daten. Binance startet ab Aug 2017.',
+    price_na:'Preis nicht verf\u00fcgbar',
+    score_live:'\u25CF LIVE \u00B7 Wird laufend aktualisiert',
+    tz:' MEZ', locale:'de-DE',
+    date_opts:{month:'short',day:'2-digit'},
+    disc:'<strong>Disclaimer:</strong> Die Informationen auf dieser Website dienen ausschlie\u00dflich <strong>Informationszwecken</strong> und stellen keine Finanz- oder Anlageberatung dar. Kryptom\u00e4rkte sind hochvolatil \u2014 Sie k\u00f6nnen Ihr gesamtes eingesetztes Kapital verlieren. Vergangene Wertentwicklungen sind kein Indikator f\u00fcr zuk\u00fcnftige Ergebnisse. <a href="/disclaimer.html">Vollst\u00e4ndiger Disclaimer \u2192</a>',
+    foot_copy:'\u00A9 2026 SignalsLayered \u00B7 Nur zu Informationszwecken \u00B7 Keine Finanzberatung',
+    cta_title:'Den Bitcoin-Markt im Blick.<br><span class="grad-text">Jederzeit.</span>',
+  }
+};
+
+function t(key){ return (LANG[window.lang]||LANG.en)[key] || LANG.en[key] || key; }
+
+function setLang(lang){
+  window.lang = lang;
+  localStorage.setItem('sl-lang', lang);
+  document.documentElement.lang = lang;
+  // Swap static text elements
+  document.querySelectorAll('[data-en]').forEach(el => {
+    const val = el.getAttribute('data-' + lang) || el.getAttribute('data-en');
+    if(val) el.textContent = val;
+  });
+  // Swap static HTML elements (btn inner HTML)
+  document.querySelectorAll('button[data-en], a[data-en]').forEach(el => {
+    const val = el.getAttribute('data-' + lang) || el.getAttribute('data-en');
+    if(val) el.innerHTML = val;
+  });
+  // Special: CTA title
+  const ct = document.getElementById('cta-title-el');
+  if(ct) ct.innerHTML = t('cta_title');
+  // Special: disclaimer
+  const disc = document.getElementById('disclaimer-el');
+  if(disc) disc.innerHTML = t('disc');
+  // Special: footer copy
+  const fc = document.getElementById('footer-copy');
+  if(fc) fc.textContent = t('foot_copy');
+  // Lang button label
+  const btn = document.getElementById('lang-btn');
+  if(btn) btn.textContent = lang === 'en' ? 'DE' : 'EN';
+  // Reload dynamic panels with new language strings
+  loadSentiment(); loadMacro(); loadDominance();
+  loadNetwork(); loadWhale(); loadNews(); loadPolymarket();
+  updateClock();
+}
+
+function toggleLang(){ setLang(window.lang === 'en' ? 'de' : 'en'); }
+
+// Apply language on load if saved
+if(window.lang !== 'en'){
+  document.addEventListener('DOMContentLoaded', () => setLang(window.lang));
+}
+
 // ══ STATE ══════════════════════════════════
 const liveScores={sentiment:null,prediction:null,politics:55,macro:60,whale:50};
 let btcPrice=null,satPrice=null;
@@ -1269,23 +1427,23 @@ document.addEventListener('click',function(e){
   const m=document.getElementById('tools-menu');
   if(m&&!m.contains(e.target))document.getElementById('tools-dropdown').style.display='none';
 });
-function openTool(t){
+function openTool(t2){
   document.getElementById('tools-dropdown').style.display='none';
   ['converter','historical','dca','satoshi'].forEach(x=>{
-    document.getElementById('tool-'+x).style.display=x===t?'block':'none';
+    document.getElementById('tool-'+x).style.display=x===t2?'block':'none';
   });
   document.getElementById('tools-modal').style.display='flex';
-  if(t==='converter')fetchBTCPrice();
-  if(t==='satoshi')fetchSatPrice();
-  if(t==='dca')document.getElementById('dca-end').value=new Date().toISOString().split('T')[0];
+  if(t2==='converter')fetchBTCPrice();
+  if(t2==='satoshi')fetchSatPrice();
+  if(t2==='dca')document.getElementById('dca-end').value=new Date().toISOString().split('T')[0];
 }
 function closeModal(){document.getElementById('tools-modal').style.display='none';}
 
 async function fetchBTCPrice(){
-  try{const r=await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');const d=await r.json();btcPrice=parseFloat(d.price);document.getElementById('btc-price-info').textContent='1 BTC = $'+btcPrice.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}catch(e){document.getElementById('btc-price-info').textContent='Preis nicht verfügbar';}
+  try{const r=await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');const d=await r.json();btcPrice=parseFloat(d.price);document.getElementById('btc-price-info').textContent='1 BTC = $'+btcPrice.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}catch(e){document.getElementById('btc-price-info').textContent=t('price_na');}
 }
 async function fetchSatPrice(){
-  try{const r=await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');const d=await r.json();satPrice=parseFloat(d.price);document.getElementById('sat-price-info').textContent='1 SAT = $'+(satPrice/1e8).toFixed(8)+' \u00B7 1 BTC = $'+satPrice.toLocaleString('en-US',{maximumFractionDigits:2});}catch(e){document.getElementById('sat-price-info').textContent='Preis nicht verfügbar';}
+  try{const r=await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');const d=await r.json();satPrice=parseFloat(d.price);document.getElementById('sat-price-info').textContent='1 SAT = $'+(satPrice/1e8).toFixed(8)+' \u00B7 1 BTC = $'+satPrice.toLocaleString('en-US',{maximumFractionDigits:2});}catch(e){document.getElementById('sat-price-info').textContent=t('price_na');}
 }
 function convertBTC(from){
   if(!btcPrice)return;
@@ -1303,21 +1461,21 @@ async function calcHistorical(){
   const date=document.getElementById('hist-date').value,amount=parseFloat(document.getElementById('hist-btc').value);
   if(!date||!amount)return;
   const rb=document.getElementById('hist-result'),rt=document.getElementById('hist-result-text');
-  rt.innerHTML='Laden\u2026';rb.style.display='block';
+  rt.innerHTML=t('loading');rb.style.display='block';
   try{
     const ts=Math.floor(new Date(date).getTime()/1000);
     const[kR,cR]=await Promise.all([fetch('https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=1440&since='+(ts-86400)),fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT')]);
-    if(!kR.ok)throw new Error('Historische Daten nicht verfügbar');
+    if(!kR.ok)throw new Error('Historical data unavailable');
     const kD=await kR.json();const cp=parseFloat((await cR.json()).price);
     if(kD.error?.length)throw new Error(kD.error[0]);
     const candles=kD.result?.XXBTZUSD||kD.result?.XBTUSD;
-    if(!candles||!candles.length)throw new Error('Keine Daten für dieses Datum.');
+    if(!candles||!candles.length)throw new Error('No data for this date.');
     let cl=candles[0],md=Math.abs(candles[0][0]-ts);
-    for(const c of candles){const d=Math.abs(c[0]-ts);if(d<md){md=d;cl=c;}}
+    for(const c of candles){const d2=Math.abs(c[0]-ts);if(d2<md){md=d2;cl=c;}}
     const pad=parseFloat(cl[4]);const vad=amount*pad;const vt=amount*cp;
     const ch=((cp-pad)/pad*100).toFixed(1);const pr=vt-vad;const up=pr>=0;
-    rt.innerHTML='<span style="color:var(--muted2)">BTC am '+date+':</span> <strong style="color:var(--text)">$'+pad.toLocaleString('en-US',{maximumFractionDigits:2})+'</strong><br><span style="color:var(--muted2)">Wert damals:</span> <strong style="color:var(--text)">$'+vad.toLocaleString('en-US',{maximumFractionDigits:2})+'</strong><br><span style="color:var(--muted2)">BTC heute:</span> <strong style="color:var(--text)">$'+cp.toLocaleString('en-US',{maximumFractionDigits:2})+'</strong><br><span style="color:var(--muted2)">Wert heute:</span> <strong style="color:var(--text)">$'+vt.toLocaleString('en-US',{maximumFractionDigits:2})+'</strong><br><span style="color:var(--muted2)">Rendite:</span> <strong style="color:'+(up?'var(--green)':'var(--red)')+';">'+(up?'+':'')+ch+'% ('+(up?'+':'-')+'$'+Math.abs(pr).toLocaleString('en-US',{maximumFractionDigits:2})+')</strong>';
-  }catch(e){rt.innerHTML='<span style="color:var(--red)">'+(e.message||'Fehler beim Laden.')+'</span>';}
+    rt.innerHTML='<span style="color:var(--muted2)">'+t('hist_on')+date+':</span> <strong style="color:var(--text)">$'+pad.toLocaleString('en-US',{maximumFractionDigits:2})+'</strong><br><span style="color:var(--muted2)">'+t('hist_then')+'</span> <strong style="color:var(--text)">$'+vad.toLocaleString('en-US',{maximumFractionDigits:2})+'</strong><br><span style="color:var(--muted2)">'+t('hist_btoday')+'</span> <strong style="color:var(--text)">$'+cp.toLocaleString('en-US',{maximumFractionDigits:2})+'</strong><br><span style="color:var(--muted2)">'+t('hist_vtoday')+'</span> <strong style="color:var(--text)">$'+vt.toLocaleString('en-US',{maximumFractionDigits:2})+'</strong><br><span style="color:var(--muted2)">'+t('hist_ret')+'</span> <strong style="color:'+(up?'var(--green)':'var(--red)')+';">'+(up?'+':'')+ch+'% ('+(up?'+':'-')+'$'+Math.abs(pr).toLocaleString('en-US',{maximumFractionDigits:2})+')</strong>';
+  }catch(e){rt.innerHTML='<span style="color:var(--red)">'+(e.message||'Error loading data.')+'</span>';}
 }
 async function calcDCA(){
   const sd=document.getElementById('dca-start').value,ed=document.getElementById('dca-end').value;
@@ -1325,12 +1483,12 @@ async function calcDCA(){
   const idays=parseInt(document.getElementById('dca-interval').value);
   if(!sd||!ed||!amount)return;
   const rb=document.getElementById('dca-result');rb.style.display='block';
-  document.getElementById('dca-invested').textContent='Laden\u2026';
-  document.getElementById('dca-avg-price').textContent='Historische Preise werden geladen\u2026';
+  document.getElementById('dca-invested').textContent=t('loading');
+  document.getElementById('dca-avg-price').textContent=t('loading');
   try{
     const start=new Date(sd),end=new Date(ed);const allP=[];let sMs=start.getTime();const eMs=end.getTime();
     while(sMs<eMs){const url='https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&startTime='+sMs+'&endTime='+eMs+'&limit=1000';const r=await fetch(url);if(!r.ok)throw new Error('HTTP '+r.status);const data=await r.json();if(!data.length)break;for(const c of data)allP.push([c[0],parseFloat(c[4])]);sMs=data[data.length-1][0]+86400000;if(data.length<1000)break;}
-    if(!allP.length)throw new Error('Keine Daten. Binance startet ab Aug 2017.');
+    if(!allP.length)throw new Error(t('dca_no'));
     const cp=parseFloat((await(await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT')).json()).price);
     const dates=[];let d=new Date(start);while(d<=end){dates.push(new Date(d));d.setDate(d.getDate()+idays);}
     let ti=0,tb=0;
@@ -1342,12 +1500,12 @@ async function calcDCA(){
     document.getElementById('dca-btc').textContent=tb.toFixed(6)+' BTC';
     document.getElementById('dca-return').textContent=(up?'+':'')+ret+'%';
     document.getElementById('dca-return').style.color=up?'var(--green)':'var(--red)';
-    document.getElementById('dca-avg-price').textContent='Ø Kaufpreis: $'+avg.toLocaleString('en-US',{maximumFractionDigits:2})+' \u00B7 '+dates.length+' Käufe';
-  }catch(e){document.getElementById('dca-invested').textContent='Fehler';document.getElementById('dca-avg-price').textContent=e.message||'Daten nicht verfügbar.';}
+    document.getElementById('dca-avg-price').textContent=t('dca_avg')+'$'+avg.toLocaleString('en-US',{maximumFractionDigits:2})+' \u00B7 '+dates.length+t('dca_buys');
+  }catch(e){document.getElementById('dca-invested').textContent='Error';document.getElementById('dca-avg-price').textContent=e.message||'Data unavailable.';}
 }
 
 // ══ CLOCK ══════════════════════════════════
-function updateClock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('de-DE')+' MEZ';}
+function updateClock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString(t('locale'))+t('tz');}
 updateClock();setInterval(updateClock,1000);
 
 // ══ BTC PRICE KPI ══════════════════════════
@@ -1371,14 +1529,14 @@ function updateSignalScore(){
   const score=isNaN(raw)?55:Math.round(raw);
   const sn=document.getElementById('score-num');if(sn)sn.textContent=score;
   let color,verdict,vtext;
-  if(score>=70){color='var(--sky)';verdict='BULLISH';vtext='Mehrheit der Signale positiv';}
-  else if(score>=55){color='var(--yellow)';verdict='NEUTRAL';vtext='Gemischte Signallage';}
-  else if(score>=40){color='var(--yellow)';verdict='VORSICHT';vtext='Signale werden negativ';}
-  else{color='var(--red)';verdict='BEARISH';vtext='Mehrheit der Signale negativ';}
+  if(score>=70){color='var(--sky)';verdict=t('v_bull');vtext=t('vt_bull');}
+  else if(score>=55){color='var(--yellow)';verdict=t('v_neut');vtext=t('vt_neut');}
+  else if(score>=40){color='var(--yellow)';verdict=t('v_caut');vtext=t('vt_caut');}
+  else{color='var(--red)';verdict=t('v_bear');vtext=t('vt_bear');}
   if(sn)sn.style.color=color;
   const vl=document.getElementById('verdict-label');if(vl){vl.textContent=verdict;vl.style.color=color;}
-  const vt=document.getElementById('verdict-text');if(vt)vt.textContent=vtext;
-  const sb=document.getElementById('score-badge');if(sb)sb.style.color=color;
+  const vt2=document.getElementById('verdict-text');if(vt2)vt2.textContent=vtext;
+  const sb=document.getElementById('score-badge');if(sb){sb.style.color=color;sb.textContent=t('score_live');}
   const ks=document.getElementById('kpi-score-strip');if(ks){ks.textContent=score;ks.style.color=color;}
   const kv=document.getElementById('kpi-verdict-strip');if(kv){kv.textContent=verdict;kv.style.color=color;}
   updateGauge(score);
@@ -1395,47 +1553,47 @@ const CRYPTO_KEYWORDS=['bitcoin','btc'];
 function formatVolume(v){const n=parseFloat(v)||0;if(n>=1e6)return'$'+(n/1e6).toFixed(1)+'M';if(n>=1e3)return'$'+(n/1e3).toFixed(0)+'K';return'$'+n.toFixed(0);}
 function renderPredictions(items){
   const panel=document.getElementById('pred-panel');
-  if(!items||!items.length){panel.innerHTML='<div class="err">Keine Märkte gefunden.<br><button class="rbtn" onclick="loadPolymarket()">\u21BB Neu laden</button></div>';return;}
+  if(!items||!items.length){panel.innerHTML='<div class="err">'+t('pred_no')+'<br><button class="rbtn" onclick="loadPolymarket()">'+t('retry')+'</button></div>';return;}
   let html='';
   items.forEach(item=>{
     const vol=formatVolume(item.volume24hr||0),link=item.url||'https://polymarket.com';
     if(item.type==='multi'&&item.markets&&item.markets.length){
       const uid='m'+Math.random().toString(36).substr(2,6);
       html+='<div class="pred-item"><div class="pq" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="var e=document.getElementById(\''+uid+'\');var a=document.getElementById(\''+uid+'a\');var o=e.style.display!==\'none\';e.style.display=o?\'none\':\'flex\';a.style.transform=o?\'rotate(-90deg)\':\'rotate(0deg)\';"><span>'+item.question+'</span><span id="'+uid+'a" style="font-size:.7rem;color:var(--sky);margin-left:7px;flex-shrink:0;transform:rotate(-90deg);">&#9660;</span></div><a class="poly-link" href="'+link+'" target="_blank" rel="noopener">&#x2197; polymarket.com</a><div id="'+uid+'" style="margin-top:7px;display:none;flex-direction:column;gap:5px;">';
-      item.markets.map(sub=>{let p=0;try{const ps=JSON.parse(sub.outcomePrices||'[0]');p=parseFloat(ps[0])||0;}catch(e){}return{question:sub.question,price:p};}).filter(s=>s.price>0).sort((a,b)=>b.price-a.price).forEach(sub=>{
+      item.markets.map(sub=>{let p=0;try{const ps=JSON.parse(sub.outcomePrices||'[0]');p=parseFloat(ps[0])||0;}catch(e2){}return{question:sub.question,price:p};}).filter(s=>s.price>0).sort((a,b)=>b.price-a.price).forEach(sub=>{
         const pct=(sub.price*100).toFixed(0),bc=sub.price>.5?'var(--green)':sub.price>.25?'var(--yellow)':'var(--muted2)';
         let lbl=(sub.question||'').replace(/^Will (Bitcoin|BTC) (reach|dip to|drop to|fall to|hit|exceed|go above|go below)\s*/i,'').replace(/^Will .* be (above|below|at|over|under)\s*/i,'').replace(/\?$/,'').trim();
         html+='<div style="display:flex;align-items:center;gap:7px;"><div style="font-family:var(--f-mono);font-size:.58rem;color:var(--muted2);min-width:75px;flex-shrink:0;">'+lbl+'</div><div style="flex:1;height:2px;background:var(--bg4);"><div style="height:2px;background:'+bc+';width:'+pct+'%"></div></div><div style="font-family:var(--f-mono);font-size:.58rem;color:'+bc+';min-width:28px;text-align:right;">'+pct+'%</div></div>';
       });
       html+='</div><div class="pmeta" style="margin-top:5px;"><span>Vol 24h: '+vol+'</span></div></div>';
     }else{
-      let yp=.5;try{const ps=JSON.parse(item.outcomePrices||'[.5,.5]');yp=parseFloat(ps[0])||.5;}catch(e){}
+      let yp=.5;try{const ps=JSON.parse(item.outcomePrices||'[.5,.5]');yp=parseFloat(ps[0])||.5;}catch(e2){}
       const yes=(yp*100).toFixed(0),no=(100-yes),yc=yes>=50?'var(--green)':'var(--red)',dir=yes>=50?'\u25B2 BULLISH':'\u25BC BEARISH';
-      html+='<div class="pred-item"><div class="pq">'+item.question+'</div><a class="poly-link" href="'+link+'" target="_blank" rel="noopener">&#x2197; polymarket.com</a><div class="pbar-row" style="margin-top:7px;"><div class="pbar"><div class="pbfill" style="width:'+yes+'%;background:'+yc+'"></div></div><span style="font-family:var(--f-mono);font-size:.56rem;color:'+yc+';">'+dir+'</span></div><div class="pmeta"><span style="color:'+yc+'">JA '+yes+'%</span><span>NEIN '+no+'%</span><span>Vol: '+vol+'</span></div></div>';
+      html+='<div class="pred-item"><div class="pq">'+item.question+'</div><a class="poly-link" href="'+link+'" target="_blank" rel="noopener">&#x2197; polymarket.com</a><div class="pbar-row" style="margin-top:7px;"><div class="pbar"><div class="pbfill" style="width:'+yes+'%;background:'+yc+'"></div></div><span style="font-family:var(--f-mono);font-size:.56rem;color:'+yc+';">'+dir+'</span></div><div class="pmeta"><span style="color:'+yc+'">'+t('pred_yes')+' '+yes+'%</span><span>'+t('pred_no')+' '+no+'%</span><span>Vol: '+vol+'</span></div></div>';
     }
   });
-  html+='<button class="rbtn" onclick="loadPolymarket()">\u21BB Aktualisieren</button>';
+  html+='<button class="rbtn" onclick="loadPolymarket()">'+t('refresh')+'</button>';
   panel.innerHTML=html;
 }
 async function loadPolymarket(){
   const panel=document.getElementById('pred-panel'),badge=document.getElementById('poly-badge');
-  panel.innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div>';badge.textContent='Laden\u2026';badge.className='bdg blo';
+  panel.innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div>';badge.textContent=t('loading');badge.className='bdg blo';
   try{
     const res=await fetch('/api/polymarket');if(!res.ok)throw new Error('HTTP '+res.status);
-    const data=await res.json();if(!Array.isArray(data)||!data.length)throw new Error('Keine Märkte');
+    const data=await res.json();if(!Array.isArray(data)||!data.length)throw new Error('No markets');
     data.sort((a,b)=>new Date(a.endDate||a.end_date||'9999-12-31')-new Date(b.endDate||b.end_date||'9999-12-31'));
     const EKW=['end of','end of month','higher','above','price','month'];let predSet=false;
     for(const item of data){const q=(item.question||'').toLowerCase();if(EKW.filter(k=>q.includes(k)).length<2)continue;if(item.type==='binary'&&item.outcomePrices){const p=parseFloat(item.outcomePrices[0])*100;if(!isNaN(p)){liveScores.prediction=Math.round(p);predSet=true;break;}}if(item.type==='multi'&&item.markets){const ym=item.markets.find(m=>{const o=(m.outcome||'').toLowerCase();return o.includes('yes')||o.includes('higher')||o.includes('above');});if(ym){const p=parseFloat(ym.probability||ym.lastTradePrice||0)*100;if(!isNaN(p)&&p>0){liveScores.prediction=Math.round(p);predSet=true;break;}}}}
     if(!predSet){const bins=data.filter(d=>d.type==='binary'&&d.outcomePrices);if(bins.length){const avg=bins.reduce((s,d)=>s+parseFloat(d.outcomePrices[0])*100,0)/bins.length;if(!isNaN(avg))liveScores.prediction=Math.round(avg);}try{const kr=await fetch('/api/kalshi');if(kr.ok){const kd=await kr.json();if(kd.probability!=null&&!isNaN(kd.probability))liveScores.prediction=kd.probability;}}catch(e){}}
     updateSignalScore();renderPredictions(data);
     badge.textContent='\u25CF Live \u00B7 Polymarket';badge.className='bdg bl';setTimeout(loadPolymarket,120000);
-  }catch(err){console.error('Polymarket:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Polymarket nicht verfügbar.<br><button class="rbtn" onclick="loadPolymarket()">\u21BB Neu laden</button></div>';}
+  }catch(err){console.error('Polymarket:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Polymarket unavailable.<br><button class="rbtn" onclick="loadPolymarket()">'+t('retry')+'</button></div>';}
 }
 
 // ══ FEAR & GREED ════════════════════════════
 async function loadSentiment(){
   const panel=document.getElementById('reddit-panel'),badge=document.getElementById('sentiment-badge');
-  panel.innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div>';badge.textContent='Laden\u2026';badge.className='bdg blo';
+  panel.innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div>';badge.textContent=t('loading');badge.className='bdg blo';
   try{
     const res=await fetch('https://api.alternative.me/fng/?limit=30&format=json');if(!res.ok)throw new Error('HTTP '+res.status);
     const data=await res.json();const entries=data.data||[];if(!entries.length)throw new Error();
@@ -1450,11 +1608,11 @@ async function loadSentiment(){
     const lw=entries[7]?parseInt(entries[7].value):null,lm=entries[29]?parseInt(entries[29].value):null;
     const wd=lw!==null?score-lw:null,md=lm!==null?score-lm:null;
     let interp,ic,action;
-    if(score>=75){interp='Extreme Gier — Markt möglicherweise überhitzt.';ic='var(--red)';action='Risikoreduzierung oder partielle Gewinnmitnahme erwägen.';}
-    else if(score>=55){interp='Gier — bullisches Momentum vorhanden.';ic='var(--amber)';action='Positiv, aber erhöhtes Risiko. Trailing Stop-Losses setzen.';}
-    else if(score>=45){interp='Neutral — kein klarer Richtungsbias.';ic='var(--muted2)';action='Auf ein klareres Signal warten.';}
-    else if(score>=25){interp='Angst — Anleger sind vorsichtig. Historisch eine Kaufgelegenheit.';ic='var(--yellow)';action='"Gierig sein, wenn andere ängstlich sind." — Warren Buffett';}
-    else{interp='Extreme Angst — Panik im Markt. Markiert oft lokale Böden.';ic='var(--yellow)';action='Extreme Angst hat 2018, 2020 und 2022 große Böden markiert.';}
+    if(score>=75){interp=t('fg75_i');ic='var(--red)';action=t('fg75_a');}
+    else if(score>=55){interp=t('fg55_i');ic='var(--amber)';action=t('fg55_a');}
+    else if(score>=45){interp=t('fg45_i');ic='var(--muted2)';action=t('fg45_a');}
+    else if(score>=25){interp=t('fg25_i');ic='var(--yellow)';action=t('fg25_a');}
+    else{interp=t('fg0_i');ic='var(--yellow)';action=t('fg0_a');}
     panel.innerHTML=`
       <div style="text-align:center;padding:6px 0 16px;">
         <div style="font-family:var(--f-ui);font-weight:800;font-size:3.5rem;line-height:1;color:${sc};">${score}</div>
@@ -1465,18 +1623,18 @@ async function loadSentiment(){
       </div>
       <div style="display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.48rem;color:var(--muted2);margin-bottom:14px;"><span style="color:var(--red)">FEAR</span><span>NEUTRAL</span><span style="color:var(--green)">GREED</span></div>
       <div style="display:flex;gap:6px;margin-bottom:12px;">
-        <div style="flex:1;background:var(--bg4);border:1px solid var(--border);padding:8px;text-align:center;"><div style="font-family:var(--f-mono);font-size:.46rem;color:var(--muted2);letter-spacing:.1em;margin-bottom:3px;">LETZTE WOCHE</div><div style="font-family:var(--f-mono);font-size:.88rem;font-weight:600;color:${lw>=60?'var(--amber)':lw>=40?'var(--yellow)':'var(--red)'};">${lw??'—'}${wd!==null?`<span style="font-size:.58rem;color:${wd>=0?'var(--green)':'var(--red)'}"> ${wd>=0?'+':''}${wd}</span>`:''}</div></div>
-        <div style="flex:1;background:var(--bg4);border:1px solid var(--border);padding:8px;text-align:center;"><div style="font-family:var(--f-mono);font-size:.46rem;color:var(--muted2);letter-spacing:.1em;margin-bottom:3px;">LETZTER MONAT</div><div style="font-family:var(--f-mono);font-size:.88rem;font-weight:600;color:${lm>=60?'var(--amber)':lm>=40?'var(--yellow)':'var(--red)'};">${lm??'—'}${md!==null?`<span style="font-size:.58rem;color:${md>=0?'var(--green)':'var(--red)'}"> ${md>=0?'+':''}${md}</span>`:''}</div></div>
+        <div style="flex:1;background:var(--bg4);border:1px solid var(--border);padding:8px;text-align:center;"><div style="font-family:var(--f-mono);font-size:.46rem;color:var(--muted2);letter-spacing:.1em;margin-bottom:3px;">${t('lw')}</div><div style="font-family:var(--f-mono);font-size:.88rem;font-weight:600;color:${lw>=60?'var(--amber)':lw>=40?'var(--yellow)':'var(--red)'};">${lw??'—'}${wd!==null?`<span style="font-size:.58rem;color:${wd>=0?'var(--green)':'var(--red)'}"> ${wd>=0?'+':''}${wd}</span>`:''}</div></div>
+        <div style="flex:1;background:var(--bg4);border:1px solid var(--border);padding:8px;text-align:center;"><div style="font-family:var(--f-mono);font-size:.46rem;color:var(--muted2);letter-spacing:.1em;margin-bottom:3px;">${t('lm')}</div><div style="font-family:var(--f-mono);font-size:.88rem;font-weight:600;color:${lm>=60?'var(--amber)':lm>=40?'var(--yellow)':'var(--red)'};">${lm??'—'}${md!==null?`<span style="font-size:.58rem;color:${md>=0?'var(--green)':'var(--red)'}"> ${md>=0?'+':''}${md}</span>`:''}</div></div>
       </div>
-      <div style="font-family:var(--f-mono);font-size:.48rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted2);margin-bottom:6px;">7-Tage-Verlauf</div>
+      <div style="font-family:var(--f-mono);font-size:.48rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted2);margin-bottom:6px;">${t('hist7')}</div>
       <div style="display:flex;align-items:flex-end;gap:3px;height:50px;margin-bottom:12px;">
-        ${chart.map((e,i)=>{const v=parseInt(e.value),c=v>=60?'var(--amber)':v>=40?'var(--yellow)':'var(--red)',h=Math.max(5,v),d=new Date(parseInt(e.timestamp)*1000),lbl=i===chart.length-1?'Heute':d.toLocaleDateString('de-DE',{weekday:'short'});return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;height:100%;justify-content:flex-end;"><div style="font-family:var(--f-mono);font-size:.42rem;color:${c};">${v}</div><div style="width:100%;height:${h}%;background:${c};opacity:${i===chart.length-1?1:.5};min-height:3px;"></div><div style="font-family:var(--f-mono);font-size:.4rem;color:var(--muted2);white-space:nowrap;">${lbl}</div></div>`;}).join('')}
+        ${chart.map((e,i)=>{const v=parseInt(e.value),c=v>=60?'var(--amber)':v>=40?'var(--yellow)':'var(--red)',h=Math.max(5,v),d=new Date(parseInt(e.timestamp)*1000),lbl=i===chart.length-1?t('today'):d.toLocaleDateString(t('locale'),{weekday:'short'});return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;height:100%;justify-content:flex-end;"><div style="font-family:var(--f-mono);font-size:.42rem;color:${c};">${v}</div><div style="width:100%;height:${h}%;background:${c};opacity:${i===chart.length-1?1:.5};min-height:3px;"></div><div style="font-family:var(--f-mono);font-size:.4rem;color:var(--muted2);white-space:nowrap;">${lbl}</div></div>`;}).join('')}
       </div>
       <div style="padding:8px 10px;background:var(--bg4);border:1px solid var(--border);border-left:2px solid ${ic};margin-bottom:7px;"><div style="font-size:.65rem;color:var(--muted2);line-height:1.55;">${interp}</div><div style="font-size:.6rem;color:var(--muted2);margin-top:4px;opacity:.7;">${action}</div></div>
-      <button class="rbtn" onclick="loadSentiment()">\u21BB Aktualisieren</button>`;
+      <button class="rbtn" onclick="loadSentiment()">${t('refresh')}</button>`;
     badge.textContent='\u25CF Live \u00B7 Alternative.me';badge.className='bdg bpu';
     setTimeout(loadSentiment,3600000);
-  }catch(err){console.error('F&G:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Fear &amp; Greed nicht verfügbar.<br><button class="rbtn" onclick="loadSentiment()">\u21BB Neu laden</button></div>';}
+  }catch(err){console.error('F&G:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Fear &amp; Greed unavailable.<br><button class="rbtn" onclick="loadSentiment()">'+t('retry')+'</button></div>';}
 }
 
 // ══ TICKER ════════════════════════════════
@@ -1485,7 +1643,7 @@ async function loadTicker(){
     const res=await fetch('/api/politics');if(!res.ok)throw new Error();
     const data=await res.json();const articles=(data.items||[]).slice(0,15);if(!articles.length)throw new Error();
     const track=document.getElementById('ticker-track');const items=[...articles,...articles];
-    track.innerHTML=items.map(a=>{const t=a.title||'';const url=(a.link&&a.link.startsWith('http'))?a.link:'https://cointelegraph.com/search?query='+encodeURIComponent(t);const isBull=/approval|adopt|legal|reserve|etf|bullish|surge|rally/i.test(t);const isBear=/ban|crash|reject|crackdown|sanction|restrict|illegal/i.test(t);const dc=isBull?'var(--green)':isBear?'var(--red)':'var(--sky)';return'<a class="ticker-item" href="'+url+'" target="_blank" rel="noopener"><span class="tdot" style="background:'+dc+'"></span>'+t+'</a>';}).join('');
+    track.innerHTML=items.map(a=>{const t2=a.title||'';const url=(a.link&&a.link.startsWith('http'))?a.link:'https://cointelegraph.com/search?query='+encodeURIComponent(t2);const isBull=/approval|adopt|legal|reserve|etf|bullish|surge|rally/i.test(t2);const isBear=/ban|crash|reject|crackdown|sanction|restrict|illegal/i.test(t2);const dc=isBull?'var(--green)':isBear?'var(--red)':'var(--sky)';return'<a class="ticker-item" href="'+url+'" target="_blank" rel="noopener"><span class="tdot" style="background:'+dc+'"></span>'+t2+'</a>';}).join('');
     const tc=articles.reduce((s,a)=>s+(a.title||'').length,0);track.style.animationDuration=Math.max(40,Math.min(90,tc*.15))+'s';
     setTimeout(loadTicker,600000);
   }catch(e){console.error('Ticker:',e);}
@@ -1498,34 +1656,34 @@ async function loadNews(){
     const res=await fetch('/api/events');if(!res.ok)throw new Error('HTTP '+res.status);
     const data=await res.json();if(!Array.isArray(data)||!data.length)throw new Error();
     let html='';
-    data.forEach(ev=>{const imp=(ev.impact||'').toUpperCase();const ic=imp==='HIGH'?'var(--red)':imp==='MEDIUM'?'var(--yellow)':'var(--muted2)';const date=ev.date?new Date(ev.date).toLocaleDateString('de-DE',{month:'short',day:'2-digit'}):'Bald';const time=ev.time||'';const fc=ev.forecast?'<span>Prognose: '+ev.forecast+'</span>':'';const pr=ev.previous?'<span>Vorherige: '+ev.previous+'</span>':'';html+='<div class="ev-item"><div class="ev-date">'+date+(time?'<br><span style="font-size:.44rem;opacity:.6">'+time+'</span>':'')+'</div><div class="ev-dot" style="background:'+ic+'"></div><div><div class="ev-title">'+(ev.name||ev.title)+'</div><div class="ev-meta"><span>Einfluss: <span style="color:'+ic+'">'+imp+'</span></span>'+fc+pr+'</div></div></div>';});
-    html+='<button class="rbtn" onclick="loadNews()">\u21BB Aktualisieren</button>';
-    panel.innerHTML=html;badge.textContent='\u25CF Live \u00B7 Kalender';badge.className='bdg byl';
+    data.forEach(ev=>{const imp=(ev.impact||'').toUpperCase();const ic=imp==='HIGH'?'var(--red)':imp==='MEDIUM'?'var(--yellow)':'var(--muted2)';const date=ev.date?new Date(ev.date).toLocaleDateString(t('locale'),t('date_opts')):t('ev_soon');const time=ev.time||'';const fc=ev.forecast?'<span>'+t('ev_fc')+ev.forecast+'</span>':'';const pr=ev.previous?'<span>'+t('ev_pr')+ev.previous+'</span>':'';html+='<div class="ev-item"><div class="ev-date">'+date+(time?'<br><span style="font-size:.44rem;opacity:.6">'+time+'</span>':'')+'</div><div class="ev-dot" style="background:'+ic+'"></div><div><div class="ev-title">'+(ev.name||ev.title)+'</div><div class="ev-meta"><span>'+t('ev_imp')+'<span style="color:'+ic+'">'+imp+'</span></span>'+fc+pr+'</div></div></div>';});
+    html+='<button class="rbtn" onclick="loadNews()">'+t('refresh')+'</button>';
+    panel.innerHTML=html;badge.textContent='\u25CF Live \u00B7 Calendar';badge.className='bdg byl';
     setTimeout(loadNews,600000);
-  }catch(err){console.error('Events:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Events nicht verfügbar.<br><button class="rbtn" onclick="loadNews()">\u21BB Neu laden</button></div>';}
+  }catch(err){console.error('Events:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Events unavailable.<br><button class="rbtn" onclick="loadNews()">'+t('retry')+'</button></div>';}
 }
 
 // ══ MACRO ══════════════════════════════════
 async function loadMacro(){
   const panel=document.getElementById('macro-panel'),badge=document.getElementById('macro-badge');
   const tickers=[{symbol:'%5EGSPC',key:'sp500',label:'S&P 500',invert:false},{symbol:'DX-Y.NYB',key:'dxy',label:'DXY',invert:true},{symbol:'GC%3DF',key:'gold',label:'Gold',invert:false},{symbol:'%5ETNX',key:'yields',label:'US 10Y Yield',invert:true}];
-  const impacts={sp500:{up:'Risk-on \u2192 BTC positiv',down:'Risk-off \u2192 BTC Druck'},dxy:{up:'Starker USD \u2192 BTC Druck',down:'Schwacher USD \u2192 BTC positiv'},gold:{up:'Safe-Haven-Nachfrage hoch',down:'Risikobereitschaft steigt'},yields:{up:'Hohe Zinsen \u2192 Risk-off',down:'Fallende Zinsen \u2192 BTC positiv'}};
-  const ft=async t=>{try{const r=await fetch('https://query1.finance.yahoo.com/v8/finance/chart/'+t.symbol+'?interval=1d&range=5d');if(!r.ok)throw new Error();const d=await r.json();const res=d?.chart?.result?.[0];if(!res)throw new Error();const cl=res.indicators?.quote?.[0]?.close?.filter(v=>v!=null);if(!cl||cl.length<2)throw new Error();const p=cl[cl.length-1],pv=cl[cl.length-2];return{...t,price:p,changePct:(p-pv)/pv*100};}catch(e){return{...t,error:true};}};
+  const impacts={sp500:{up:()=>t('imp_sp_u'),down:()=>t('imp_sp_d')},dxy:{up:()=>t('imp_dx_u'),down:()=>t('imp_dx_d')},gold:{up:()=>t('imp_go_u'),down:()=>t('imp_go_d')},yields:{up:()=>t('imp_yi_u'),down:()=>t('imp_yi_d')}};
+  const ft=async tk=>{try{const r=await fetch('https://query1.finance.yahoo.com/v8/finance/chart/'+tk.symbol+'?interval=1d&range=5d');if(!r.ok)throw new Error();const d=await r.json();const res=d?.chart?.result?.[0];if(!res)throw new Error();const cl=res.indicators?.quote?.[0]?.close?.filter(v=>v!=null);if(!cl||cl.length<2)throw new Error();const p=cl[cl.length-1],pv=cl[cl.length-2];return{...tk,price:p,changePct:(p-pv)/pv*100};}catch(e){return{...tk,error:true};}};
   try{
     const data=await Promise.all(tickers.map(ft));let bc=0,vc=0,html='<div style="display:flex;flex-direction:column;gap:5px;">';
     data.forEach(item=>{
       if(item.error){html+='<div style="padding:7px 10px;background:var(--bg4);border:1px solid var(--border);display:flex;justify-content:space-between;"><span style="font-family:var(--f-mono);font-size:.62rem;color:var(--muted2);">'+item.label+'</span><span style="font-family:var(--f-mono);font-size:.62rem;color:var(--muted2);">N/A</span></div>';return;}
       vc++;const up=item.changePct>=0,isBull=item.invert?!up:up;if(isBull)bc++;
-      const col=isBull?'var(--green)':'var(--red)',arrow=up?'\u25B2':'\u25BC',sign=up?'+':'',imp=impacts[item.key]?.[up?'up':'down']||'';
+      const col=isBull?'var(--green)':'var(--red)',arrow=up?'\u25B2':'\u25BC',sign=up?'+':'',imp=impacts[item.key]?.[up?'up':'down']?.()||'';
       let ps;if(item.key==='yields')ps=item.price.toFixed(2)+'%';else if(item.key==='gold')ps='$'+item.price.toLocaleString('en-US',{maximumFractionDigits:0});else if(item.key==='sp500')ps=item.price.toLocaleString('en-US',{maximumFractionDigits:0});else ps=item.price.toFixed(2);
       html+='<div style="padding:8px 10px;background:var(--bg4);border:1px solid var(--border);border-left:2px solid '+col+';"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-family:var(--f-mono);font-size:.62rem;color:var(--muted2);">'+item.label+'</span><span style="font-family:var(--f-mono);font-size:.64rem;color:'+col+';font-weight:500;">'+ps+' '+arrow+' '+sign+item.changePct.toFixed(2)+'%</span></div><div style="font-size:.6rem;color:var(--muted2);margin-top:2px;">'+imp+'</div></div>';
     });
     html+='</div>';panel.innerHTML=html;
     const ms=vc>0?Math.round((bc/vc)*100):60;liveScores.macro=ms;updateSignalScore();
-    const env=ms>=60?'Bullish Umfeld':ms>=40?'Neutrales Umfeld':'Bearish Umfeld';
+    const env=ms>=60?t('mac_bull'):ms>=40?t('mac_neut'):t('mac_bear');
     badge.textContent='\u25CF '+env;badge.className=ms>=60?'bdg bl':ms>=40?'bdg byl':'bdg ber';
     setTimeout(loadMacro,300000);
-  }catch(err){console.error('Macro:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Makrodaten nicht verfügbar.<br><button class="rbtn" onclick="loadMacro()">\u21BB Neu laden</button></div>';}
+  }catch(err){console.error('Macro:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Macro data unavailable.<br><button class="rbtn" onclick="loadMacro()">'+t('retry')+'</button></div>';}
 }
 
 // ══ DOMINANCE ══════════════════════════════
@@ -1537,12 +1695,12 @@ async function loadDominance(){
     if(!dom)throw new Error();const totalMcap=data.data?.total_market_cap?.usd,mcc=data.data?.market_cap_change_percentage_24h_usd;
     const kdom=document.getElementById('kpi-dom'),kmcap=document.getElementById('kpi-mcap');
     if(kdom)kdom.textContent=dom.toFixed(1)+'%';if(kmcap&&totalMcap)kmcap.textContent='$'+(totalMcap/1e12).toFixed(2)+'T';
-    const dv=dom.toFixed(1),dc=dom>=55?'var(--amber)':dom>=45?'var(--yellow)':'var(--red)',dl=dom>=55?'BTC DOMINANT':dom>=45?'AUSGEWOGEN':'ALTSEASON',ts=totalMcap?'$'+(totalMcap/1e12).toFixed(2)+'T':'—',cc=mcc>=0?'var(--green)':'var(--red)',cs=mcc>=0?'+':'';
+    const dv=dom.toFixed(1),dc=dom>=55?'var(--amber)':dom>=45?'var(--yellow)':'var(--red)',dl=dom>=55?t('dom_dom'):dom>=45?t('dom_bal'):t('dom_alt'),ts=totalMcap?'$'+(totalMcap/1e12).toFixed(2)+'T':'—',cc=mcc>=0?'var(--green)':'var(--red)',cs=mcc>=0?'+':'';
     const coins=[{s:'BTC',k:'btc',c:'#F7931A'},{s:'ETH',k:'eth',c:'#627EEA'},{s:'BNB',k:'bnb',c:'#F3BA2F'},{s:'XRP',k:'xrp',c:'#E84142'},{s:'SOL',k:'sol',c:'#9945FF'}];
     const known=coins.reduce((s,c)=>s+(mp?.[c.k]||0),0),other=Math.max(0,100-known);
-    panel.innerHTML=`<div style="text-align:center;padding:6px 0 12px;"><div style="font-family:var(--f-ui);font-weight:800;font-size:3rem;line-height:1;color:${dc};">${dv}<span style="font-size:1.1rem;">%</span></div><div style="font-family:var(--f-mono);font-size:.5rem;letter-spacing:.14em;color:${dc};margin-top:4px;">${dl}</div></div><div style="height:5px;overflow:hidden;margin-bottom:6px;display:flex;">${coins.map(c=>'<div style="width:'+(mp?.[c.k]||0).toFixed(1)+'%;background:'+c.c+';transition:width 1s;"></div>').join('')}<div style="flex:1;background:var(--bg4);"></div></div><div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;">${coins.map(c=>'<div style="display:flex;align-items:center;gap:3px;"><div style="width:5px;height:5px;background:'+c.c+';"></div><span style="font-family:var(--f-mono);font-size:.5rem;color:var(--muted2);">'+c.s+' <span style="color:var(--text);">'+(mp?.[c.k]||0).toFixed(1)+'%</span></span></div>').join('')}</div><div style="display:flex;flex-direction:column;gap:4px;"><div style="display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.58rem;"><span style="color:var(--muted2);">Total Market Cap</span><span>${ts}</span></div><div style="display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.58rem;"><span style="color:var(--muted2);">24h Veränderung</span><span style="color:${cc};">${cs}${mcc?.toFixed(2)}%</span></div></div><div style="margin-top:8px;padding:7px 10px;background:var(--bg4);border:1px solid var(--border);border-left:2px solid ${dc};"><div style="font-size:.61rem;color:var(--muted2);">${dom>=55?'Hohe BTC Dominanz — Kapital konzentriert sich in Bitcoin.':dom>=45?'Ausgewogener Markt — Kapital verteilt auf BTC und Altcoins.':'Niedrige BTC Dominanz — Altseason-Bedingungen.'}</div></div>`;
+    panel.innerHTML=`<div style="text-align:center;padding:6px 0 12px;"><div style="font-family:var(--f-ui);font-weight:800;font-size:3rem;line-height:1;color:${dc};">${dv}<span style="font-size:1.1rem;">%</span></div><div style="font-family:var(--f-mono);font-size:.5rem;letter-spacing:.14em;color:${dc};margin-top:4px;">${dl}</div></div><div style="height:5px;overflow:hidden;margin-bottom:6px;display:flex;">${coins.map(c=>'<div style="width:'+(mp?.[c.k]||0).toFixed(1)+'%;background:'+c.c+';transition:width 1s;"></div>').join('')}<div style="flex:1;background:var(--bg4);"></div></div><div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;">${coins.map(c=>'<div style="display:flex;align-items:center;gap:3px;"><div style="width:5px;height:5px;background:'+c.c+';"></div><span style="font-family:var(--f-mono);font-size:.5rem;color:var(--muted2);">'+c.s+' <span style="color:var(--text);">'+(mp?.[c.k]||0).toFixed(1)+'%</span></span></div>').join('')}</div><div style="display:flex;flex-direction:column;gap:4px;"><div style="display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.58rem;"><span style="color:var(--muted2);">${t('dom_mc')}</span><span>${ts}</span></div><div style="display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.58rem;"><span style="color:var(--muted2);">${t('dom_24h')}</span><span style="color:${cc};">${cs}${mcc?.toFixed(2)}%</span></div></div><div style="margin-top:8px;padding:7px 10px;background:var(--bg4);border:1px solid var(--border);border-left:2px solid ${dc};"><div style="font-size:.61rem;color:var(--muted2);">${dom>=55?t('dom_h'):dom>=45?t('dom_b'):t('dom_l')}</div></div>`;
     badge.textContent='\u25CF Live \u00B7 CoinGecko';badge.className='bdg bl';setTimeout(loadDominance,300000);
-  }catch(err){console.error('Dom:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Daten nicht verfügbar.<br><button class="rbtn" onclick="loadDominance()">\u21BB Neu laden</button></div>';}
+  }catch(err){console.error('Dom:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Data unavailable.<br><button class="rbtn" onclick="loadDominance()">'+t('retry')+'</button></div>';}
 }
 
 // ══ NETWORK STATS ══════════════════════════
@@ -1553,12 +1711,12 @@ async function loadNetwork(){
     if(!sR.ok||!fR.ok||!bR.ok)throw new Error();
     const stats=await sR.json(),fees=await fR.json(),bh=await bR.json();
     const hr=((stats.currentHashrate||0)/1e18).toFixed(1),diff=stats.currentDifficulty?(stats.currentDifficulty/1e12).toFixed(2)+' T':'—';
-    const expl={'Block Height':'Jeder Block erhält eine fortlaufende Nummer. Zeigt, wie weit die Chain seit dem Genesis Block gewachsen ist.','Hashrate':'Gesamte Rechenleistung des Bitcoin-Netzwerks. Höhere Hashrate = sicherer.','Difficulty':'Wie schwer es ist, einen gültigen Block zu finden. Passt sich alle 2016 Blöcke (~2 Wochen) an.','Fast Fee':'Diese Gebühr zahlen für Bestätigung im nächsten Block.','Standard Fee':'Bestätigung innerhalb weniger Blöcke.'};
-    const rows=[{l:'Block Height',v:'#'+bh.toLocaleString('de-DE'),c:'var(--amber)'},{l:'Hashrate',v:hr+' EH/s',c:'var(--green)'},{l:'Difficulty',v:diff,c:'var(--muted2)'},{l:'Fast Fee',v:fees.fastestFee+' sat/vB',c:fees.fastestFee>50?'var(--red)':fees.fastestFee>20?'var(--yellow)':'var(--green)'},{l:'Standard Fee',v:fees.halfHourFee+' sat/vB',c:'var(--muted2)'}];
+    const expl={'Block Height':t('expl_bh'),'Hashrate':t('expl_hr'),'Difficulty':t('expl_di'),'Fast Fee':t('expl_ff'),'Standard Fee':t('expl_sf')};
+    const rows=[{l:'Block Height',v:'#'+bh.toLocaleString('en-US'),c:'var(--amber)'},{l:'Hashrate',v:hr+' EH/s',c:'var(--green)'},{l:'Difficulty',v:diff,c:'var(--muted2)'},{l:'Fast Fee',v:fees.fastestFee+' sat/vB',c:fees.fastestFee>50?'var(--red)':fees.fastestFee>20?'var(--yellow)':'var(--green)'},{l:'Standard Fee',v:fees.halfHourFee+' sat/vB',c:'var(--muted2)'}];
     let html='<div style="display:flex;flex-direction:column;gap:4px;">';
     rows.forEach((r,i)=>{const uid='nx'+i;html+='<div style="background:var(--bg4);border:1px solid var(--border);overflow:hidden;"><div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;cursor:pointer;" onclick="var e=document.getElementById(\''+uid+'\');var a=document.getElementById(\''+uid+'a\');var o=e.style.display!==\'none\';e.style.display=o?\'none\':\'block\';a.style.transform=o?\'rotate(-90deg)\':\'rotate(0deg)\';"><span style="font-family:var(--f-mono);font-size:.6rem;color:var(--muted2);">'+r.l+'</span><div style="display:flex;align-items:center;gap:5px;"><span style="font-family:var(--f-mono);font-size:.64rem;color:'+r.c+';font-weight:500;">'+r.v+'</span><span id="'+uid+'a" style="font-size:.5rem;color:var(--muted2);transition:transform .2s;transform:rotate(-90deg);">&#9660;</span></div></div><div id="'+uid+'" style="display:none;padding:5px 10px 7px;border-top:1px solid var(--border);"><div style="font-size:.62rem;color:var(--muted2);line-height:1.55;">'+expl[r.l]+'</div></div></div>';});
     html+='</div>';panel.innerHTML=html;badge.textContent='\u25CF Live \u00B7 Mempool';badge.className='bdg bl';setTimeout(loadNetwork,60000);
-  }catch(err){console.error('Network:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Netzwerkdaten nicht verfügbar.<br><button class="rbtn" onclick="loadNetwork()">\u21BB Neu laden</button></div>';}
+  }catch(err){console.error('Network:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Network data unavailable.<br><button class="rbtn" onclick="loadNetwork()">'+t('retry')+'</button></div>';}
 }
 
 // ══ WHALE TRACKER ══════════════════════════
@@ -1571,16 +1729,16 @@ async function loadWhale(){
     const blocks=await br.json();const allTx=[];
     for(const block of blocks.slice(0,3)){try{const tr=await fetch('https://mempool.space/api/block/'+block.id+'/txs/0');if(!tr.ok)continue;const txs=await tr.json();for(const tx of txs){const v=tx.vout.reduce((s,o)=>s+(o.value||0),0);if(v>=100000000)allTx.push({txid:tx.txid,value:v,blockHeight:block.height});}}catch(e){continue;}}
     const whales=allTx.sort((a,b)=>b.value-a.value).slice(0,8);
-    const tb=whales.reduce((s,t)=>s+t.value/100000000,0);
+    const tb=whales.reduce((s,tx)=>s+tx.value/100000000,0);
     const ws=Math.min(75,Math.round(45+tb/100));liveScores.whale=ws;updateSignalScore();
-    const wl=ws>=60?'AKTIV':ws>=45?'MODERAT':'RUHIG';
-    badge.textContent='\u25CF Whale-Aktivität: '+wl;badge.className=ws>=60?'bdg bl':'bdg byl';
-    if(!whales.length){panel.innerHTML='<div style="text-align:center;padding:18px;color:var(--muted2);font-family:var(--f-mono);font-size:.7rem;">Keine großen Transaktionen in den letzten Blöcken.</div>';return;}
+    const wl=ws>=60?t('wh_act'):ws>=45?t('wh_mod'):t('wh_qui');
+    badge.textContent='\u25CF '+t('wh_lbl')+wl;badge.className=ws>=60?'bdg bl':'bdg byl';
+    if(!whales.length){panel.innerHTML='<div style="text-align:center;padding:18px;color:var(--muted2);font-family:var(--f-mono);font-size:.7rem;">'+t('wh_no')+'</div>';return;}
     let html='<div style="display:flex;flex-direction:column;gap:5px;">';
     for(const tx of whales){const btc=(tx.value/100000000).toFixed(2),usd=(tx.value/100000000*btcP).toLocaleString('en-US',{maximumFractionDigits:0}),sh=tx.txid.slice(0,8)+'...'+tx.txid.slice(-6),em=tx.value>=10000000000?'\uD83D\uDC33':'\uD83D\uDC1F';html+='<a href="https://mempool.space/tx/'+tx.txid+'" target="_blank" style="text-decoration:none;"><div style="background:var(--bg4);border:1px solid var(--border);border-left:2px solid var(--violet);padding:8px 11px;transition:opacity .15s;" onmouseover="this.style.opacity=\'.75\'" onmouseout="this.style.opacity=\'1\'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;"><span style="font-family:var(--f-mono);font-size:.7rem;font-weight:500;color:var(--violet);">'+em+' '+btc+' BTC</span><span style="font-family:var(--f-mono);font-size:.64rem;color:var(--green);">~$'+usd+'</span></div><div style="font-family:var(--f-mono);font-size:.52rem;color:var(--muted2);">'+sh+' \u00B7 Block #'+tx.blockHeight+'</div></div></a>';}
-    html+='</div><div style="margin-top:7px;font-family:var(--f-mono);font-size:.52rem;color:var(--muted2);text-align:center;">Letzte 3 bestätigte Blöcke \u00B7 <a href="https://mempool.space" target="_blank" style="color:var(--sky);text-decoration:none;">mempool.space \u2197</a></div>';
+    html+='</div><div style="margin-top:7px;font-family:var(--f-mono);font-size:.52rem;color:var(--muted2);text-align:center;">'+t('wh_foot')+'<a href="https://mempool.space" target="_blank" style="color:var(--sky);text-decoration:none;">mempool.space \u2197</a></div>';
     panel.innerHTML=html;setTimeout(loadWhale,120000);
-  }catch(err){console.error('Whale:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Whale-Daten nicht verfügbar.<br><button class="rbtn" onclick="loadWhale()">\u21BB Neu laden</button></div>';}
+  }catch(err){console.error('Whale:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Whale data unavailable.<br><button class="rbtn" onclick="loadWhale()">'+t('retry')+'</button></div>';}
 }
 
 // ══ INIT ══════════════════════════════════
@@ -1590,6 +1748,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   loadPolymarket();loadSentiment();loadTicker();
   loadNews();loadMacro();loadDominance();
   loadNetwork();loadWhale();
+  // Apply saved language
+  if(window.lang !== 'en') setLang(window.lang);
+  else document.getElementById('lang-btn').textContent = 'DE';
 });
 </script>
 </body>
