@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SignalsLayered — Loading...</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0e1a; --bg2: #0f1628; --bg3: #151e35;
+    --text: #ffffff; --muted: #4a5880; --muted2: #8899bb;
+    --accent: #4d9fff; --border2: rgba(100,140,255,0.18);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(77,159,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(77,159,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(77,159,255,0.05) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    animation: pulse 4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.6; }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 48px 32px;
+    max-width: 480px;
+    width: 100%;
+  }
+
+  .logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .spinner-wrap {
+    margin: 0 auto 32px;
+    width: 56px;
+    height: 56px;
+    position: relative;
+  }
+
+  .spinner {
+    width: 56px;
+    height: 56px;
+    border: 2px solid rgba(77,159,255,0.1);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+  }
+
+  .spinner-inner {
+    position: absolute;
+    top: 8px; left: 8px;
+    width: 40px;
+    height: 40px;
+    border: 2px solid rgba(77,159,255,0.05);
+    border-bottom-color: rgba(77,159,255,0.4);
+    border-radius: 50%;
+    animation: spin 1.4s linear infinite reverse;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    letter-spacing: -0.02em;
+  }
+
+  h1 span { color: var(--accent); }
+
+  p {
+    font-size: 0.85rem;
+    color: var(--muted2);
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+
+  .progress-bar {
+    height: 3px;
+    background: rgba(77,159,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #6db3ff);
+    border-radius: 2px;
+    animation: load 2.5s ease-in-out infinite;
+  }
+
+  @keyframes load {
+    0% { width: 0%; opacity: 1; }
+    70% { width: 90%; opacity: 1; }
+    100% { width: 100%; opacity: 0; }
+  }
+
+  .retry-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(77,159,255,0.08);
+    border: 1px solid rgba(77,159,255,0.25);
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-block;
+  }
+
+  .retry-btn:hover {
+    background: rgba(77,159,255,0.15);
+    border-color: var(--accent);
+  }
+
+  .footer-text {
+    margin-top: 40px;
+    font-size: 0.68rem;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="logo">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAEaklEQVR4nO2YW28VVRTHf2vP7fRc28JpC7UFbC00UEioBklMipcH4wMvPvut/A5+A30DowkRjBcUUQTKrbTQ2gs9Pbe57OXDHCqJpU1mIJrAeplJ9szav/mvy14Zmf70c+V/bOa/BtjLXgPmtVccUCS3i5cHKGCjOLeblwZo44RSfRDJqeKLBxQhiSLenHuX6U8+IImTXO5ePKCC4xg0Tnh8/SbGdUCznwVuXh4RQVVTMnGQJCLqq+CUS3jFApokiMmuQy5AESEJY8QoVOuEbgXHjWhZhTimOnYAtTYXYK4QR50uldERvMCn3QoZmhonqA8i4uAWCiRhiEi+LMqkoIiQRDEH3z7J4XNn2Vx4xMbiXwxNDfPr1wtotZ++gSqoEnZDgmIhM2Cmz1NrcQOffUcnuH3xMk7YYejEJIWVJfxqDXVcmk8a6NYW41PjeWokY4hFELVc/e4GG6Hh1KF+vHvznJw5jPFcwnaHYHOdMzNjnHn/dFrVGSkzF4lV6Phlqr7QbbYZGRnk7vwSbKxx/swEszNjXPlxnksXfsKJY8QxkIFR8gysraOzFGxIKdriw3PHGRiokMQxBd/lywvXud70KNkuwe1rmXthNgVVwfUwG2uEjxZpHT/FF98+YG6yQn2gxFffP2Cz2E9p+Q7m7i3oL2XaJjsg6aAiv1+jcfUWhXsP8ebe4+L9AJlv4gQlClcu0bj8C97+GrVaCTIeyblCjEC43mLrj/uIKn3nziL799O98A3h4grFyVGK43UAM+VffkBAXIMNE7ZuLhIur4MRxPepTo/h95ewOYeFPUNsjPQE0B3zXKMExzXUTozTXqwQb7UpHRlGHJPOg7uMW0+XdqufXQFVodHs4rkOrmP+me2EdDaQdJdON8ZzDcFwDbdeQySdB0UkfaYX4d5t+uEihHECCJ4rz4V8bqNWBccRzs8d4+TUMGMjNYwRPNdgJF0DSKxy+tgBAt/FFRgdLGCtYoyQWCWKLVFisarbVxQa7ZCx4TKj9RJhZJ9bQzsqKAKJtZSDgLnZQ/x2ewVjhL7ARRUK38EYw/zCGtNH6jxea3J6+iBGlLsLy9xZavDZx0eJYsvjtRajQ2V8z9DuxKhCtezzaLXFxMEqP9xYYX5xk8B3UPtvGXdUUDUNQTdM+PP+KvWBIp1uTKUY8Nb4Ph4uN7jzcJ3JsUFUlYSnTCHw6C8HfPTOG9RKPp0wZmZiH61OTOM5rDe6LK228Nx021Y35slWiNPL8x3F2quKiwWPZjskjBLmZg8TJ5ZLVx/gew7GCNILc8F36YQxvufguYZmO6JS9Bilk9OjwAALlJREFU1zJZsKE3FmUmK+4oMWxn2K6p9meoNXTHqOiqbStlBFnfBqfSwCkS1gQhWo/8hbP2cEF+NfBvW8O+j2YB7Jcj3Bnx07wAAAABJRU5ErkJggg==" style="height:26px;width:auto;" alt="">
+    SignalsLayered
+  </div>
+
+  <div class="spinner-wrap">
+    <div class="spinner"></div>
+    <div class="spinner-inner"></div>
+  </div>
+
+  <h1>Just a <span>moment</span>...</h1>
+  <p>We're updating SignalsLayered with the latest improvements. The dashboard will be back in just a few seconds.</p>
+
+  <div class="progress-bar">
+    <div class="progress-fill"></div>
+  </div>
+
+  <a href="/" class="retry-btn" onclick="location.reload()">↻ Try Again</a>
+
+  <div class="footer-text">© 2026 SignalsLayered · Not financial advice</div>
+
+</div>
+
+<script>
+  // Auto-reload every 5 seconds
+  setTimeout(() => location.reload(), 5000);
+</script>
+
+</body>
+</html>

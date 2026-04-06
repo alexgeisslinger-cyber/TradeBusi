@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impressum — SignalsLayered</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0a0e1a;
+    color: #dce4f5;
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(77,159,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(77,159,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    height: 56px;
+    background: rgba(10,14,26,0.95);
+    border-bottom: 1px solid rgba(100,140,255,0.18);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: 0.15em;
+    color: #4d9fff;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .logo span {
+    color: #7a8ab8;
+    font-weight: 400;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    margin-left: 12px;
+  }
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 60px auto;
+    padding: 0 32px;
+  }
+  .card {
+    background: #0f1628;
+    border: 1px solid rgba(100,140,255,0.18);
+    border-radius: 16px;
+    padding: 40px;
+  }
+  h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 32px;
+    letter-spacing: -0.02em;
+  }
+  h2 {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #4d9fff;
+    margin-top: 28px;
+    margin-bottom: 12px;
+  }
+  p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: #7a8ab8;
+    line-height: 1.7;
+  }
+  a {
+    color: #4d9fff;
+    text-decoration: none;
+  }
+  a:hover { text-decoration: underline; }
+  .footer {
+    text-align: center;
+    padding: 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: #4a5880;
+    position: relative;
+    z-index: 1;
+  }
+  .footer a { color: #4a5880; text-decoration: none; margin: 0 12px; }
+  .footer a:hover { color: #4d9fff; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="/" class="logo">SignalsLayered <span>Trader Intelligence Platform</span></a>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h1>Impressum</h1>
+
+      <h2>Angaben gemäß § 5 TMG</h2>
+      <p>
+        Alexander Geißlinger<br>
+        Am Buchberg 3<br>
+        91413 Neustadt an der Aisch
+      </p>
+
+      <h2>Kontakt</h2>
+      <p>
+        Telefon: 0151204700<br>
+        E-Mail: <a href="mailto:Signalslayered@gmx.de">Signalslayered@gmx.de</a>
+      </p>
+
+      <h2>Redaktionell verantwortlich</h2>
+      <p>
+        Alexander Geißlinger<br>
+        Am Buchberg 3<br>
+        91413 Neustadt an der Aisch
+      </p>
+
+      <h2>Quelle</h2>
+      <p><a href="https://www.e-recht24.de" target="_blank" rel="noopener">e-recht24.de</a></p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="/">← Back to SignalsLayered</a>
+    <a href="/privacy.html">Privacy Policy</a>
+    <a href="/impressum.html">Impressum</a>
+  </div>
+</body>
+</html>

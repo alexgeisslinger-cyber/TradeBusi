@@ -1,0 +1,2 @@
+# TradeBusi
+Trader intellegence platform
