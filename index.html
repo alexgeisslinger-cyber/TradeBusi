@@ -497,6 +497,7 @@ body {
 .dash-panel:nth-child(9){animation-delay:.56s;}
 
 .dp-chart    { grid-column: 1 / -1; min-height: 560px; }
+.dp-liqmap   { grid-column: 1 / -1; min-height: 420px; }
 .dp-fg       { grid-column: 1 / 4; min-height: 220px; }
 .dp-dom      { grid-column: 4 / 7; min-height: 220px; }
 .dp-net      { grid-column: 7 / 13; min-height: 220px; }
@@ -1042,6 +1043,51 @@ body {
             <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
             {"allow_symbol_change":true,"calendar":false,"details":false,"hide_side_toolbar":true,"hide_top_toolbar":false,"hide_legend":false,"hide_volume":false,"hotlist":false,"interval":"60","locale":"en","save_image":true,"style":"1","symbol":"COINBASE:BTCUSD","theme":"dark","timezone":"Etc/UTC","backgroundColor":"#09121F","gridColor":"rgba(56,189,248,0.04)","watchlist":[],"withdateranges":true,"compareSymbols":[],"studies":[],"autosize":true}
             </script>
+          </div>
+        </div>
+      </div>
+
+      <!-- Liquidation Heatmap -->
+      <div class="dash-panel dp-liqmap">
+        <div class="ph">
+          <span class="pt" data-en="BTC Liquidation Heatmap — Real-time" data-de="BTC Liquidations-Heatmap — Echtzeit">BTC Liquidation Heatmap — Real-time</span>
+          <span class="bdg bl" id="liq-badge">&#9679; Connecting&hellip;</span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+          <!-- Stats bar -->
+          <div id="liq-stats" style="display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;">
+            <div style="flex:1;padding:8px 16px;border-right:1px solid var(--border);">
+              <div style="font-family:var(--f-mono);font-size:.44rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);margin-bottom:2px;" data-en="Long Liquidated" data-de="Long Liquidiert">Long Liquidated</div>
+              <div style="font-family:var(--f-ui);font-weight:700;font-size:.9rem;color:var(--red);" id="liq-long-total">$0</div>
+            </div>
+            <div style="flex:1;padding:8px 16px;border-right:1px solid var(--border);">
+              <div style="font-family:var(--f-mono);font-size:.44rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);margin-bottom:2px;" data-en="Short Liquidated" data-de="Short Liquidiert">Short Liquidated</div>
+              <div style="font-family:var(--f-ui);font-weight:700;font-size:.9rem;color:var(--green);" id="liq-short-total">$0</div>
+            </div>
+            <div style="flex:1;padding:8px 16px;border-right:1px solid var(--border);">
+              <div style="font-family:var(--f-mono);font-size:.44rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);margin-bottom:2px;" data-en="Total Events" data-de="Gesamt Events">Total Events</div>
+              <div style="font-family:var(--f-ui);font-weight:700;font-size:.9rem;color:var(--sky);" id="liq-count">0</div>
+            </div>
+            <div style="flex:1;padding:8px 16px;">
+              <div style="font-family:var(--f-mono);font-size:.44rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);margin-bottom:2px;" data-en="Bias" data-de="Richtung">Bias</div>
+              <div style="font-family:var(--f-ui);font-weight:700;font-size:.9rem;" id="liq-bias">—</div>
+            </div>
+          </div>
+          <!-- Canvas heatmap -->
+          <div style="flex:1;position:relative;overflow:hidden;">
+            <canvas id="liq-canvas" style="width:100%;height:100%;display:block;"></canvas>
+            <div id="liq-empty" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">
+              <div style="font-family:var(--f-mono);font-size:.58rem;color:var(--muted2);" data-en="Collecting liquidation data…" data-de="Liquidationsdaten werden gesammelt…">Collecting liquidation data…</div>
+              <div style="font-family:var(--f-mono);font-size:.5rem;color:var(--muted2);opacity:.6;" data-en="Heatmap builds up in real time from Binance perp liquidations" data-de="Heatmap baut sich in Echtzeit aus Binance Perp-Liquidationen auf">Heatmap builds up in real time from Binance perp liquidations</div>
+            </div>
+          </div>
+          <!-- Legend -->
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 16px;border-top:1px solid var(--border);flex-shrink:0;">
+            <div style="display:flex;align-items:center;gap:16px;">
+              <div style="display:flex;align-items:center;gap:5px;"><div style="width:10px;height:10px;background:var(--red);opacity:.8;"></div><span style="font-family:var(--f-mono);font-size:.46rem;color:var(--muted2);" data-en="Long liquidated" data-de="Long liquidiert">Long liquidated</span></div>
+              <div style="display:flex;align-items:center;gap:5px;"><div style="width:10px;height:10px;background:var(--green);opacity:.8;"></div><span style="font-family:var(--f-mono);font-size:.46rem;color:var(--muted2);" data-en="Short liquidated" data-de="Short liquidiert">Short liquidated</span></div>
+            </div>
+            <div style="font-family:var(--f-mono);font-size:.46rem;color:var(--muted2);" data-en="Source: Binance Perpetual &bull; $500 price buckets" data-de="Quelle: Binance Perpetual &bull; $500 Preisbuckets">Source: Binance Perpetual &bull; $500 price buckets</div>
           </div>
         </div>
       </div>
@@ -1701,6 +1747,189 @@ async function loadWhale(){
   }catch(err){console.error('Whale:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Whale data unavailable.<br><button class="rbtn" onclick="loadWhale()">'+t('retry')+'</button></div>';}
 }
 
+// ══ LIQUIDATION HEATMAP ════════════════════
+const LIQ = {
+  ws: null,
+  buckets: {},       // { priceLevel: { long: 0, short: 0, count: 0 } }
+  bucketSize: 500,
+  totalLong: 0,
+  totalShort: 0,
+  count: 0,
+  currentPrice: 0,
+  renderTimer: null,
+
+  bucket(price) {
+    return Math.round(price / this.bucketSize) * this.bucketSize;
+  },
+
+  fmt(usd) {
+    if (usd >= 1e6) return '$' + (usd / 1e6).toFixed(2) + 'M';
+    if (usd >= 1e3) return '$' + (usd / 1e3).toFixed(0) + 'K';
+    return '$' + usd.toFixed(0);
+  },
+
+  connect() {
+    const badge = document.getElementById('liq-badge');
+    try {
+      this.ws = new WebSocket('wss://fstream.binance.com/ws/btcusdt@forceOrder');
+      this.ws.onopen = () => {
+        if (badge) { badge.textContent = '\u25CF Live \u00B7 Binance Perp'; badge.className = 'bdg bl'; }
+      };
+      this.ws.onmessage = (e) => {
+        const o = JSON.parse(e.data).o;
+        if (!o) return;
+        const price = parseFloat(o.p);
+        const usd = parseFloat(o.q) * price;
+        const bkt = this.bucket(price);
+        if (!this.buckets[bkt]) this.buckets[bkt] = { long: 0, short: 0, count: 0 };
+        // SELL side = long position liquidated; BUY side = short position liquidated
+        if (o.S === 'SELL') { this.buckets[bkt].long += usd; this.totalLong += usd; }
+        else { this.buckets[bkt].short += usd; this.totalShort += usd; }
+        this.buckets[bkt].count++;
+        this.count++;
+        this.currentPrice = price;
+        // Hide empty state after first event
+        const empty = document.getElementById('liq-empty');
+        if (empty && empty.style.display !== 'none') empty.style.display = 'none';
+      };
+      this.ws.onerror = () => {
+        if (badge) { badge.textContent = 'Error'; badge.className = 'bdg ber'; }
+      };
+      this.ws.onclose = () => {
+        if (badge) { badge.textContent = 'Reconnecting\u2026'; badge.className = 'bdg blo'; }
+        setTimeout(() => this.connect(), 5000);
+      };
+    } catch (e) {
+      if (badge) { badge.textContent = 'Unavailable'; badge.className = 'bdg ber'; }
+    }
+  },
+
+  updateStats() {
+    const lt = document.getElementById('liq-long-total');
+    const st = document.getElementById('liq-short-total');
+    const ct = document.getElementById('liq-count');
+    const bi = document.getElementById('liq-bias');
+    if (lt) lt.textContent = this.fmt(this.totalLong);
+    if (st) st.textContent = this.fmt(this.totalShort);
+    if (ct) ct.textContent = this.count.toLocaleString();
+    if (bi) {
+      const ratio = this.totalLong + this.totalShort > 0
+        ? this.totalLong / (this.totalLong + this.totalShort) : 0.5;
+      if (ratio > 0.55) { bi.textContent = 'LONG HEAVY'; bi.style.color = 'var(--red)'; }
+      else if (ratio < 0.45) { bi.textContent = 'SHORT HEAVY'; bi.style.color = 'var(--green)'; }
+      else { bi.textContent = 'BALANCED'; bi.style.color = 'var(--sky)'; }
+    }
+  },
+
+  render() {
+    const canvas = document.getElementById('liq-canvas');
+    if (!canvas) return;
+    this.updateStats();
+    if (Object.keys(this.buckets).length === 0) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const W = canvas.offsetWidth, H = canvas.offsetHeight;
+    if (W === 0 || H === 0) return;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    // Background
+    ctx.fillStyle = '#0D1A2D';
+    ctx.fillRect(0, 0, W, H);
+
+    const levels = Object.keys(this.buckets).map(Number).sort((a, b) => a - b);
+    if (levels.length === 0) return;
+
+    const minP = levels[0] - this.bucketSize;
+    const maxP = levels[levels.length - 1] + this.bucketSize;
+    const priceRange = maxP - minP;
+    const barH = Math.max(4, (H - 40) / Math.max(levels.length + 2, 20));
+    const labelW = 72;
+    const chartW = W - labelW - 12;
+
+    // Max value for scaling
+    let maxVal = 0;
+    levels.forEach(l => {
+      const b = this.buckets[l];
+      maxVal = Math.max(maxVal, b.long + b.short);
+    });
+    if (maxVal === 0) return;
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(56,189,248,0.05)';
+    ctx.lineWidth = 1;
+    [0.25, 0.5, 0.75, 1].forEach(f => {
+      const x = labelW + chartW * f;
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H - 30); ctx.stroke();
+    });
+
+    // Bars
+    levels.forEach(level => {
+      const b = this.buckets[level];
+      const y = H - 30 - ((level - minP) / priceRange) * (H - 40);
+      const totalW = ((b.long + b.short) / maxVal) * chartW;
+      const longW = (b.long / (b.long + b.short || 1)) * totalW;
+      const shortW = totalW - longW;
+
+      // Intensity based on size
+      const intensity = Math.min(1, (b.long + b.short) / maxVal);
+
+      // Long bar (red, left side)
+      if (b.long > 0) {
+        const alpha = 0.25 + intensity * 0.65;
+        ctx.fillStyle = `rgba(239,68,68,${alpha})`;
+        ctx.fillRect(labelW, y - barH / 2, longW, barH);
+      }
+      // Short bar (green, after long)
+      if (b.short > 0) {
+        const alpha = 0.25 + intensity * 0.65;
+        ctx.fillStyle = `rgba(34,197,94,${alpha})`;
+        ctx.fillRect(labelW + longW, y - barH / 2, shortW, barH);
+      }
+
+      // Price label
+      ctx.fillStyle = 'rgba(74,104,128,0.9)';
+      ctx.font = `${Math.round(9 * dpr) / dpr}px "Space Mono", monospace`;
+      ctx.textAlign = 'right';
+      ctx.fillText('$' + level.toLocaleString(), labelW - 4, y + 3);
+    });
+
+    // Current price line
+    if (this.currentPrice > 0 && this.currentPrice >= minP && this.currentPrice <= maxP) {
+      const cy = H - 30 - ((this.currentPrice - minP) / priceRange) * (H - 40);
+      ctx.strokeStyle = 'rgba(56,189,248,0.7)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath(); ctx.moveTo(labelW, cy); ctx.lineTo(W, cy); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = 'var(--sky)';
+      ctx.fillStyle = '#38BDF8';
+      ctx.font = `bold ${Math.round(9 * dpr) / dpr}px "Space Mono", monospace`;
+      ctx.textAlign = 'right';
+      ctx.fillText('$' + Math.round(this.currentPrice).toLocaleString(), labelW - 4, cy + 3);
+    }
+
+    // X-axis labels
+    ctx.fillStyle = 'rgba(74,104,128,0.7)';
+    ctx.font = `${Math.round(8 * dpr) / dpr}px "Space Mono", monospace`;
+    ctx.textAlign = 'center';
+    [0, 0.25, 0.5, 0.75, 1].forEach(f => {
+      const val = (maxVal * f);
+      const x = labelW + chartW * f;
+      ctx.fillText(this.fmt(val), x, H - 8);
+    });
+  },
+
+  init() {
+    this.connect();
+    this.renderTimer = setInterval(() => this.render(), 2000);
+    // Resize handler
+    window.addEventListener('resize', () => this.render());
+  }
+};
+
 // ══ INIT ══════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
   updateGauge(72);
@@ -1708,6 +1937,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   loadPolymarket();loadSentiment();loadTicker();
   loadNews();loadMacro();loadDominance();
   loadNetwork();loadWhale();
+  LIQ.init();
   // Apply saved language
   if(window.lang !== 'en') setLang(window.lang);
   else document.getElementById('lang-btn').textContent = 'DE';
