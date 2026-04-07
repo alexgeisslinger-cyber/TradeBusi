@@ -1050,45 +1050,22 @@ body {
       <!-- Liquidation Heatmap -->
       <div class="dash-panel dp-liqmap">
         <div class="ph">
-          <span class="pt" data-en="BTC Liquidation Heatmap — Real-time" data-de="BTC Liquidations-Heatmap — Echtzeit">BTC Liquidation Heatmap — Real-time</span>
-          <span class="bdg bl" id="liq-badge">&#9679; Connecting&hellip;</span>
+          <span class="pt" data-en="BTC Liquidation Heatmap · 7D · Estimated Zones" data-de="BTC Liquidations-Heatmap · 7T · Geschätzte Zonen">BTC Liquidation Heatmap · 7D · Estimated Zones</span>
+          <span class="bdg blo" id="liq-badge" data-en="Loading…" data-de="Laden…">Loading…</span>
         </div>
-        <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
-          <!-- Stats bar -->
-          <div id="liq-stats" style="display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;">
-            <div style="flex:1;padding:8px 16px;border-right:1px solid var(--border);">
-              <div style="font-family:var(--f-mono);font-size:.44rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);margin-bottom:2px;" data-en="Long Liquidated" data-de="Long Liquidiert">Long Liquidated</div>
-              <div style="font-family:var(--f-ui);font-weight:700;font-size:.9rem;color:var(--red);" id="liq-long-total">$0</div>
-            </div>
-            <div style="flex:1;padding:8px 16px;border-right:1px solid var(--border);">
-              <div style="font-family:var(--f-mono);font-size:.44rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);margin-bottom:2px;" data-en="Short Liquidated" data-de="Short Liquidiert">Short Liquidated</div>
-              <div style="font-family:var(--f-ui);font-weight:700;font-size:.9rem;color:var(--green);" id="liq-short-total">$0</div>
-            </div>
-            <div style="flex:1;padding:8px 16px;border-right:1px solid var(--border);">
-              <div style="font-family:var(--f-mono);font-size:.44rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);margin-bottom:2px;" data-en="Total Events" data-de="Gesamt Events">Total Events</div>
-              <div style="font-family:var(--f-ui);font-weight:700;font-size:.9rem;color:var(--sky);" id="liq-count">0</div>
-            </div>
-            <div style="flex:1;padding:8px 16px;">
-              <div style="font-family:var(--f-mono);font-size:.44rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);margin-bottom:2px;" data-en="Bias" data-de="Richtung">Bias</div>
-              <div style="font-family:var(--f-ui);font-weight:700;font-size:.9rem;" id="liq-bias">—</div>
-            </div>
+        <div style="flex:1;position:relative;overflow:hidden;">
+          <canvas id="liq-canvas" style="position:absolute;inset:0;width:100%;height:100%;display:block;"></canvas>
+          <div id="liq-loading" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg3);">
+            <span style="font-family:var(--f-mono);font-size:.58rem;color:var(--muted2);" data-en="Computing liquidation zones…" data-de="Liquidationszonen werden berechnet…">Computing liquidation zones…</span>
           </div>
-          <!-- Canvas heatmap -->
-          <div style="flex:1;position:relative;overflow:hidden;">
-            <canvas id="liq-canvas" style="width:100%;height:100%;display:block;"></canvas>
-            <div id="liq-empty" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">
-              <div style="font-family:var(--f-mono);font-size:.58rem;color:var(--muted2);" data-en="Collecting liquidation data…" data-de="Liquidationsdaten werden gesammelt…">Collecting liquidation data…</div>
-              <div style="font-family:var(--f-mono);font-size:.5rem;color:var(--muted2);opacity:.6;" data-en="Heatmap builds up in real time from Binance perp liquidations" data-de="Heatmap baut sich in Echtzeit aus Binance Perp-Liquidationen auf">Heatmap builds up in real time from Binance perp liquidations</div>
-            </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 14px;border-top:1px solid var(--border);flex-shrink:0;background:rgba(6,12,24,0.5);">
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div style="display:flex;align-items:center;gap:5px;"><div style="width:8px;height:8px;background:rgba(239,68,68,0.85);"></div><span style="font-family:var(--f-mono);font-size:.44rem;color:var(--muted2);" data-en="Long liq. zone" data-de="Long Liq. Zone">Long liq. zone</span></div>
+            <div style="display:flex;align-items:center;gap:5px;"><div style="width:8px;height:8px;background:rgba(34,197,94,0.85);"></div><span style="font-family:var(--f-mono);font-size:.44rem;color:var(--muted2);" data-en="Short liq. zone" data-de="Short Liq. Zone">Short liq. zone</span></div>
+            <div style="display:flex;align-items:center;gap:5px;"><div style="width:8px;height:1px;background:rgba(56,189,248,0.7);"></div><span style="font-family:var(--f-mono);font-size:.44rem;color:var(--muted2);" data-en="Current price" data-de="Aktueller Preis">Current price</span></div>
           </div>
-          <!-- Legend -->
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 16px;border-top:1px solid var(--border);flex-shrink:0;">
-            <div style="display:flex;align-items:center;gap:16px;">
-              <div style="display:flex;align-items:center;gap:5px;"><div style="width:10px;height:10px;background:var(--red);opacity:.8;"></div><span style="font-family:var(--f-mono);font-size:.46rem;color:var(--muted2);" data-en="Long liquidated" data-de="Long liquidiert">Long liquidated</span></div>
-              <div style="display:flex;align-items:center;gap:5px;"><div style="width:10px;height:10px;background:var(--green);opacity:.8;"></div><span style="font-family:var(--f-mono);font-size:.46rem;color:var(--muted2);" data-en="Short liquidated" data-de="Short liquidiert">Short liquidated</span></div>
-            </div>
-            <div style="font-family:var(--f-mono);font-size:.46rem;color:var(--muted2);" data-en="Source: Binance Perpetual &bull; $500 price buckets" data-de="Quelle: Binance Perpetual &bull; $500 Preisbuckets">Source: Binance Perpetual &bull; $500 price buckets</div>
-          </div>
+          <span style="font-family:var(--f-mono);font-size:.42rem;color:var(--muted2);" data-en="Binance Futures · Leverage model 5x–100x · Updates every 5 min" data-de="Binance Futures · Hebel-Modell 5x–100x · Alle 5 Min">Binance Futures · Leverage model 5x–100x · Updates every 5 min</span>
         </div>
       </div>
 
@@ -1748,205 +1725,186 @@ async function loadWhale(){
 }
 
 // ══ LIQUIDATION HEATMAP ════════════════════
-const LIQ = {
-  ws: null,
-  buckets: {},       // { priceLevel: { long: 0, short: 0, count: 0 } }
-  bucketSize: 500,
-  totalLong: 0,
-  totalShort: 0,
-  count: 0,
-  currentPrice: 0,
-  renderTimer: null,
+const LIQMAP = {
+  candles: [],
+  heatGrid: [],
+  priceMin: 0,
+  priceMax: 0,
+  numPriceBuckets: 80,
+  leverageWeights: [[5,0.10],[10,0.30],[20,0.25],[25,0.15],[50,0.12],[100,0.08]],
 
-  bucket(price) {
-    return Math.round(price / this.bucketSize) * this.bucketSize;
+  priceToBucket(price) {
+    if (this.priceMax === this.priceMin) return 0;
+    const idx = Math.floor((price - this.priceMin) / (this.priceMax - this.priceMin) * this.numPriceBuckets);
+    return Math.max(0, Math.min(this.numPriceBuckets - 1, idx));
   },
 
-  fmt(usd) {
-    if (usd >= 1e6) return '$' + (usd / 1e6).toFixed(2) + 'M';
-    if (usd >= 1e3) return '$' + (usd / 1e3).toFixed(0) + 'K';
-    return '$' + usd.toFixed(0);
-  },
-
-  addOrder(side, price, qty) {
-    const usd = qty * price;
-    const bkt = this.bucket(price);
-    if (!this.buckets[bkt]) this.buckets[bkt] = { long: 0, short: 0, count: 0 };
-    if (side === 'SELL') { this.buckets[bkt].long += usd; this.totalLong += usd; }
-    else               { this.buckets[bkt].short += usd; this.totalShort += usd; }
-    this.buckets[bkt].count++;
-    this.count++;
-    this.currentPrice = price;
-  },
-
-  hideEmpty() {
-    const el = document.getElementById('liq-empty');
-    if (el) el.style.display = 'none';
-  },
-
-  async fetchHistorical() {
-    try {
-      const r = await fetch('https://fapi.binance.com/fapi/v1/allForceOrders?symbol=BTCUSDT&limit=200');
-      if (!r.ok) return;
-      const data = await r.json();
-      if (!Array.isArray(data) || !data.length) return;
-      data.forEach(o => {
-        const price = parseFloat(o.price || o.averagePrice);
-        const qty   = parseFloat(o.executedQty || o.origQty);
-        if (price && qty) this.addOrder(o.side, price, qty);
-      });
-      if (this.count > 0) this.hideEmpty();
-      this.render();
-    } catch(e) { /* silent — WebSocket will still provide data */ }
-  },
-
-  connect() {
+  async load() {
     const badge = document.getElementById('liq-badge');
+    const loading = document.getElementById('liq-loading');
     try {
-      this.ws = new WebSocket('wss://fstream.binance.com/ws/btcusdt@forceOrder');
-      this.ws.onopen = () => {
-        if (badge) { badge.textContent = '\u25CF Live \u00B7 Binance Perp'; badge.className = 'bdg bl'; }
-      };
-      this.ws.onmessage = (e) => {
-        const o = JSON.parse(e.data).o;
-        if (!o) return;
-        this.addOrder(o.S, parseFloat(o.p), parseFloat(o.q));
-        this.hideEmpty();
-      };
-      this.ws.onerror = () => {
-        if (badge) { badge.textContent = 'Error'; badge.className = 'bdg ber'; }
-      };
-      this.ws.onclose = () => {
-        if (badge) { badge.textContent = 'Reconnecting\u2026'; badge.className = 'bdg blo'; }
-        setTimeout(() => this.connect(), 5000);
-      };
-    } catch (e) {
-      if (badge) { badge.textContent = 'Unavailable'; badge.className = 'bdg ber'; }
+      const r = await fetch('https://fapi.binance.com/fapi/v1/klines?symbol=BTCUSDT&interval=1h&limit=168');
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const raw = await r.json();
+      this.candles = raw.map(k => ({ t: k[0], o: +k[1], h: +k[2], l: +k[3], c: +k[4] }));
+      this.computeGrid();
+      this.render();
+      if (loading) loading.style.display = 'none';
+      if (badge) { badge.textContent = '\u25CF Live \u00B7 Binance Futures'; badge.className = 'bdg bl'; }
+    } catch(e) {
+      if (badge) { badge.textContent = 'Error'; badge.className = 'bdg ber'; }
+      console.error('LIQMAP load:', e);
     }
   },
 
-  updateStats() {
-    const lt = document.getElementById('liq-long-total');
-    const st = document.getElementById('liq-short-total');
-    const ct = document.getElementById('liq-count');
-    const bi = document.getElementById('liq-bias');
-    if (lt) lt.textContent = this.fmt(this.totalLong);
-    if (st) st.textContent = this.fmt(this.totalShort);
-    if (ct) ct.textContent = this.count.toLocaleString();
-    if (bi) {
-      const ratio = this.totalLong + this.totalShort > 0
-        ? this.totalLong / (this.totalLong + this.totalShort) : 0.5;
-      if (ratio > 0.55) { bi.textContent = 'LONG HEAVY'; bi.style.color = 'var(--red)'; }
-      else if (ratio < 0.45) { bi.textContent = 'SHORT HEAVY'; bi.style.color = 'var(--green)'; }
-      else { bi.textContent = 'BALANCED'; bi.style.color = 'var(--sky)'; }
-    }
+  computeGrid() {
+    if (!this.candles.length) return;
+    const N = this.candles.length;
+    const P = this.numPriceBuckets;
+
+    // Price range from candle highs/lows + liq zone overshoot
+    let lo = Infinity, hi = -Infinity;
+    this.candles.forEach(c => { lo = Math.min(lo, c.l); hi = Math.max(hi, c.h); });
+    const lowestLiq = lo * (1 - (1/5) * 0.92);
+    const highestLiq = hi * (1 + (1/5) * 0.92);
+    const pad = (highestLiq - lowestLiq) * 0.02;
+    this.priceMin = lowestLiq - pad;
+    this.priceMax = highestLiq + pad;
+
+    // Init grid
+    this.heatGrid = Array.from({length: N}, () =>
+      Array.from({length: P}, () => ({long: 0, short: 0}))
+    );
+
+    // Fill: for each candle and leverage, compute estimated liq price and spread density
+    this.candles.forEach((c, i) => {
+      this.leverageWeights.forEach(([lev, w]) => {
+        const longLiq  = c.c * (1 - (1/lev) * 0.92);
+        const shortLiq = c.c * (1 + (1/lev) * 0.92);
+        const lb = this.priceToBucket(longLiq);
+        const sb = this.priceToBucket(shortLiq);
+        for (let d = -1; d <= 1; d++) {
+          const wt = d === 0 ? w : w * 0.35;
+          const lbi = Math.max(0, Math.min(P-1, lb + d));
+          const sbi = Math.max(0, Math.min(P-1, sb + d));
+          this.heatGrid[i][lbi].long  += wt;
+          this.heatGrid[i][sbi].short += wt;
+        }
+      });
+    });
   },
 
   render() {
     const canvas = document.getElementById('liq-canvas');
-    if (!canvas) return;
-    this.updateStats();
-    if (Object.keys(this.buckets).length === 0) return;
+    if (!canvas || !this.candles.length || !this.heatGrid.length) return;
 
     const dpr = window.devicePixelRatio || 1;
     const W = canvas.offsetWidth, H = canvas.offsetHeight;
-    if (W === 0 || H === 0) return;
-    canvas.width = W * dpr;
-    canvas.height = H * dpr;
+    if (W < 10 || H < 10) return;
+
+    canvas.width  = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
     const ctx = canvas.getContext('2d');
     ctx.scale(dpr, dpr);
 
+    const N = this.candles.length;
+    const P = this.numPriceBuckets;
+    const padL = 70, padR = 10, padT = 10, padB = 26;
+    const chartW = W - padL - padR;
+    const chartH = H - padT - padB;
+    const cellW = chartW / N;
+    const cellH = chartH / P;
+
     // Background
-    ctx.fillStyle = '#0D1A2D';
+    ctx.fillStyle = '#07111F';
     ctx.fillRect(0, 0, W, H);
 
-    const levels = Object.keys(this.buckets).map(Number).sort((a, b) => a - b);
-    if (levels.length === 0) return;
+    // Normalize
+    let maxLong = 0, maxShort = 0;
+    this.heatGrid.forEach(col => col.forEach(cell => {
+      if (cell.long  > maxLong)  maxLong  = cell.long;
+      if (cell.short > maxShort) maxShort = cell.short;
+    }));
+    const maxVal = Math.max(maxLong, maxShort, 0.001);
 
-    const minP = levels[0] - this.bucketSize;
-    const maxP = levels[levels.length - 1] + this.bucketSize;
-    const priceRange = maxP - minP;
-    const barH = Math.max(4, (H - 40) / Math.max(levels.length + 2, 20));
-    const labelW = 72;
-    const chartW = W - labelW - 12;
+    // Draw heatmap
+    for (let i = 0; i < N; i++) {
+      const x = padL + i * cellW;
+      for (let p = 0; p < P; p++) {
+        const cell = this.heatGrid[i][p];
+        const y = padT + (P - 1 - p) * cellH;
+        const li = cell.long  / maxVal;
+        const si = cell.short / maxVal;
+        if (li < 0.02 && si < 0.02) continue;
+        if (li >= si) {
+          ctx.fillStyle = `rgba(239,68,68,${(0.06 + li * 0.84).toFixed(3)})`;
+        } else {
+          ctx.fillStyle = `rgba(34,197,94,${(0.06 + si * 0.84).toFixed(3)})`;
+        }
+        ctx.fillRect(x, y, Math.ceil(cellW) + 0.5, Math.ceil(cellH) + 0.5);
+      }
+    }
 
-    // Max value for scaling
-    let maxVal = 0;
-    levels.forEach(l => {
-      const b = this.buckets[l];
-      maxVal = Math.max(maxVal, b.long + b.short);
-    });
-    if (maxVal === 0) return;
-
-    // Grid lines
-    ctx.strokeStyle = 'rgba(56,189,248,0.05)';
+    // Y-axis grid + price labels
+    const priceRange = this.priceMax - this.priceMin;
+    const priceToY = p => padT + (1 - (p - this.priceMin) / priceRange) * chartH;
+    ctx.strokeStyle = 'rgba(56,189,248,0.06)';
     ctx.lineWidth = 1;
-    [0.25, 0.5, 0.75, 1].forEach(f => {
-      const x = labelW + chartW * f;
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H - 30); ctx.stroke();
-    });
+    ctx.textAlign = 'right';
+    for (let g = 0; g <= 6; g++) {
+      const frac = g / 6;
+      const price = this.priceMin + frac * priceRange;
+      const y = padT + (1 - frac) * chartH;
+      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+      ctx.fillStyle = 'rgba(100,130,160,0.8)';
+      ctx.font = `${Math.round(8 * dpr) / dpr}px "Space Mono", monospace`;
+      ctx.fillText('$' + Math.round(price).toLocaleString(), padL - 4, y + 3);
+    }
 
-    // Bars
-    levels.forEach(level => {
-      const b = this.buckets[level];
-      const y = H - 30 - ((level - minP) / priceRange) * (H - 40);
-      const totalW = ((b.long + b.short) / maxVal) * chartW;
-      const longW = (b.long / (b.long + b.short || 1)) * totalW;
-      const shortW = totalW - longW;
-
-      // Intensity based on size
-      const intensity = Math.min(1, (b.long + b.short) / maxVal);
-
-      // Long bar (red, left side)
-      if (b.long > 0) {
-        const alpha = 0.25 + intensity * 0.65;
-        ctx.fillStyle = `rgba(239,68,68,${alpha})`;
-        ctx.fillRect(labelW, y - barH / 2, longW, barH);
-      }
-      // Short bar (green, after long)
-      if (b.short > 0) {
-        const alpha = 0.25 + intensity * 0.65;
-        ctx.fillStyle = `rgba(34,197,94,${alpha})`;
-        ctx.fillRect(labelW + longW, y - barH / 2, shortW, barH);
-      }
-
-      // Price label
-      ctx.fillStyle = 'rgba(74,104,128,0.9)';
-      ctx.font = `${Math.round(9 * dpr) / dpr}px "Space Mono", monospace`;
-      ctx.textAlign = 'right';
-      ctx.fillText('$' + level.toLocaleString(), labelW - 4, y + 3);
+    // Candlesticks
+    this.candles.forEach((c, i) => {
+      const x = padL + i * cellW + cellW / 2;
+      const bullish = c.c >= c.o;
+      const color = bullish ? 'rgba(34,197,94,0.9)' : 'rgba(239,68,68,0.9)';
+      const oY = priceToY(c.o), cY = priceToY(c.c);
+      const hY = priceToY(c.h), lY = priceToY(c.l);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = Math.max(0.5, cellW * 0.1);
+      ctx.beginPath(); ctx.moveTo(x, hY); ctx.lineTo(x, lY); ctx.stroke();
+      ctx.fillStyle = color;
+      const bodyW = Math.max(cellW * 0.6, 1.5);
+      ctx.fillRect(x - bodyW/2, Math.min(oY, cY), bodyW, Math.max(Math.abs(oY - cY), 1));
     });
 
     // Current price line
-    if (this.currentPrice > 0 && this.currentPrice >= minP && this.currentPrice <= maxP) {
-      const cy = H - 30 - ((this.currentPrice - minP) / priceRange) * (H - 40);
-      ctx.strokeStyle = 'rgba(56,189,248,0.7)';
-      ctx.lineWidth = 1;
-      ctx.setLineDash([4, 3]);
-      ctx.beginPath(); ctx.moveTo(labelW, cy); ctx.lineTo(W, cy); ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.fillStyle = 'var(--sky)';
-      ctx.fillStyle = '#38BDF8';
-      ctx.font = `bold ${Math.round(9 * dpr) / dpr}px "Space Mono", monospace`;
-      ctx.textAlign = 'right';
-      ctx.fillText('$' + Math.round(this.currentPrice).toLocaleString(), labelW - 4, cy + 3);
-    }
+    const lastC = this.candles[this.candles.length - 1].c;
+    const py = priceToY(lastC);
+    ctx.strokeStyle = 'rgba(56,189,248,0.9)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 4]);
+    ctx.beginPath(); ctx.moveTo(padL, py); ctx.lineTo(W - padR, py); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#38BDF8';
+    ctx.font = `bold ${Math.round(8.5 * dpr) / dpr}px "Space Mono", monospace`;
+    ctx.textAlign = 'right';
+    ctx.fillText('$' + Math.round(lastC).toLocaleString(), padL - 4, py + 3);
 
-    // X-axis labels
-    ctx.fillStyle = 'rgba(74,104,128,0.7)';
-    ctx.font = `${Math.round(8 * dpr) / dpr}px "Space Mono", monospace`;
+    // X-axis time labels
+    ctx.fillStyle = 'rgba(100,130,160,0.7)';
     ctx.textAlign = 'center';
-    [0, 0.25, 0.5, 0.75, 1].forEach(f => {
-      const val = (maxVal * f);
-      const x = labelW + chartW * f;
-      ctx.fillText(this.fmt(val), x, H - 8);
-    });
+    ctx.font = `${Math.round(7.5 * dpr) / dpr}px "Space Mono", monospace`;
+    for (let li = 0; li <= 7; li++) {
+      const idx = Math.round(li * (N - 1) / 7);
+      if (idx >= N) continue;
+      const d = new Date(this.candles[idx].t);
+      const label = (d.getMonth()+1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2,'0') + 'h';
+      ctx.fillText(label, padL + (idx + 0.5) * cellW, H - 7);
+    }
   },
 
   init() {
-    this.fetchHistorical();
-    this.connect();
-    this.renderTimer = setInterval(() => this.render(), 2000);
+    this.load();
+    setInterval(() => this.load(), 300000);
     window.addEventListener('resize', () => this.render());
   }
 };
@@ -1958,7 +1916,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   loadPolymarket();loadSentiment();loadTicker();
   loadNews();loadMacro();loadDominance();
   loadNetwork();loadWhale();
-  LIQ.init();
+  LIQMAP.init();
   // Apply saved language
   if(window.lang !== 'en') setLang(window.lang);
   else document.getElementById('lang-btn').textContent = 'DE';
