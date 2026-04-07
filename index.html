@@ -1768,6 +1768,38 @@ const LIQ = {
     return '$' + usd.toFixed(0);
   },
 
+  addOrder(side, price, qty) {
+    const usd = qty * price;
+    const bkt = this.bucket(price);
+    if (!this.buckets[bkt]) this.buckets[bkt] = { long: 0, short: 0, count: 0 };
+    if (side === 'SELL') { this.buckets[bkt].long += usd; this.totalLong += usd; }
+    else               { this.buckets[bkt].short += usd; this.totalShort += usd; }
+    this.buckets[bkt].count++;
+    this.count++;
+    this.currentPrice = price;
+  },
+
+  hideEmpty() {
+    const el = document.getElementById('liq-empty');
+    if (el) el.style.display = 'none';
+  },
+
+  async fetchHistorical() {
+    try {
+      const r = await fetch('https://fapi.binance.com/fapi/v1/allForceOrders?symbol=BTCUSDT&limit=200');
+      if (!r.ok) return;
+      const data = await r.json();
+      if (!Array.isArray(data) || !data.length) return;
+      data.forEach(o => {
+        const price = parseFloat(o.price || o.averagePrice);
+        const qty   = parseFloat(o.executedQty || o.origQty);
+        if (price && qty) this.addOrder(o.side, price, qty);
+      });
+      if (this.count > 0) this.hideEmpty();
+      this.render();
+    } catch(e) { /* silent — WebSocket will still provide data */ }
+  },
+
   connect() {
     const badge = document.getElementById('liq-badge');
     try {
@@ -1778,19 +1810,8 @@ const LIQ = {
       this.ws.onmessage = (e) => {
         const o = JSON.parse(e.data).o;
         if (!o) return;
-        const price = parseFloat(o.p);
-        const usd = parseFloat(o.q) * price;
-        const bkt = this.bucket(price);
-        if (!this.buckets[bkt]) this.buckets[bkt] = { long: 0, short: 0, count: 0 };
-        // SELL side = long position liquidated; BUY side = short position liquidated
-        if (o.S === 'SELL') { this.buckets[bkt].long += usd; this.totalLong += usd; }
-        else { this.buckets[bkt].short += usd; this.totalShort += usd; }
-        this.buckets[bkt].count++;
-        this.count++;
-        this.currentPrice = price;
-        // Hide empty state after first event
-        const empty = document.getElementById('liq-empty');
-        if (empty && empty.style.display !== 'none') empty.style.display = 'none';
+        this.addOrder(o.S, parseFloat(o.p), parseFloat(o.q));
+        this.hideEmpty();
       };
       this.ws.onerror = () => {
         if (badge) { badge.textContent = 'Error'; badge.className = 'bdg ber'; }
@@ -1923,9 +1944,9 @@ const LIQ = {
   },
 
   init() {
+    this.fetchHistorical();
     this.connect();
     this.renderTimer = setInterval(() => this.render(), 2000);
-    // Resize handler
     window.addEventListener('resize', () => this.render());
   }
 };
