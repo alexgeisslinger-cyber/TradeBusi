@@ -497,7 +497,6 @@ body {
 .dash-panel:nth-child(9){animation-delay:.56s;}
 
 .dp-chart    { grid-column: 1 / -1; min-height: 560px; }
-.dp-break    { grid-column: 1 / -1; min-height: 320px; }
 .dp-fg       { grid-column: 1 / 4; min-height: 220px; }
 .dp-dom      { grid-column: 4 / 7; min-height: 220px; }
 .dp-net      { grid-column: 7 / 13; min-height: 220px; }
@@ -718,7 +717,7 @@ body {
 /* ── RESPONSIVE ─────────────────────────────── */
 @media (max-width: 1100px) {
   .dash-grid { grid-template-columns: repeat(6, 1fr); }
-  .dp-chart,.dp-break,.dp-net,.dp-macro,.dp-whale,.dp-pred,.dp-events { grid-column: 1 / 7; }
+  .dp-chart,.dp-net,.dp-macro,.dp-whale,.dp-pred,.dp-events { grid-column: 1 / 7; }
   .dp-fg { grid-column: 1 / 4; } .dp-dom { grid-column: 4 / 7; }
   .score-layout { grid-template-columns: 1fr; gap: 32px; }
   .feature-grid { grid-template-columns: 1fr 1fr; }
@@ -736,7 +735,7 @@ body {
   .nav-links { display: none; }
   .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
   .dash-grid { grid-template-columns: 1fr; }
-  .dp-chart,.dp-break,.dp-fg,.dp-dom,.dp-net,.dp-macro,.dp-whale,.dp-pred,.dp-events { grid-column: 1; }
+  .dp-chart,.dp-fg,.dp-dom,.dp-net,.dp-macro,.dp-whale,.dp-pred,.dp-events { grid-column: 1; }
 }
 </style>
 </head>
@@ -1043,45 +1042,6 @@ body {
             <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
             {"allow_symbol_change":true,"calendar":false,"details":false,"hide_side_toolbar":true,"hide_top_toolbar":false,"hide_legend":false,"hide_volume":false,"hotlist":false,"interval":"60","locale":"en","save_image":true,"style":"1","symbol":"COINBASE:BTCUSD","theme":"dark","timezone":"Etc/UTC","backgroundColor":"#09121F","gridColor":"rgba(56,189,248,0.04)","watchlist":[],"withdateranges":true,"compareSymbols":[],"studies":[],"autosize":true}
             </script>
-          </div>
-        </div>
-      </div>
-
-      <!-- Signal Breakdown in Dashboard -->
-      <div class="dash-panel dp-break">
-        <div class="ph">
-          <span class="pt">Signal Breakdown</span>
-          <span class="bdg bcy">&#9679; Composite</span>
-        </div>
-        <div class="pb">
-          <div class="dash-meters">
-            <div class="dm-row">
-              <span class="dm-lbl">Sentiment</span>
-              <div class="dm-track"><div class="dm-fill" style="width:74%;background:var(--violet)"></div></div>
-              <span class="dm-val" style="color:var(--violet)">74%</span>
-            </div>
-            <div class="dm-row">
-              <span class="dm-lbl" data-en="Politics" data-de="Politik">Politics</span>
-              <div class="dm-track"><div class="dm-fill" style="width:55%;background:var(--yellow)"></div></div>
-              <span class="dm-val" style="color:var(--yellow)">55%</span>
-            </div>
-            <div class="dm-row">
-              <span class="dm-lbl">Macro</span>
-              <div class="dm-track"><div class="dm-fill" style="width:81%;background:var(--sky)"></div></div>
-              <span class="dm-val" style="color:var(--sky)">81%</span>
-            </div>
-            <div class="dm-row">
-              <span class="dm-lbl">Whales</span>
-              <div class="dm-track"><div class="dm-fill" style="width:50%;background:var(--amber)"></div></div>
-              <span class="dm-val" style="color:var(--amber)">50%</span>
-            </div>
-          </div>
-          <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
-            <div style="font-family:var(--f-mono);font-size:.48rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);margin-bottom:8px;" data-en="Score Formula" data-de="Score-Formel">Score Formula</div>
-            <div style="font-family:var(--f-mono);font-size:.62rem;color:var(--muted2);line-height:1.65;">
-              Sentiment &times; 40% &nbsp;+&nbsp; <span data-en="Politics" data-de="Politik">Politics</span> &times; 25%<br>
-              + Macro &times; 20% &nbsp;+&nbsp; Whales &times; 15%
-            </div>
           </div>
         </div>
       </div>
