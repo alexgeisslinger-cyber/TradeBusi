@@ -1728,177 +1728,235 @@ async function loadWhale(){
 const LIQMAP = {
   candles: [],
   heatGrid: [],
-  priceMin: 0,
-  priceMax: 0,
-  numPriceBuckets: 80,
-  leverageWeights: [[5,0.10],[10,0.30],[20,0.25],[25,0.15],[50,0.12],[100,0.08]],
+  realEvents: [],
+  priceMin: 0, priceMax: 0,
+  numT: 168, numP: 80,
+  leverageWeights: [[5,0.08],[10,0.25],[20,0.25],[25,0.14],[50,0.18],[100,0.10]],
+  ws: null,
 
-  priceToBucket(price) {
-    if (this.priceMax === this.priceMin) return 0;
-    const idx = Math.floor((price - this.priceMin) / (this.priceMax - this.priceMin) * this.numPriceBuckets);
-    return Math.max(0, Math.min(this.numPriceBuckets - 1, idx));
+  pBucket(price) {
+    return Math.max(0, Math.min(this.numP - 1,
+      Math.floor((price - this.priceMin) / (this.priceMax - this.priceMin) * this.numP)
+    ));
   },
 
   async load() {
     const badge = document.getElementById('liq-badge');
-    const loading = document.getElementById('liq-loading');
+    const loadingEl = document.getElementById('liq-loading');
     try {
+      // 1. Klines for chart + price range
       const r = await fetch('https://fapi.binance.com/fapi/v1/klines?symbol=BTCUSDT&interval=1h&limit=168');
       if (!r.ok) throw new Error('HTTP ' + r.status);
-      const raw = await r.json();
-      this.candles = raw.map(k => ({ t: k[0], o: +k[1], h: +k[2], l: +k[3], c: +k[4] }));
-      this.computeGrid();
+      this.candles = (await r.json()).map(k => ({ t:+k[0], o:+k[1], h:+k[2], l:+k[3], c:+k[4], v:+k[5] }));
+      let lo = Infinity, hi = -Infinity;
+      this.candles.forEach(c => { lo = Math.min(lo, c.l); hi = Math.max(hi, c.h); });
+      const pad = (hi * (1 + 0.92/5) - lo * (1 - 0.92/5)) * 0.02;
+      this.priceMin = lo  * (1 - 0.92/5) - pad;
+      this.priceMax = hi  * (1 + 0.92/5) + pad;
+
+      // 2. Real force orders (historical)
+      try {
+        const fr = await fetch('https://fapi.binance.com/fapi/v1/allForceOrders?symbol=BTCUSDT&limit=1000');
+        if (fr.ok) {
+          const fd = await fr.json();
+          if (Array.isArray(fd)) {
+            this.realEvents = fd.map(o => ({
+              t: o.T || o.time,
+              price: parseFloat(o.ap || o.p),
+              qty:   parseFloat(o.z  || o.q || o.origQty),
+              isLong: o.S === 'SELL'   // SELL = liquidated a long position
+            })).filter(e => e.price && e.qty && e.t);
+          }
+        }
+      } catch(e) { /* continue without REST history */ }
+
+      this.buildGrid();
       this.render();
-      if (loading) loading.style.display = 'none';
-      if (badge) { badge.textContent = '\u25CF Live \u00B7 Binance Futures'; badge.className = 'bdg bl'; }
+      if (loadingEl) loadingEl.style.display = 'none';
+      if (badge) { badge.textContent = '\u25CF Live \u00B7 Binance'; badge.className = 'bdg bl'; }
+      this.connectWS();
     } catch(e) {
       if (badge) { badge.textContent = 'Error'; badge.className = 'bdg ber'; }
-      console.error('LIQMAP load:', e);
+      console.error('LIQMAP:', e);
     }
   },
 
-  computeGrid() {
-    if (!this.candles.length) return;
-    const N = this.candles.length;
-    const P = this.numPriceBuckets;
-
-    // Price range from candle highs/lows + liq zone overshoot
-    let lo = Infinity, hi = -Infinity;
-    this.candles.forEach(c => { lo = Math.min(lo, c.l); hi = Math.max(hi, c.h); });
-    const lowestLiq = lo * (1 - (1/5) * 0.92);
-    const highestLiq = hi * (1 + (1/5) * 0.92);
-    const pad = (highestLiq - lowestLiq) * 0.02;
-    this.priceMin = lowestLiq - pad;
-    this.priceMax = highestLiq + pad;
-
-    // Init grid
+  buildGrid() {
+    const N = this.numT, P = this.numP, nC = this.candles.length;
     this.heatGrid = Array.from({length: N}, () =>
       Array.from({length: P}, () => ({long: 0, short: 0}))
     );
 
-    // Fill: for each candle and leverage, compute estimated liq price and spread density
+    // ── Layer 1: leverage model (estimated liq zones) ──
+    // Sample 5 entry prices per candle across its trading range
+    const entryFracs = [0, 0.25, 0.5, 0.75, 1];
     this.candles.forEach((c, i) => {
-      this.leverageWeights.forEach(([lev, w]) => {
-        const longLiq  = c.c * (1 - (1/lev) * 0.92);
-        const shortLiq = c.c * (1 + (1/lev) * 0.92);
-        const lb = this.priceToBucket(longLiq);
-        const sb = this.priceToBucket(shortLiq);
-        for (let d = -1; d <= 1; d++) {
-          const wt = d === 0 ? w : w * 0.35;
-          const lbi = Math.max(0, Math.min(P-1, lb + d));
-          const sbi = Math.max(0, Math.min(P-1, sb + d));
-          this.heatGrid[i][lbi].long  += wt;
-          this.heatGrid[i][sbi].short += wt;
-        }
+      const ti = Math.round(i * (N - 1) / (nC - 1));
+      entryFracs.forEach(f => {
+        const entry = c.l + f * (c.h - c.l);
+        const eWt = f === 0.5 ? 0.28 : 0.18;   // center weighted slightly higher
+        this.leverageWeights.forEach(([lev, w]) => {
+          const contribution = w * eWt * c.v;
+          const longLiq  = entry * (1 - 0.92 / lev);
+          const shortLiq = entry * (1 + 0.92 / lev);
+          // Gaussian-ish spread ±2 buckets
+          [[-2,0.08],[-1,0.22],[0,0.60],[1,0.22],[2,0.08]].forEach(([d, sw]) => {
+            const lp = Math.max(0, Math.min(P-1, this.pBucket(longLiq)  + d));
+            const sp = Math.max(0, Math.min(P-1, this.pBucket(shortLiq) + d));
+            this.heatGrid[ti][lp].long  += contribution * sw;
+            this.heatGrid[ti][sp].short += contribution * sw;
+          });
+        });
       });
     });
+
+    // ── Layer 2: real force orders (5× boost) ──
+    const tStart = this.candles[0].t;
+    const tEnd   = this.candles[nC-1].t + 3600000;
+    this.realEvents.forEach(ev => {
+      if (ev.t < tStart || ev.t > tEnd) return;
+      const ti = Math.max(0, Math.min(N-1, Math.floor((ev.t - tStart) / (tEnd - tStart) * N)));
+      const pi = this.pBucket(ev.price);
+      const vol = ev.qty * ev.price * 5;   // real events get 5× weight
+      [[-1,0.3],[0,1.0],[1,0.3]].forEach(([d,w]) => {
+        const pi2 = Math.max(0, Math.min(P-1, pi + d));
+        if (ev.isLong) this.heatGrid[ti][pi2].long  += vol * w;
+        else           this.heatGrid[ti][pi2].short += vol * w;
+      });
+    });
+  },
+
+  connectWS() {
+    if (this.ws) { try { this.ws.close(); } catch(e) {} }
+    try {
+      this.ws = new WebSocket('wss://fstream.binance.com/ws/btcusdt@forceOrder');
+      this.ws.onmessage = (e) => {
+        const o = JSON.parse(e.data).o;
+        if (!o) return;
+        const price  = parseFloat(o.ap || o.p);
+        const qty    = parseFloat(o.z  || o.q);
+        if (!price || !qty) return;
+        const isLong = o.S === 'SELL';
+        const tStart = this.candles[0].t;
+        const tEnd   = this.candles[this.candles.length-1].t + 3600000;
+        const ti = Math.max(0, Math.min(this.numT-1,
+          Math.floor((o.T - tStart) / (tEnd - tStart) * this.numT)
+        ));
+        const pi = this.pBucket(price);
+        const vol = qty * price * 5;
+        [[-1,0.3],[0,1.0],[1,0.3]].forEach(([d,w]) => {
+          const pi2 = Math.max(0, Math.min(this.numP-1, pi+d));
+          if (isLong) this.heatGrid[ti][pi2].long  += vol * w;
+          else        this.heatGrid[ti][pi2].short += vol * w;
+        });
+        this.render();
+      };
+      this.ws.onclose = () => setTimeout(() => this.connectWS(), 5000);
+    } catch(e) {}
   },
 
   render() {
     const canvas = document.getElementById('liq-canvas');
     if (!canvas || !this.candles.length || !this.heatGrid.length) return;
-
     const dpr = window.devicePixelRatio || 1;
     const W = canvas.offsetWidth, H = canvas.offsetHeight;
     if (W < 10 || H < 10) return;
-
     canvas.width  = Math.round(W * dpr);
     canvas.height = Math.round(H * dpr);
     const ctx = canvas.getContext('2d');
     ctx.scale(dpr, dpr);
 
-    const N = this.candles.length;
-    const P = this.numPriceBuckets;
+    const N = this.numT, P = this.numP, nC = this.candles.length;
     const padL = 70, padR = 10, padT = 10, padB = 26;
     const chartW = W - padL - padR;
     const chartH = H - padT - padB;
     const cellW = chartW / N;
     const cellH = chartH / P;
 
-    // Background
-    ctx.fillStyle = '#07111F';
+    ctx.fillStyle = '#060E1C';
     ctx.fillRect(0, 0, W, H);
 
     // Normalize
-    let maxLong = 0, maxShort = 0;
-    this.heatGrid.forEach(col => col.forEach(cell => {
-      if (cell.long  > maxLong)  maxLong  = cell.long;
-      if (cell.short > maxShort) maxShort = cell.short;
+    let maxL = 0, maxS = 0;
+    this.heatGrid.forEach(col => col.forEach(c => {
+      if (c.long  > maxL) maxL = c.long;
+      if (c.short > maxS) maxS = c.short;
     }));
-    const maxVal = Math.max(maxLong, maxShort, 0.001);
+    maxL = maxL || 1; maxS = maxS || 1;
 
-    // Draw heatmap
-    for (let i = 0; i < N; i++) {
-      const x = padL + i * cellW;
-      for (let p = 0; p < P; p++) {
-        const cell = this.heatGrid[i][p];
-        const y = padT + (P - 1 - p) * cellH;
-        const li = cell.long  / maxVal;
-        const si = cell.short / maxVal;
-        if (li < 0.02 && si < 0.02) continue;
-        if (li >= si) {
-          ctx.fillStyle = `rgba(239,68,68,${(0.06 + li * 0.84).toFixed(3)})`;
-        } else {
-          ctx.fillStyle = `rgba(34,197,94,${(0.06 + si * 0.84).toFixed(3)})`;
+    // Draw heatmap cells
+    // Long liq zones → orange/amber (price fell, longs wiped)
+    // Short liq zones → cyan/blue  (price rose, shorts wiped)
+    for (let ti = 0; ti < N; ti++) {
+      const x = padL + ti * cellW;
+      for (let pi = 0; pi < P; pi++) {
+        const cell = this.heatGrid[ti][pi];
+        const y = padT + (P - 1 - pi) * cellH;
+        const cw = Math.ceil(cellW) + 0.5, ch = Math.ceil(cellH) + 0.5;
+        const lInt = cell.long  / maxL;
+        const sInt = cell.short / maxS;
+        if (lInt > 0.012) {
+          const t = Math.pow(lInt, 0.42);
+          ctx.fillStyle = `rgba(${Math.round(80+175*t)},${Math.round(130*Math.pow(t,1.6))},0,${(0.04+t*0.9).toFixed(3)})`;
+          ctx.fillRect(x, y, cw, ch);
         }
-        ctx.fillRect(x, y, Math.ceil(cellW) + 0.5, Math.ceil(cellH) + 0.5);
+        if (sInt > 0.012) {
+          const t = Math.pow(sInt, 0.42);
+          ctx.fillStyle = `rgba(0,${Math.round(100+140*t)},${Math.round(160+90*t)},${(0.04+t*0.9).toFixed(3)})`;
+          ctx.fillRect(x, y, cw, ch);
+        }
       }
     }
 
-    // Y-axis grid + price labels
     const priceRange = this.priceMax - this.priceMin;
     const priceToY = p => padT + (1 - (p - this.priceMin) / priceRange) * chartH;
-    ctx.strokeStyle = 'rgba(56,189,248,0.06)';
-    ctx.lineWidth = 1;
-    ctx.textAlign = 'right';
+
+    // Y-axis grid + labels
     for (let g = 0; g <= 6; g++) {
       const frac = g / 6;
-      const price = this.priceMin + frac * priceRange;
       const y = padT + (1 - frac) * chartH;
-      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
-      ctx.fillStyle = 'rgba(100,130,160,0.8)';
-      ctx.font = `${Math.round(8 * dpr) / dpr}px "Space Mono", monospace`;
-      ctx.fillText('$' + Math.round(price).toLocaleString(), padL - 4, y + 3);
+      ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W-padR, y); ctx.stroke();
+      ctx.fillStyle = 'rgba(120,145,165,0.85)';
+      ctx.font = `${Math.round(8*dpr)/dpr}px "Space Mono", monospace`;
+      ctx.textAlign = 'right';
+      ctx.fillText('$' + Math.round(this.priceMin + frac * priceRange).toLocaleString(), padL-4, y+3);
     }
 
-    // Candlesticks
+    // Candlestick overlay
     this.candles.forEach((c, i) => {
-      const x = padL + i * cellW + cellW / 2;
-      const bullish = c.c >= c.o;
-      const color = bullish ? 'rgba(34,197,94,0.9)' : 'rgba(239,68,68,0.9)';
-      const oY = priceToY(c.o), cY = priceToY(c.c);
-      const hY = priceToY(c.h), lY = priceToY(c.l);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = Math.max(0.5, cellW * 0.1);
-      ctx.beginPath(); ctx.moveTo(x, hY); ctx.lineTo(x, lY); ctx.stroke();
-      ctx.fillStyle = color;
-      const bodyW = Math.max(cellW * 0.6, 1.5);
-      ctx.fillRect(x - bodyW/2, Math.min(oY, cY), bodyW, Math.max(Math.abs(oY - cY), 1));
+      const x = padL + (i / (nC-1)) * (N-1) * cellW + cellW/2;
+      const bull = c.c >= c.o;
+      const col  = bull ? 'rgba(34,197,94,0.92)' : 'rgba(239,68,68,0.92)';
+      ctx.strokeStyle = col; ctx.lineWidth = Math.max(0.5, cellW * 0.09);
+      ctx.beginPath(); ctx.moveTo(x, priceToY(c.h)); ctx.lineTo(x, priceToY(c.l)); ctx.stroke();
+      const bW = Math.max(cellW * 0.58, 1.5);
+      ctx.fillStyle = col;
+      ctx.fillRect(x - bW/2, Math.min(priceToY(c.o), priceToY(c.c)),
+        bW, Math.max(Math.abs(priceToY(c.o) - priceToY(c.c)), 1));
     });
 
     // Current price line
-    const lastC = this.candles[this.candles.length - 1].c;
+    const lastC = this.candles[nC-1].c;
     const py = priceToY(lastC);
-    ctx.strokeStyle = 'rgba(56,189,248,0.9)';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([5, 4]);
-    ctx.beginPath(); ctx.moveTo(padL, py); ctx.lineTo(W - padR, py); ctx.stroke();
+    ctx.strokeStyle = 'rgba(56,189,248,0.9)'; ctx.lineWidth = 1;
+    ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(padL, py); ctx.lineTo(W-padR, py); ctx.stroke();
     ctx.setLineDash([]);
     ctx.fillStyle = '#38BDF8';
-    ctx.font = `bold ${Math.round(8.5 * dpr) / dpr}px "Space Mono", monospace`;
+    ctx.font = `bold ${Math.round(8.5*dpr)/dpr}px "Space Mono", monospace`;
     ctx.textAlign = 'right';
-    ctx.fillText('$' + Math.round(lastC).toLocaleString(), padL - 4, py + 3);
+    ctx.fillText('$' + Math.round(lastC).toLocaleString(), padL-4, py+3);
 
     // X-axis time labels
     ctx.fillStyle = 'rgba(100,130,160,0.7)';
     ctx.textAlign = 'center';
-    ctx.font = `${Math.round(7.5 * dpr) / dpr}px "Space Mono", monospace`;
+    ctx.font = `${Math.round(7.5*dpr)/dpr}px "Space Mono", monospace`;
     for (let li = 0; li <= 7; li++) {
-      const idx = Math.round(li * (N - 1) / 7);
-      if (idx >= N) continue;
+      const idx = Math.round(li * (nC-1) / 7);
       const d = new Date(this.candles[idx].t);
-      const label = (d.getMonth()+1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2,'0') + 'h';
-      ctx.fillText(label, padL + (idx + 0.5) * cellW, H - 7);
+      const label = (d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+'h';
+      ctx.fillText(label, padL + (idx/(nC-1))*(N-1)*cellW + cellW/2, H-7);
     }
   },
 
