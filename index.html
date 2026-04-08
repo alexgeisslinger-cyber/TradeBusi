@@ -1744,31 +1744,47 @@ const LIQMAP = {
     const badge = document.getElementById('liq-badge');
     const loadingEl = document.getElementById('liq-loading');
     try {
-      // 1. Klines for chart + price range
-      const r = await fetch('https://fapi.binance.com/fapi/v1/klines?symbol=BTCUSDT&interval=1h&limit=168');
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      this.candles = (await r.json()).map(k => ({ t:+k[0], o:+k[1], h:+k[2], l:+k[3], c:+k[4], v:+k[5] }));
-      let lo = Infinity, hi = -Infinity;
-      this.candles.forEach(c => { lo = Math.min(lo, c.l); hi = Math.max(hi, c.h); });
-      const pad = (hi * (1 + 0.92/5) - lo * (1 - 0.92/5)) * 0.02;
-      this.priceMin = lo  * (1 - 0.92/5) - pad;
-      this.priceMax = hi  * (1 + 0.92/5) + pad;
+      // 1. Klines (168 × 1h = 7 days)
+      const r1 = await fetch('https://fapi.binance.com/fapi/v1/klines?symbol=BTCUSDT&interval=1h&limit=168');
+      if (!r1.ok) throw new Error('klines ' + r1.status);
+      this.candles = (await r1.json()).map(k => ({ t:+k[0], o:+k[1], h:+k[2], l:+k[3], c:+k[4], v:+k[5], oi:0 }));
 
-      // 2. Real force orders (historical)
+      // 2. Open Interest history — real position sizing, much better than volume
       try {
-        const fr = await fetch('https://fapi.binance.com/fapi/v1/allForceOrders?symbol=BTCUSDT&limit=1000');
-        if (fr.ok) {
-          const fd = await fr.json();
+        const r2 = await fetch(`https://fapi.binance.com/futures/data/openInterestHist?symbol=BTCUSDT&period=1h&limit=200&startTime=${this.candles[0].t}`);
+        if (r2.ok) {
+          const oiRaw = await r2.json();
+          const oiMap = {};
+          oiRaw.forEach(d => { oiMap[d.timestamp] = parseFloat(d.sumOpenInterestValue); });
+          this.candles.forEach(c => { c.oi = oiMap[c.t] || 0; });
+        }
+      } catch(e) {}
+      // Fallback: derive OI proxy from volume if API returned nothing
+      const hasOI = this.candles.some(c => c.oi > 0);
+      if (!hasOI) this.candles.forEach(c => { c.oi = c.v * c.c; });
+
+      // 3. Real force orders (historical liquidation events)
+      try {
+        const r3 = await fetch('https://fapi.binance.com/fapi/v1/allForceOrders?symbol=BTCUSDT&limit=1000');
+        if (r3.ok) {
+          const fd = await r3.json();
           if (Array.isArray(fd)) {
             this.realEvents = fd.map(o => ({
               t: o.T || o.time,
               price: parseFloat(o.ap || o.p),
               qty:   parseFloat(o.z  || o.q || o.origQty),
-              isLong: o.S === 'SELL'   // SELL = liquidated a long position
+              isLong: o.S === 'SELL'
             })).filter(e => e.price && e.qty && e.t);
           }
         }
-      } catch(e) { /* continue without REST history */ }
+      } catch(e) {}
+
+      // Price range
+      let lo = Infinity, hi = -Infinity;
+      this.candles.forEach(c => { lo = Math.min(lo, c.l); hi = Math.max(hi, c.h); });
+      const pad = (hi * (1 + 0.92/5) - lo * (1 - 0.92/5)) * 0.02;
+      this.priceMin = lo * (1 - 0.92/5) - pad;
+      this.priceMax = hi * (1 + 0.92/5) + pad;
 
       this.buildGrid();
       this.render();
@@ -1787,38 +1803,57 @@ const LIQMAP = {
       Array.from({length: P}, () => ({long: 0, short: 0}))
     );
 
-    // ── Layer 1: leverage model (estimated liq zones) ──
-    // Sample 5 entry prices per candle across its trading range
+    // ── Layer 1: OI-weighted leverage model ──
+    // OI tells us how many $ in positions exist at each hour — much more accurate than volume
     const entryFracs = [0, 0.25, 0.5, 0.75, 1];
+    const entryWts   = [0.12, 0.20, 0.36, 0.20, 0.12]; // bell-curve across candle range
+    const spread     = [[-2,0.06],[-1,0.22],[0,0.64],[1,0.22],[2,0.06]];
+
     this.candles.forEach((c, i) => {
       const ti = Math.round(i * (N - 1) / (nC - 1));
-      entryFracs.forEach(f => {
+      const weight = c.oi; // real open interest in USD
+
+      entryFracs.forEach((f, fi) => {
         const entry = c.l + f * (c.h - c.l);
-        const eWt = f === 0.5 ? 0.28 : 0.18;   // center weighted slightly higher
-        this.leverageWeights.forEach(([lev, w]) => {
-          const contribution = w * eWt * c.v;
-          const longLiq  = entry * (1 - 0.92 / lev);
-          const shortLiq = entry * (1 + 0.92 / lev);
-          // Gaussian-ish spread ±2 buckets
-          [[-2,0.08],[-1,0.22],[0,0.60],[1,0.22],[2,0.08]].forEach(([d, sw]) => {
+        const ew = entryWts[fi];
+        this.leverageWeights.forEach(([lev, lw]) => {
+          const contrib   = weight * ew * lw;
+          const longLiq   = entry * (1 - 0.92 / lev);
+          const shortLiq  = entry * (1 + 0.92 / lev);
+          spread.forEach(([d, sw]) => {
             const lp = Math.max(0, Math.min(P-1, this.pBucket(longLiq)  + d));
             const sp = Math.max(0, Math.min(P-1, this.pBucket(shortLiq) + d));
-            this.heatGrid[ti][lp].long  += contribution * sw;
-            this.heatGrid[ti][sp].short += contribution * sw;
+            this.heatGrid[ti][lp].long  += contrib * sw;
+            this.heatGrid[ti][sp].short += contrib * sw;
           });
         });
       });
+
+      // ── OI delta signal: OI drop → actual liquidations occurred ──
+      if (i > 0 && this.candles[i-1].oi > 0) {
+        const oiDelta = c.oi - this.candles[i-1].oi;
+        if (oiDelta < 0) {
+          const liqMass = Math.abs(oiDelta) * 3; // amplify the signal
+          const pi = this.pBucket(c.c);
+          const priceFell = c.c < c.o;
+          spread.forEach(([d, sw]) => {
+            const pi2 = Math.max(0, Math.min(P-1, pi + d));
+            if (priceFell) this.heatGrid[ti][pi2].long  += liqMass * sw;
+            else           this.heatGrid[ti][pi2].short += liqMass * sw;
+          });
+        }
+      }
     });
 
-    // ── Layer 2: real force orders (5× boost) ──
+    // ── Layer 2: real force orders (8× boost) ──
     const tStart = this.candles[0].t;
     const tEnd   = this.candles[nC-1].t + 3600000;
     this.realEvents.forEach(ev => {
       if (ev.t < tStart || ev.t > tEnd) return;
-      const ti = Math.max(0, Math.min(N-1, Math.floor((ev.t - tStart) / (tEnd - tStart) * N)));
-      const pi = this.pBucket(ev.price);
-      const vol = ev.qty * ev.price * 5;   // real events get 5× weight
-      [[-1,0.3],[0,1.0],[1,0.3]].forEach(([d,w]) => {
+      const ti  = Math.max(0, Math.min(N-1, Math.floor((ev.t - tStart) / (tEnd - tStart) * N)));
+      const pi  = this.pBucket(ev.price);
+      const vol = ev.qty * ev.price * 8;
+      [[-1,0.25],[0,1.0],[1,0.25]].forEach(([d, w]) => {
         const pi2 = Math.max(0, Math.min(P-1, pi + d));
         if (ev.isLong) this.heatGrid[ti][pi2].long  += vol * w;
         else           this.heatGrid[ti][pi2].short += vol * w;
