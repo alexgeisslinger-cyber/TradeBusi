@@ -1081,7 +1081,7 @@ body {
       <!-- Macro Indicators -->
       <div class="dash-panel dp-macro">
         <div class="ph">
-          <span class="pt" data-en="Macro Indicators" data-de="Makro-Indikatoren">Macro Indicators</span>
+          <span class="pt" data-en="BTC Futures · Market Structure" data-de="BTC Futures · Marktstruktur">BTC Futures · Market Structure</span>
           <span class="bdg blo" id="macro-badge">Loading&hellip;</span>
         </div>
         <div class="pb" id="macro-panel">
@@ -1234,11 +1234,11 @@ const LANG = {
     fg25_a:'"Be greedy when others are fearful." \u2014 Warren Buffett',
     fg0_i:'Extreme Fear \u2014 panic in the market. Often marks local bottoms.',
     fg0_a:'Extreme fear marked major bottoms in 2018, 2020 and 2022.',
-    mac_bull:'Bullish Environment', mac_neut:'Neutral Environment', mac_bear:'Bearish Environment',
-    imp_sp_u:'Risk-on \u2192 BTC positive', imp_sp_d:'Risk-off \u2192 BTC pressure',
-    imp_dx_u:'Strong USD \u2192 BTC pressure', imp_dx_d:'Weak USD \u2192 BTC positive',
-    imp_go_u:'Safe-haven demand elevated', imp_go_d:'Risk appetite rising',
-    imp_yi_u:'High rates \u2192 risk-off', imp_yi_d:'Falling rates \u2192 BTC positive',
+    mac_bull:'Bullish Structure', mac_neut:'Neutral Structure', mac_bear:'Bearish Structure',
+    fr_high:'Overleveraged longs \u2192 squeeze risk', fr_neg:'Negative funding \u2192 short squeeze risk', fr_ok:'Healthy funding environment',
+    oi_in:'Capital flowing in \u2192 bullish', oi_out:'Capital flowing out \u2192 caution',
+    ls_long:'Heavily long \u2192 squeeze risk', ls_short:'Heavily short \u2192 pump risk', ls_bal:'Balanced positioning',
+    eth_btc_dom:'BTC outperforming \u2192 dominance up', eth_btc_alt:'Altcoin rotation \u2192 capital leaving BTC',
     expl_bh:'Each block gets a sequential number. Shows how far the chain has grown since the genesis block.',
     expl_hr:'Total computing power of the Bitcoin network. Higher hashrate = more secure.',
     expl_di:'How hard it is to find a valid block. Adjusts every 2,016 blocks (~2 weeks).',
@@ -1283,11 +1283,11 @@ const LANG = {
     fg25_a:'"Gierig sein, wenn andere \u00e4ngstlich sind." \u2014 Warren Buffett',
     fg0_i:'Extreme Angst \u2014 Panik im Markt. Markiert oft lokale B\u00f6den.',
     fg0_a:'Extreme Angst hat 2018, 2020 und 2022 gro\u00dfe B\u00f6den markiert.',
-    mac_bull:'Bullish Umfeld', mac_neut:'Neutrales Umfeld', mac_bear:'Bearish Umfeld',
-    imp_sp_u:'Risk-on \u2192 BTC positiv', imp_sp_d:'Risk-off \u2192 BTC Druck',
-    imp_dx_u:'Starker USD \u2192 BTC Druck', imp_dx_d:'Schwacher USD \u2192 BTC positiv',
-    imp_go_u:'Safe-Haven-Nachfrage hoch', imp_go_d:'Risikobereitschaft steigt',
-    imp_yi_u:'Hohe Zinsen \u2192 Risk-off', imp_yi_d:'Fallende Zinsen \u2192 BTC positiv',
+    mac_bull:'Bullish Struktur', mac_neut:'Neutrale Struktur', mac_bear:'Bearish Struktur',
+    fr_high:'\u00dcberhebelte Longs \u2192 Squeeze-Risiko', fr_neg:'Negatives Funding \u2192 Short-Squeeze-Risiko', fr_ok:'Gesundes Funding-Umfeld',
+    oi_in:'Kapitalzufluss \u2192 bullish', oi_out:'Kapitalabfluss \u2192 Vorsicht',
+    ls_long:'Stark long \u2192 Squeeze-Risiko', ls_short:'Stark short \u2192 Pump-Risiko', ls_bal:'Ausgeglichene Positionierung',
+    eth_btc_dom:'BTC outperformt \u2192 Dominanz steigt', eth_btc_alt:'Altcoin-Rotation \u2192 Kapital verl\u00e4sst BTC',
     expl_bh:'Jeder Block erh\u00e4lt eine fortlaufende Nummer. Zeigt, wie weit die Chain seit dem Genesis Block gewachsen ist.',
     expl_hr:'Gesamte Rechenleistung des Bitcoin-Netzwerks. H\u00f6here Hashrate = sicherer.',
     expl_di:'Wie schwer es ist, einen g\u00fcltigen Block zu finden. Passt sich alle 2016 Bl\u00f6cke (~2 Wochen) an.',
@@ -1627,24 +1627,52 @@ async function loadNews(){
 // ══ MACRO ══════════════════════════════════
 async function loadMacro(){
   const panel=document.getElementById('macro-panel'),badge=document.getElementById('macro-badge');
-  const tickers=[{symbol:'%5EGSPC',key:'sp500',label:'S&P 500',invert:false},{symbol:'DX-Y.NYB',key:'dxy',label:'DXY',invert:true},{symbol:'GC%3DF',key:'gold',label:'Gold',invert:false},{symbol:'%5ETNX',key:'yields',label:'US 10Y Yield',invert:true}];
-  const impacts={sp500:{up:()=>t('imp_sp_u'),down:()=>t('imp_sp_d')},dxy:{up:()=>t('imp_dx_u'),down:()=>t('imp_dx_d')},gold:{up:()=>t('imp_go_u'),down:()=>t('imp_go_d')},yields:{up:()=>t('imp_yi_u'),down:()=>t('imp_yi_d')}};
-  const ft=async tk=>{try{const r=await fetch('https://query1.finance.yahoo.com/v8/finance/chart/'+tk.symbol+'?interval=1d&range=5d');if(!r.ok)throw new Error();const d=await r.json();const res=d?.chart?.result?.[0];if(!res)throw new Error();const cl=res.indicators?.quote?.[0]?.close?.filter(v=>v!=null);if(!cl||cl.length<2)throw new Error();const p=cl[cl.length-1],pv=cl[cl.length-2];return{...tk,price:p,changePct:(p-pv)/pv*100};}catch(e){return{...tk,error:true};}};
   try{
-    const data=await Promise.all(tickers.map(ft));let bc=0,vc=0,html='<div style="display:flex;flex-direction:column;gap:5px;">';
-    data.forEach(item=>{
-      if(item.error){html+='<div style="padding:7px 10px;background:var(--bg4);border:1px solid var(--border);display:flex;justify-content:space-between;"><span style="font-family:var(--f-mono);font-size:.62rem;color:var(--muted2);">'+item.label+'</span><span style="font-family:var(--f-mono);font-size:.62rem;color:var(--muted2);">N/A</span></div>';return;}
-      vc++;const up=item.changePct>=0,isBull=item.invert?!up:up;if(isBull)bc++;
-      const col=isBull?'var(--green)':'var(--red)',arrow=up?'\u25B2':'\u25BC',sign=up?'+':'',imp=impacts[item.key]?.[up?'up':'down']?.()||'';
-      let ps;if(item.key==='yields')ps=item.price.toFixed(2)+'%';else if(item.key==='gold')ps='$'+item.price.toLocaleString('en-US',{maximumFractionDigits:0});else if(item.key==='sp500')ps=item.price.toLocaleString('en-US',{maximumFractionDigits:0});else ps=item.price.toFixed(2);
-      html+='<div style="padding:8px 10px;background:var(--bg4);border:1px solid var(--border);border-left:2px solid '+col+';"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-family:var(--f-mono);font-size:.62rem;color:var(--muted2);">'+item.label+'</span><span style="font-family:var(--f-mono);font-size:.64rem;color:'+col+';font-weight:500;">'+ps+' '+arrow+' '+sign+item.changePct.toFixed(2)+'%</span></div><div style="font-size:.6rem;color:var(--muted2);margin-top:2px;">'+imp+'</div></div>';
+    const[frR,oiR,lsR,ethR]=await Promise.all([
+      fetch('https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT'),
+      fetch('https://fapi.binance.com/futures/data/openInterestHist?symbol=BTCUSDT&period=1h&limit=2'),
+      fetch('https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=BTCUSDT&period=1h&limit=1'),
+      fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=ETHBTC')
+    ]);
+    const fr=await frR.json(),oi=await oiR.json(),ls=await lsR.json(),eth=await ethR.json();
+    const fundingRate=parseFloat(fr.lastFundingRate)*100;
+    const fundingAnn=(fundingRate*3*365).toFixed(1);
+    const oiNow=parseFloat(oi[1]?.sumOpenInterestValue||0),oiPrev=parseFloat(oi[0]?.sumOpenInterestValue||1);
+    const oiChg=(oiNow-oiPrev)/oiPrev*100;
+    const lsRatio=parseFloat(ls[0]?.longShortRatio||1);
+    const ethChg=parseFloat(eth.priceChangePercent),ethP=parseFloat(eth.lastPrice);
+    const frBull=fundingRate>=-0.01&&fundingRate<0.05,oiBull=oiChg>0,lsBull=lsRatio>1,ethBull=ethChg<0;
+    const bc=[frBull,oiBull,lsBull,ethBull].filter(Boolean).length;
+    const ms=Math.round(bc/4*100);liveScores.macro=ms;updateSignalScore();
+    const rows=[
+      {label:'Funding Rate',
+       val:(fundingRate>=0?'+':'')+fundingRate.toFixed(4)+'%',
+       sub:fundingAnn+'% ann. · '+(fundingRate>0.05?t('fr_high'):fundingRate<-0.01?t('fr_neg'):t('fr_ok')),
+       bull:frBull},
+      {label:'Open Interest 1h',
+       val:(oiChg>=0?'+':'')+oiChg.toFixed(2)+'%',
+       sub:'$'+(oiNow/1e9).toFixed(2)+'B · '+(oiBull?t('oi_in'):t('oi_out')),
+       bull:oiBull},
+      {label:'Long / Short Ratio',
+       val:lsRatio.toFixed(3),
+       sub:lsRatio>1.3?t('ls_long'):lsRatio<0.77?t('ls_short'):t('ls_bal'),
+       bull:lsBull},
+      {label:'ETH / BTC 24h',
+       val:ethP.toFixed(5)+(ethChg>=0?' \u25B2':' \u25BC'),
+       sub:(ethChg>=0?'+':'')+ethChg.toFixed(2)+'% · '+(ethBull?t('eth_btc_dom'):t('eth_btc_alt')),
+       bull:ethBull}
+    ];
+    let html='<div style="display:flex;flex-direction:column;gap:5px;">';
+    rows.forEach(r=>{
+      const col=r.bull?'var(--green)':'var(--red)';
+      html+='<div style="padding:8px 10px;background:var(--bg4);border:1px solid var(--border);border-left:2px solid '+col+';"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-family:var(--f-mono);font-size:.62rem;color:var(--muted2);">'+r.label+'</span><span style="font-family:var(--f-mono);font-size:.64rem;color:'+col+';font-weight:500;">'+r.val+'</span></div><div style="font-size:.6rem;color:var(--muted2);margin-top:2px;">'+r.sub+'</div></div>';
     });
-    html+='</div>';panel.innerHTML=html;
-    const ms=vc>0?Math.round((bc/vc)*100):60;liveScores.macro=ms;updateSignalScore();
+    html+='</div><div style="margin-top:7px;font-family:var(--f-mono);font-size:.52rem;color:var(--muted2);text-align:center;">Binance Futures · Updates every 60s</div>';
+    panel.innerHTML=html;
     const env=ms>=60?t('mac_bull'):ms>=40?t('mac_neut'):t('mac_bear');
     badge.textContent='\u25CF '+env;badge.className=ms>=60?'bdg bl':ms>=40?'bdg byl':'bdg ber';
-    setTimeout(loadMacro,300000);
-  }catch(err){console.error('Macro:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Macro data unavailable.<br><button class="rbtn" onclick="loadMacro()">'+t('retry')+'</button></div>';}
+    setTimeout(loadMacro,60000);
+  }catch(err){console.error('Macro:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Data unavailable.<br><button class="rbtn" onclick="loadMacro()">'+t('retry')+'</button></div>';}
 }
 
 // ══ DOMINANCE ══════════════════════════════
