@@ -1687,7 +1687,47 @@ async function loadDominance(){
     const dv=dom.toFixed(1),dc=dom>=55?'var(--amber)':dom>=45?'var(--yellow)':'var(--red)',dl=dom>=55?t('dom_dom'):dom>=45?t('dom_bal'):t('dom_alt'),ts=totalMcap?'$'+(totalMcap/1e12).toFixed(2)+'T':'—',cc=mcc>=0?'var(--green)':'var(--red)',cs=mcc>=0?'+':'';
     const coins=[{s:'BTC',k:'btc',c:'#F7931A'},{s:'ETH',k:'eth',c:'#627EEA'},{s:'BNB',k:'bnb',c:'#F3BA2F'},{s:'XRP',k:'xrp',c:'#E84142'},{s:'SOL',k:'sol',c:'#9945FF'}];
     const known=coins.reduce((s,c)=>s+(mp?.[c.k]||0),0),other=Math.max(0,100-known);
-    panel.innerHTML=`<div style="text-align:center;padding:6px 0 12px;"><div style="font-family:var(--f-ui);font-weight:800;font-size:3rem;line-height:1;color:${dc};">${dv}<span style="font-size:1.1rem;">%</span></div><div style="font-family:var(--f-mono);font-size:.5rem;letter-spacing:.14em;color:${dc};margin-top:4px;">${dl}</div></div><div style="height:5px;overflow:hidden;margin-bottom:6px;display:flex;">${coins.map(c=>'<div style="width:'+(mp?.[c.k]||0).toFixed(1)+'%;background:'+c.c+';transition:width 1s;"></div>').join('')}<div style="flex:1;background:var(--bg4);"></div></div><div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;">${coins.map(c=>'<div style="display:flex;align-items:center;gap:3px;"><div style="width:5px;height:5px;background:'+c.c+';"></div><span style="font-family:var(--f-mono);font-size:.5rem;color:var(--muted2);">'+c.s+' <span style="color:var(--text);">'+(mp?.[c.k]||0).toFixed(1)+'%</span></span></div>').join('')}</div><div style="display:flex;flex-direction:column;gap:4px;"><div style="display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.58rem;"><span style="color:var(--muted2);">${t('dom_mc')}</span><span>${ts}</span></div><div style="display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.58rem;"><span style="color:var(--muted2);">${t('dom_24h')}</span><span style="color:${cc};">${cs}${mcc?.toFixed(2)}%</span></div></div><div style="margin-top:8px;padding:7px 10px;background:var(--bg4);border:1px solid var(--border);border-left:2px solid ${dc};"><div style="font-size:.61rem;color:var(--muted2);">${dom>=55?t('dom_h'):dom>=45?t('dom_b'):t('dom_l')}</div></div>`;
+    const othersColor='#2A3F5C';
+    const allSlices=[...coins.map(c=>({pct:mp?.[c.k]||0,color:c.c,s:c.s})),{pct:other,color:othersColor,s:'Others'}];
+    panel.innerHTML=`<div style="display:flex;gap:12px;align-items:center;margin-bottom:10px;">
+      <canvas id="dom-donut" width="110" height="110" style="flex-shrink:0;width:110px;height:110px;"></canvas>
+      <div style="flex:1;min-width:0;">
+        <div style="font-family:var(--f-ui);font-weight:800;font-size:2.5rem;line-height:1;color:${dc};">${dv}<span style="font-size:1rem;">%</span></div>
+        <div style="font-family:var(--f-mono);font-size:.47rem;letter-spacing:.13em;color:${dc};margin-top:3px;margin-bottom:8px;">${dl}</div>
+        <div style="height:4px;overflow:hidden;margin-bottom:7px;display:flex;border-radius:2px;">${coins.map(c=>'<div style="width:'+(mp?.[c.k]||0).toFixed(1)+'%;background:'+c.c+';"></div>').join('')}<div style="flex:1;background:${othersColor};"></div></div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px 8px;">${allSlices.map(sl=>'<div style="display:flex;align-items:center;gap:3px;"><div style="width:5px;height:5px;border-radius:50%;background:'+sl.color+';"></div><span style="font-family:var(--f-mono);font-size:.48rem;color:var(--muted2);">'+sl.s+' <span style="color:var(--text);">'+sl.pct.toFixed(1)+'%</span></span></div>').join('')}</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.58rem;"><span style="color:var(--muted2);">${t('dom_mc')}</span><span>${ts}</span></div>
+      <div style="display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.58rem;"><span style="color:var(--muted2);">${t('dom_24h')}</span><span style="color:${cc};">${cs}${mcc?.toFixed(2)}%</span></div>
+    </div>
+    <div style="padding:7px 10px;background:var(--bg4);border:1px solid var(--border);border-left:2px solid ${dc};"><div style="font-size:.61rem;color:var(--muted2);">${dom>=55?t('dom_h'):dom>=45?t('dom_b'):t('dom_l')}</div></div>`;
+    requestAnimationFrame(()=>{
+      const cv=document.getElementById('dom-donut');if(!cv)return;
+      const dpr=window.devicePixelRatio||1,sz=110;
+      cv.width=sz*dpr;cv.height=sz*dpr;
+      const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);
+      const cx=sz/2,cy=sz/2,rOuter=50,rInner=32;
+      const total=allSlices.reduce((s,sl)=>s+sl.pct,0)||100;
+      let ang=-Math.PI/2;
+      allSlices.forEach(sl=>{
+        if(sl.pct<=0)return;
+        const sweep=sl.pct/total*Math.PI*2;
+        ctx.beginPath();ctx.arc(cx,cy,rOuter,ang,ang+sweep);ctx.arc(cx,cy,rInner,ang+sweep,ang,true);ctx.closePath();
+        ctx.fillStyle=sl.color;ctx.fill();
+        // thin gap between slices
+        ctx.strokeStyle='#0D1A2D';ctx.lineWidth=1.5;ctx.stroke();
+        ang+=sweep;
+      });
+      // center text
+      ctx.fillStyle=dc;ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.font=`bold ${Math.round(13*dpr)/dpr}px var(--f-ui,sans-serif)`;
+      ctx.fillText(dv+'%',cx,cy-5);
+      ctx.font=`${Math.round(7*dpr)/dpr}px var(--f-mono,monospace)`;
+      ctx.fillStyle='rgba(148,163,184,0.7)';
+      ctx.fillText('BTC DOM',cx,cy+7);
+    });
     badge.textContent='\u25CF Live \u00B7 CoinGecko';badge.className='bdg bl';setTimeout(loadDominance,300000);
   }catch(err){console.error('Dom:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Data unavailable.<br><button class="rbtn" onclick="loadDominance()">'+t('retry')+'</button></div>';}
 }
