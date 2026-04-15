@@ -505,6 +505,7 @@ body {
 .dp-whale    { grid-column: 7 / 13; min-height: 260px; }
 .dp-pred     { grid-column: 1 / 7; min-height: 260px; }
 .dp-events   { grid-column: 7 / 13; min-height: 260px; }
+.dp-techsig  { grid-column: 1 / 7; min-height: 480px; }
 
 .ph {
   display: flex; align-items: center; justify-content: space-between;
@@ -718,7 +719,7 @@ body {
 /* ── RESPONSIVE ─────────────────────────────── */
 @media (max-width: 1100px) {
   .dash-grid { grid-template-columns: repeat(6, 1fr); }
-  .dp-chart,.dp-net,.dp-macro,.dp-whale,.dp-pred,.dp-events { grid-column: 1 / 7; }
+  .dp-chart,.dp-net,.dp-macro,.dp-whale,.dp-pred,.dp-events,.dp-techsig { grid-column: 1 / 7; }
   .dp-fg { grid-column: 1 / 4; } .dp-dom { grid-column: 4 / 7; }
   .score-layout { grid-template-columns: 1fr; gap: 32px; }
   .feature-grid { grid-template-columns: 1fr 1fr; }
@@ -736,7 +737,7 @@ body {
   .nav-links { display: none; }
   .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
   .dash-grid { grid-template-columns: 1fr; }
-  .dp-chart,.dp-fg,.dp-dom,.dp-net,.dp-macro,.dp-whale,.dp-pred,.dp-events { grid-column: 1; }
+  .dp-chart,.dp-fg,.dp-dom,.dp-net,.dp-macro,.dp-whale,.dp-pred,.dp-events,.dp-techsig { grid-column: 1; }
 }
 </style>
 </head>
@@ -1136,6 +1137,23 @@ body {
         </div>
         <div class="pb" id="news-panel">
           <div class="sk"></div><div class="sk"></div><div class="sk"></div>
+        </div>
+      </div>
+
+      <!-- Technical Analysis -->
+      <div class="dash-panel dp-techsig">
+        <div class="ph">
+          <span class="pt" data-en="BTC Technical Analysis · Live" data-de="BTC Technische Analyse · Live">BTC Technical Analysis · Live</span>
+          <span class="bdg bl">&#9679; Live &middot; TradingView</span>
+        </div>
+        <div style="flex:1;overflow:hidden;">
+          <div class="tradingview-widget-container" style="width:100%;height:450px;">
+            <div class="tradingview-widget-container__widget" style="width:100%;height:450px;"></div>
+            <div class="tradingview-widget-copyright" style="display:none!important;height:0!important;overflow:hidden;"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+            {"colorTheme":"dark","displayMode":"single","isTransparent":true,"locale":"en","interval":"1D","disableInterval":false,"width":"100%","height":450,"symbol":"BINANCE:BTCUSDT","showIntervalTabs":true}
+            </script>
+          </div>
         </div>
       </div>
 
