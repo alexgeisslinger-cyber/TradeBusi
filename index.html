@@ -500,10 +500,10 @@ body {
 .dp-tvheat   { grid-column: 1 / -1; min-height: 500px; }
 .dp-fg       { grid-column: 1 / 4; min-height: 220px; }
 .dp-dom      { grid-column: 4 / 7; min-height: 220px; }
-.dp-net      { grid-column: 7 / 13; min-height: 220px; }
+.dp-net      { grid-column: 1 / 7;  min-height: 220px; }
 .dp-macro    { grid-column: 7 / 13; min-height: 260px; }
 .dp-whale    { grid-column: 1 / 7; min-height: 480px; }
-.dp-pred     { grid-column: 1 / 7; min-height: 260px; }
+.dp-pred     { grid-column: 7 / 13; min-height: 220px; }
 .dp-events   { grid-column: 1 / 7; min-height: 260px; }
 .dp-techsig  { grid-column: 7 / 13; min-height: 480px; }
 
@@ -1102,17 +1102,6 @@ body {
         </div>
       </div>
 
-      <!-- Network Stats -->
-      <div class="dash-panel dp-net">
-        <div class="ph">
-          <span class="pt" data-en="Network Statistics" data-de="Netzwerk-Statistiken">Network Statistics</span>
-          <span class="bdg blo" id="network-badge">Loading&hellip;</span>
-        </div>
-        <div class="pb" id="network-panel">
-          <div class="sk"></div><div class="sk"></div><div class="sk"></div>
-        </div>
-      </div>
-
       <!-- Prediction Markets -->
       <div class="dash-panel dp-pred">
         <div class="ph">
@@ -1121,6 +1110,17 @@ body {
         </div>
         <div class="pb" id="pred-panel">
           <div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div>
+        </div>
+      </div>
+
+      <!-- Network Stats -->
+      <div class="dash-panel dp-net">
+        <div class="ph">
+          <span class="pt" data-en="Network Statistics" data-de="Netzwerk-Statistiken">Network Statistics</span>
+          <span class="bdg blo" id="network-badge">Loading&hellip;</span>
+        </div>
+        <div class="pb" id="network-panel">
+          <div class="sk"></div><div class="sk"></div><div class="sk"></div>
         </div>
       </div>
 
@@ -1556,25 +1556,53 @@ function formatVolume(v){const n=parseFloat(v)||0;if(n>=1e6)return'$'+(n/1e6).to
 function renderPredictions(items){
   const panel=document.getElementById('pred-panel');
   if(!items||!items.length){panel.innerHTML='<div class="err">'+t('pred_no')+'<br><button class="rbtn" onclick="loadPolymarket()">'+t('retry')+'</button></div>';return;}
-  let html='';
+  let html='<div style="display:flex;flex-direction:column;gap:3px;">';
   items.forEach(item=>{
     const vol=formatVolume(item.volume24hr||0),link=item.url||'https://polymarket.com';
+    const uid='p'+Math.random().toString(36).substr(2,6);
     if(item.type==='multi'&&item.markets&&item.markets.length){
-      const uid='m'+Math.random().toString(36).substr(2,6);
-      html+='<div class="pred-item"><div class="pq" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="var e=document.getElementById(\''+uid+'\');var a=document.getElementById(\''+uid+'a\');var o=e.style.display!==\'none\';e.style.display=o?\'none\':\'flex\';a.style.transform=o?\'rotate(-90deg)\':\'rotate(0deg)\';"><span>'+item.question+'</span><span id="'+uid+'a" style="font-size:.7rem;color:var(--sky);margin-left:7px;flex-shrink:0;transform:rotate(-90deg);">&#9660;</span></div><a class="poly-link" href="'+link+'" target="_blank" rel="noopener">&#x2197; polymarket.com</a><div id="'+uid+'" style="margin-top:7px;display:none;flex-direction:column;gap:5px;">';
-      item.markets.map(sub=>{let p=0;try{const ps=JSON.parse(sub.outcomePrices||'[0]');p=parseFloat(ps[0])||0;}catch(e2){}return{question:sub.question,price:p};}).filter(s=>s.price>0).sort((a,b)=>b.price-a.price).forEach(sub=>{
-        const pct=(sub.price*100).toFixed(0),bc=sub.price>.5?'var(--green)':sub.price>.25?'var(--yellow)':'var(--muted2)';
-        let lbl=(sub.question||'').replace(/^Will (Bitcoin|BTC) (reach|dip to|drop to|fall to|hit|exceed|go above|go below)\s*/i,'').replace(/^Will .* be (above|below|at|over|under)\s*/i,'').replace(/\?$/,'').trim();
-        html+='<div style="display:flex;align-items:center;gap:7px;"><div style="font-family:var(--f-mono);font-size:.58rem;color:var(--muted2);min-width:75px;flex-shrink:0;">'+lbl+'</div><div style="flex:1;height:2px;background:var(--bg4);"><div style="height:2px;background:'+bc+';width:'+pct+'%"></div></div><div style="font-family:var(--f-mono);font-size:.58rem;color:'+bc+';min-width:28px;text-align:right;">'+pct+'%</div></div>';
+      // compact summary: top sub-market probability
+      const subs=item.markets.map(sub=>{let p=0;try{const ps=JSON.parse(sub.outcomePrices||'[0]');p=parseFloat(ps[0])||0;}catch(e2){}return{question:sub.question,price:p};}).filter(s=>s.price>0).sort((a,b)=>b.price-a.price);
+      const topP=subs.length?(subs[0].price*100).toFixed(0):null;
+      const bc=topP>=50?'var(--green)':topP>=25?'var(--yellow)':'var(--muted2)';
+      const shortQ=(item.question||'').length>52?(item.question||'').substring(0,52)+'…':item.question;
+      html+='<div style="background:var(--bg3);border:1px solid var(--border);overflow:hidden;">';
+      // collapsed row
+      html+='<div onclick="var d=document.getElementById(\''+uid+'\');var a=document.getElementById(\''+uid+'a\');var o=d.style.display!==\'none\';d.style.display=o?\'none\':\'block\';a.style.transform=o?\'rotate(0)\':\'rotate(180deg)\';" style="display:flex;align-items:center;gap:8px;padding:7px 9px;cursor:pointer;">';
+      html+='<div style="flex:1;min-width:0;"><div style="font-size:.62rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+shortQ+'</div></div>';
+      if(topP!==null)html+='<div style="font-family:var(--f-mono);font-size:.65rem;font-weight:600;color:'+bc+';flex-shrink:0;">'+topP+'%</div>';
+      html+='<span id="'+uid+'a" style="font-size:.55rem;color:var(--sky);flex-shrink:0;transition:transform .2s;">&#9660;</span>';
+      html+='</div>';
+      // expanded content
+      html+='<div id="'+uid+'" style="display:none;padding:0 9px 8px;">';
+      html+='<div style="font-size:.6rem;color:var(--text);margin-bottom:6px;">'+item.question+'</div>';
+      subs.slice(0,6).forEach(sub=>{
+        const pct=(sub.price*100).toFixed(0),bc2=sub.price>.5?'var(--green)':sub.price>.25?'var(--yellow)':'var(--muted2)';
+        let lbl=(sub.question||'').replace(/^Will (Bitcoin|BTC) (reach|dip to|drop to|fall to|hit|exceed|go above|go below)\s*/i,'').replace(/^Will .* be (above|below|at|over|under)\s*/i,'').replace(/\?$/,'').trim().substring(0,30);
+        html+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><div style="font-family:var(--f-mono);font-size:.52rem;color:var(--muted2);min-width:70px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+lbl+'</div><div style="flex:1;height:2px;background:var(--bg4);"><div style="height:2px;background:'+bc2+';width:'+pct+'%"></div></div><div style="font-family:var(--f-mono);font-size:.52rem;color:'+bc2+';min-width:26px;text-align:right;">'+pct+'%</div></div>';
       });
-      html+='</div><div class="pmeta" style="margin-top:5px;"><span>Vol 24h: '+vol+'</span></div></div>';
+      html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;"><span style="font-family:var(--f-mono);font-size:.48rem;color:var(--muted2);">Vol 24h: '+vol+'</span><a href="'+link+'" target="_blank" rel="noopener" style="font-family:var(--f-mono);font-size:.48rem;color:var(--sky);text-decoration:none;">&#x2197; polymarket</a></div>';
+      html+='</div></div>';
     }else{
       let yp=.5;try{const ps=JSON.parse(item.outcomePrices||'[.5,.5]');yp=parseFloat(ps[0])||.5;}catch(e2){}
-      const yes=(yp*100).toFixed(0),no=(100-yes),yc=yes>=50?'var(--green)':'var(--red)',dir=yes>=50?'\u25B2 BULLISH':'\u25BC BEARISH';
-      html+='<div class="pred-item"><div class="pq">'+item.question+'</div><a class="poly-link" href="'+link+'" target="_blank" rel="noopener">&#x2197; polymarket.com</a><div class="pbar-row" style="margin-top:7px;"><div class="pbar"><div class="pbfill" style="width:'+yes+'%;background:'+yc+'"></div></div><span style="font-family:var(--f-mono);font-size:.56rem;color:'+yc+';">'+dir+'</span></div><div class="pmeta"><span style="color:'+yc+'">'+t('pred_yes')+' '+yes+'%</span><span>'+t('pred_no')+' '+no+'%</span><span>Vol: '+vol+'</span></div></div>';
+      const yes=(yp*100).toFixed(0),yc=yes>=50?'var(--green)':'var(--red)',dir=yes>=50?'▲':'▼';
+      const shortQ=(item.question||'').length>52?(item.question||'').substring(0,52)+'…':item.question;
+      html+='<div style="background:var(--bg3);border:1px solid var(--border);overflow:hidden;">';
+      // collapsed row
+      html+='<div onclick="var d=document.getElementById(\''+uid+'\');var a=document.getElementById(\''+uid+'a\');var o=d.style.display!==\'none\';d.style.display=o?\'none\':\'block\';a.style.transform=o?\'rotate(0)\':\'rotate(180deg)\';" style="display:flex;align-items:center;gap:8px;padding:7px 9px;cursor:pointer;">';
+      html+='<div style="flex:1;min-width:0;"><div style="font-size:.62rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+shortQ+'</div></div>';
+      html+='<div style="font-family:var(--f-mono);font-size:.65rem;font-weight:600;color:'+yc+';flex-shrink:0;">'+dir+' '+yes+'%</div>';
+      html+='<span id="'+uid+'a" style="font-size:.55rem;color:var(--sky);flex-shrink:0;transition:transform .2s;">&#9660;</span>';
+      html+='</div>';
+      // expanded content
+      html+='<div id="'+uid+'" style="display:none;padding:0 9px 8px;">';
+      html+='<div style="font-size:.6rem;color:var(--text);margin-bottom:6px;">'+item.question+'</div>';
+      html+='<div style="display:flex;align-items:center;gap:4px;margin-bottom:6px;"><div style="flex:1;height:3px;background:var(--bg4);"><div style="height:3px;background:'+yc+';width:'+yes+'%"></div></div></div>';
+      html+='<div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-family:var(--f-mono);font-size:.48rem;color:'+yc+';">YES '+yes+'% / NO '+(100-yes)+'%</span><span style="font-family:var(--f-mono);font-size:.48rem;color:var(--muted2);">Vol: '+vol+'</span><a href="'+link+'" target="_blank" rel="noopener" style="font-family:var(--f-mono);font-size:.48rem;color:var(--sky);text-decoration:none;">&#x2197; polymarket</a></div>';
+      html+='</div></div>';
     }
   });
-  html+='<button class="rbtn" onclick="loadPolymarket()">'+t('refresh')+'</button>';
+  html+='</div><button class="rbtn" style="margin-top:6px;" onclick="loadPolymarket()">'+t('refresh')+'</button>';
   panel.innerHTML=html;
 }
 async function loadPolymarket(){
