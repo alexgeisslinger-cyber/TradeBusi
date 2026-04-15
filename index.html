@@ -501,10 +501,10 @@ body {
 .dp-fg       { grid-column: 1 / 4; min-height: 220px; }
 .dp-dom      { grid-column: 4 / 7; min-height: 220px; }
 .dp-net      { grid-column: 7 / 13; min-height: 220px; }
-.dp-macro    { grid-column: 1 / 7; min-height: 260px; }
+.dp-macro    { grid-column: 7 / 13; min-height: 260px; }
 .dp-whale    { grid-column: 1 / 7; min-height: 480px; }
 .dp-pred     { grid-column: 1 / 7; min-height: 260px; }
-.dp-events   { grid-column: 7 / 13; min-height: 260px; }
+.dp-events   { grid-column: 1 / 7; min-height: 260px; }
 .dp-techsig  { grid-column: 7 / 13; min-height: 480px; }
 
 .ph {
@@ -1068,28 +1068,6 @@ body {
         <div class="pb" id="dom-panel"><div class="sk"></div></div>
       </div>
 
-      <!-- Network Stats -->
-      <div class="dash-panel dp-net">
-        <div class="ph">
-          <span class="pt" data-en="Network Statistics" data-de="Netzwerk-Statistiken">Network Statistics</span>
-          <span class="bdg blo" id="network-badge">Loading&hellip;</span>
-        </div>
-        <div class="pb" id="network-panel">
-          <div class="sk"></div><div class="sk"></div><div class="sk"></div>
-        </div>
-      </div>
-
-      <!-- Macro Indicators -->
-      <div class="dash-panel dp-macro">
-        <div class="ph">
-          <span class="pt" data-en="BTC Futures · Market Structure" data-de="BTC Futures · Marktstruktur">BTC Futures · Market Structure</span>
-          <span class="bdg blo" id="macro-badge">Loading&hellip;</span>
-        </div>
-        <div class="pb" id="macro-panel">
-          <div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div>
-        </div>
-      </div>
-
       <!-- Technical Analysis -->
       <div class="dash-panel dp-techsig">
         <div class="ph">
@@ -1107,17 +1085,6 @@ body {
         </div>
       </div>
 
-      <!-- Prediction Markets -->
-      <div class="dash-panel dp-pred">
-        <div class="ph">
-          <span class="pt">Prediction Markets</span>
-          <span class="bdg blo" id="poly-badge">Loading&hellip;</span>
-        </div>
-        <div class="pb" id="pred-panel">
-          <div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div>
-        </div>
-      </div>
-
       <!-- Economic Calendar -->
       <div class="dash-panel dp-events">
         <div class="ph">
@@ -1132,6 +1099,39 @@ body {
             {"colorTheme":"dark","isTransparent":true,"width":"100%","height":"420","locale":"en","importanceFilter":"0,1","countryFilter":"us"}
             </script>
           </div>
+        </div>
+      </div>
+
+      <!-- Network Stats -->
+      <div class="dash-panel dp-net">
+        <div class="ph">
+          <span class="pt" data-en="Network Statistics" data-de="Netzwerk-Statistiken">Network Statistics</span>
+          <span class="bdg blo" id="network-badge">Loading&hellip;</span>
+        </div>
+        <div class="pb" id="network-panel">
+          <div class="sk"></div><div class="sk"></div><div class="sk"></div>
+        </div>
+      </div>
+
+      <!-- Prediction Markets -->
+      <div class="dash-panel dp-pred">
+        <div class="ph">
+          <span class="pt">Prediction Markets</span>
+          <span class="bdg blo" id="poly-badge">Loading&hellip;</span>
+        </div>
+        <div class="pb" id="pred-panel">
+          <div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div>
+        </div>
+      </div>
+
+      <!-- Macro Indicators -->
+      <div class="dash-panel dp-macro">
+        <div class="ph">
+          <span class="pt" data-en="BTC Futures · Market Structure" data-de="BTC Futures · Marktstruktur">BTC Futures · Market Structure</span>
+          <span class="bdg blo" id="macro-badge">Loading&hellip;</span>
+        </div>
+        <div class="pb" id="macro-panel">
+          <div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div>
         </div>
       </div>
 
