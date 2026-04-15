@@ -1121,7 +1121,7 @@ body {
       <!-- Political & Economic Events -->
       <div class="dash-panel dp-events">
         <div class="ph">
-          <span class="pt" data-en="Political &amp; Economic Events" data-de="Politische &amp; Wirtschaftliche Events">Political &amp; Economic Events</span>
+          <span class="pt" data-en="USD Economic Calendar · This &amp; Next Week" data-de="USD Wirtschaftskalender · Diese &amp; Nächste Woche">USD Economic Calendar · This &amp; Next Week</span>
           <span class="bdg blo" id="news-badge">Loading&hellip;</span>
         </div>
         <div class="pb" id="news-panel">
@@ -1649,14 +1649,50 @@ async function loadTicker(){
 async function loadNews(){
   const panel=document.getElementById('news-panel'),badge=document.getElementById('news-badge');
   try{
-    const res=await fetch('/api/events');if(!res.ok)throw new Error('HTTP '+res.status);
-    const data=await res.json();if(!Array.isArray(data)||!data.length)throw new Error();
-    let html='';
-    data.forEach(ev=>{const imp=(ev.impact||'').toUpperCase();const ic=imp==='HIGH'?'var(--red)':imp==='MEDIUM'?'var(--yellow)':'var(--muted2)';const date=ev.date?new Date(ev.date).toLocaleDateString(t('locale'),t('date_opts')):t('ev_soon');const time=ev.time||'';const fc=ev.forecast?'<span>'+t('ev_fc')+ev.forecast+'</span>':'';const pr=ev.previous?'<span>'+t('ev_pr')+ev.previous+'</span>':'';html+='<div class="ev-item"><div class="ev-date">'+date+(time?'<br><span style="font-size:.44rem;opacity:.6">'+time+'</span>':'')+'</div><div class="ev-dot" style="background:'+ic+'"></div><div><div class="ev-title">'+(ev.name||ev.title)+'</div><div class="ev-meta"><span>'+t('ev_imp')+'<span style="color:'+ic+'">'+imp+'</span></span>'+fc+pr+'</div></div></div>';});
-    html+='<button class="rbtn" onclick="loadNews()">'+t('refresh')+'</button>';
-    panel.innerHTML=html;badge.textContent='\u25CF Live \u00B7 Calendar';badge.className='bdg byl';
-    setTimeout(loadNews,600000);
-  }catch(err){console.error('Events:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Events unavailable.<br><button class="rbtn" onclick="loadNews()">'+t('retry')+'</button></div>';}
+    const [r1,r2]=await Promise.all([
+      fetch('https://nfs.faireconomy.media/ff_calendar_thisweek.json?version='+Date.now()),
+      fetch('https://nfs.faireconomy.media/ff_calendar_nextweek.json?version='+Date.now())
+    ]);
+    const w1=r1.ok?await r1.json():[];
+    const w2=r2.ok?await r2.json():[];
+    const all=[...w1,...w2];
+
+    // Filter: USD events, High + Medium impact only — most relevant for BTC
+    const events=all.filter(ev=>ev.country==='USD'&&(ev.impact==='High'||ev.impact==='Medium'));
+    if(!events.length)throw new Error('No USD events');
+
+    const now=new Date();
+    let html='<div style="display:flex;flex-direction:column;gap:5px;">';
+    events.forEach(ev=>{
+      const d=new Date(ev.date);
+      const past=d<now;
+      const isToday=d.toDateString()===now.toDateString();
+      const high=ev.impact==='High';
+      const col=high?'var(--red)':'var(--amber)';
+      const dateStr=isToday?'Today':d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+      const timeStr=d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+      const forecast=ev.forecast?'<span style="color:var(--sky);">F: '+ev.forecast+'</span>':'';
+      const previous=ev.previous?'<span>P: '+ev.previous+'</span>':'';
+      const actual=ev.actual?'<span style="color:var(--green);font-weight:600;">A: '+ev.actual+'</span>':'';
+      html+=`<div style="padding:7px 10px;background:var(--bg4);border:1px solid var(--border);border-left:2px solid ${col};${past?'opacity:.45':''}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+          <span style="font-family:var(--f-mono);font-size:.59rem;color:var(--text);font-weight:500;flex:1;">${ev.title}</span>
+          <span style="font-family:var(--f-mono);font-size:.48rem;color:${col};white-space:nowrap;flex-shrink:0;">${ev.impact.toUpperCase()}</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:3px;font-family:var(--f-mono);font-size:.5rem;color:var(--muted2);">
+          <span>${dateStr} &middot; ${timeStr}</span>${forecast}${previous}${actual}
+        </div>
+      </div>`;
+    });
+    html+='</div><div style="margin-top:6px;font-family:var(--f-mono);font-size:.46rem;color:var(--muted2);text-align:center;">USD events &middot; Forex Factory &middot; High &amp; Medium impact</div>';
+    panel.innerHTML=html;
+    badge.textContent='\u25CF Live \u00B7 Forex Factory';badge.className='bdg bl';
+    setTimeout(loadNews,3600000);
+  }catch(err){
+    console.error('Events:',err);
+    badge.textContent='Offline';badge.className='bdg ber';
+    panel.innerHTML='<div class="err">Events unavailable.<br><button class="rbtn" onclick="loadNews()">'+t('retry')+'</button></div>';
+  }
 }
 
 // ══ MACRO ══════════════════════════════════
