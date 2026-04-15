@@ -502,10 +502,10 @@ body {
 .dp-dom      { grid-column: 4 / 7; min-height: 220px; }
 .dp-net      { grid-column: 7 / 13; min-height: 220px; }
 .dp-macro    { grid-column: 1 / 7; min-height: 260px; }
-.dp-whale    { grid-column: 7 / 13; min-height: 260px; }
+.dp-whale    { grid-column: 1 / 7; min-height: 480px; }
 .dp-pred     { grid-column: 1 / 7; min-height: 260px; }
 .dp-events   { grid-column: 7 / 13; min-height: 260px; }
-.dp-techsig  { grid-column: 1 / 7; min-height: 480px; }
+.dp-techsig  { grid-column: 7 / 13; min-height: 480px; }
 
 .ph {
   display: flex; align-items: center; justify-content: space-between;
@@ -1048,23 +1048,6 @@ body {
         </div>
       </div>
 
-      <!-- Crypto Heatmap -->
-      <div class="dash-panel dp-tvheat">
-        <div class="ph">
-          <span class="pt" data-en="Crypto Market Heatmap · 24h" data-de="Krypto-Markt-Heatmap · 24h">Crypto Market Heatmap · 24h</span>
-          <span class="bdg bl">&#9679; Live &middot; TradingView</span>
-        </div>
-        <div style="flex:1;min-height:450px;">
-          <div class="tradingview-widget-container" style="width:100%;height:450px;">
-            <div class="tradingview-widget-container__widget" style="width:100%;height:450px;"></div>
-            <div class="tradingview-widget-copyright" style="display:none!important;height:0!important;overflow:hidden;"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-crypto-coins-heatmap.js" async>
-            {"dataSource":"Crypto","blockSize":"market_cap_calc","blockColor":"24h_close_change|5","locale":"en","symbolUrl":"","colorTheme":"dark","hasTopBar":false,"isDataSetEnabled":false,"isZoomEnabled":true,"hasSymbolTooltip":true,"isMonoSize":false,"width":"100%","height":"100%"}
-            </script>
-          </div>
-        </div>
-      </div>
-
       <!-- Fear & Greed -->
       <div class="dash-panel dp-fg">
         <div class="ph">
@@ -1107,14 +1090,20 @@ body {
         </div>
       </div>
 
-      <!-- Whale Tracker -->
-      <div class="dash-panel dp-whale">
+      <!-- Technical Analysis -->
+      <div class="dash-panel dp-techsig">
         <div class="ph">
-          <span class="pt">Whale Tracker</span>
-          <span class="bdg blo" id="whale-badge">Loading&hellip;</span>
+          <span class="pt" data-en="BTC Technical Analysis · Live" data-de="BTC Technische Analyse · Live">BTC Technical Analysis · Live</span>
+          <span class="bdg bl">&#9679; Live &middot; TradingView</span>
         </div>
-        <div class="pb" id="whale-panel">
-          <div class="sk"></div><div class="sk"></div><div class="sk"></div>
+        <div style="flex:1;overflow:hidden;">
+          <div class="tradingview-widget-container" style="width:100%;height:450px;">
+            <div class="tradingview-widget-container__widget" style="width:100%;height:450px;"></div>
+            <div class="tradingview-widget-copyright" style="display:none!important;height:0!important;overflow:hidden;"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+            {"colorTheme":"dark","displayMode":"single","isTransparent":true,"locale":"en","interval":"1D","disableInterval":false,"width":"100%","height":450,"symbol":"BINANCE:BTCUSDT","showIntervalTabs":true}
+            </script>
+          </div>
         </div>
       </div>
 
@@ -1140,18 +1129,29 @@ body {
         </div>
       </div>
 
-      <!-- Technical Analysis -->
-      <div class="dash-panel dp-techsig">
+      <!-- Whale Tracker -->
+      <div class="dash-panel dp-whale">
         <div class="ph">
-          <span class="pt" data-en="BTC Technical Analysis · Live" data-de="BTC Technische Analyse · Live">BTC Technical Analysis · Live</span>
+          <span class="pt">Whale Tracker</span>
+          <span class="bdg blo" id="whale-badge">Loading&hellip;</span>
+        </div>
+        <div class="pb" id="whale-panel">
+          <div class="sk"></div><div class="sk"></div><div class="sk"></div>
+        </div>
+      </div>
+
+      <!-- Crypto Heatmap -->
+      <div class="dash-panel dp-tvheat">
+        <div class="ph">
+          <span class="pt" data-en="Crypto Market Heatmap · 24h" data-de="Krypto-Markt-Heatmap · 24h">Crypto Market Heatmap · 24h</span>
           <span class="bdg bl">&#9679; Live &middot; TradingView</span>
         </div>
-        <div style="flex:1;overflow:hidden;">
+        <div style="flex:1;min-height:450px;">
           <div class="tradingview-widget-container" style="width:100%;height:450px;">
             <div class="tradingview-widget-container__widget" style="width:100%;height:450px;"></div>
             <div class="tradingview-widget-copyright" style="display:none!important;height:0!important;overflow:hidden;"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
-            {"colorTheme":"dark","displayMode":"single","isTransparent":true,"locale":"en","interval":"1D","disableInterval":false,"width":"100%","height":450,"symbol":"BINANCE:BTCUSDT","showIntervalTabs":true}
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-crypto-coins-heatmap.js" async>
+            {"dataSource":"Crypto","blockSize":"market_cap_calc","blockColor":"24h_close_change|5","locale":"en","symbolUrl":"","colorTheme":"dark","hasTopBar":false,"isDataSetEnabled":false,"isZoomEnabled":true,"hasSymbolTooltip":true,"isMonoSize":false,"width":"100%","height":"100%"}
             </script>
           </div>
         </div>
