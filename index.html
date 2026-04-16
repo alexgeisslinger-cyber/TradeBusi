@@ -352,28 +352,28 @@ body {
 
 /* ── TICKER ─────────────────────────────────── */
 .ticker {
-  height: 36px; background: var(--bg);
+  height: 48px; background: var(--bg);
   border-bottom: 1px solid var(--border);
   display: flex; align-items: center; overflow: hidden;
 }
 .ticker-lbl {
-  font-family: var(--f-mono); font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase;
+  font-family: var(--f-mono); font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase;
   color: var(--sky); background: rgba(56,189,248,0.06);
   border-right: 1px solid var(--border2);
-  padding: 0 14px; height: 100%;
+  padding: 0 18px; height: 100%;
   display: flex; align-items: center; flex-shrink: 0;
 }
 .ticker-scroll { overflow: hidden; flex: 1; }
 .ticker-track { display: flex; animation: tick 60s linear infinite; white-space: nowrap; }
 .ticker-track:hover { animation-play-state: paused; }
 .ticker-item {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 0 24px; font-family: var(--f-mono); font-size: 0.6rem;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 0 28px; font-family: var(--f-mono); font-size: 0.72rem;
   color: var(--muted2); border-right: 1px solid var(--border);
   white-space: nowrap; text-decoration: none; transition: color 0.2s;
 }
 .ticker-item:hover { color: var(--text); }
-.tdot { width: 4px; height: 4px; flex-shrink: 0; }
+.tdot { width: 5px; height: 5px; flex-shrink: 0; }
 @keyframes tick { 0%{transform:translateX(0);} 100%{transform:translateX(-50%);} }
 
 /* ── SECTIONS ───────────────────────────────── */
