@@ -1734,19 +1734,25 @@ async function loadNews(){
 async function loadMacro(){
   const panel=document.getElementById('macro-panel'),badge=document.getElementById('macro-badge');
   try{
-    const[frR,oiR,lsR,ethR]=await Promise.all([
-      fetch('https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT'),
-      fetch('https://fapi.binance.com/futures/data/openInterestHist?symbol=BTCUSDT&period=1h&limit=2'),
-      fetch('https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=BTCUSDT&period=1h&limit=1'),
-      fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=ETHBTC')
+    const[tkR,oiR,lsR,ethR]=await Promise.all([
+      fetch('https://api.bybit.com/v5/market/tickers?category=linear&symbol=BTCUSDT'),
+      fetch('https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=1h&limit=2'),
+      fetch('https://api.bybit.com/v5/market/account-ratio?category=linear&symbol=BTCUSDT&period=1h&limit=1'),
+      fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=btc&include_24hr_change=true')
     ]);
-    const fr=await frR.json(),oi=await oiR.json(),ls=await lsR.json(),eth=await ethR.json();
-    const fundingRate=parseFloat(fr.lastFundingRate)*100;
+    const tk=await tkR.json(),oi=await oiR.json(),ls=await lsR.json(),eth=await ethR.json();
+    const ticker=tk.result?.list?.[0];
+    const fundingRate=parseFloat(ticker?.fundingRate||0)*100;
     const fundingAnn=(fundingRate*3*365).toFixed(1);
-    const oiNow=parseFloat(oi[1]?.sumOpenInterestValue||0),oiPrev=parseFloat(oi[0]?.sumOpenInterestValue||1);
-    const oiChg=(oiNow-oiPrev)/oiPrev*100;
-    const lsRatio=parseFloat(ls[0]?.longShortRatio||1);
-    const ethChg=parseFloat(eth.priceChangePercent),ethP=parseFloat(eth.lastPrice);
+    const oiList=oi.result?.list||[];
+    const oiNow=parseFloat(oiList[0]?.openInterest||0),oiPrev=parseFloat(oiList[1]?.openInterest||1);
+    const oiChg=(oiNow-oiPrev)/Math.abs(oiPrev)*100;
+    const oiUSD=parseFloat(ticker?.openInterestValue||0);
+    const lsData=ls.result?.list?.[0];
+    const buyRatio=parseFloat(lsData?.buyRatio||0.5);
+    const lsRatio=buyRatio>0&&buyRatio<1?buyRatio/(1-buyRatio):1;
+    const ethP=eth?.ethereum?.btc||0;
+    const ethChg=eth?.ethereum?.btc_24h_change||0;
     const frBull=fundingRate>=-0.01&&fundingRate<0.05,oiBull=oiChg>0,lsBull=lsRatio>1,ethBull=ethChg<0;
     const bc=[frBull,oiBull,lsBull,ethBull].filter(Boolean).length;
     const ms=Math.round(bc/4*100);liveScores.macro=ms;updateSignalScore();
@@ -1757,7 +1763,7 @@ async function loadMacro(){
        bull:frBull},
       {label:'Open Interest 1h',
        val:(oiChg>=0?'+':'')+oiChg.toFixed(2)+'%',
-       sub:'$'+(oiNow/1e9).toFixed(2)+'B · '+(oiBull?t('oi_in'):t('oi_out')),
+       sub:'$'+(oiUSD/1e9).toFixed(2)+'B · '+(oiBull?t('oi_in'):t('oi_out')),
        bull:oiBull},
       {label:'Long / Short Ratio',
        val:lsRatio.toFixed(3),
@@ -1773,7 +1779,7 @@ async function loadMacro(){
       const col=r.bull?'var(--green)':'var(--red)';
       html+='<div style="padding:8px 10px;background:var(--bg4);border:1px solid var(--border);border-left:2px solid '+col+';"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-family:var(--f-mono);font-size:.62rem;color:var(--muted2);">'+r.label+'</span><span style="font-family:var(--f-mono);font-size:.64rem;color:'+col+';font-weight:500;">'+r.val+'</span></div><div style="font-size:.6rem;color:var(--muted2);margin-top:2px;">'+r.sub+'</div></div>';
     });
-    html+='</div><div style="margin-top:7px;font-family:var(--f-mono);font-size:.65rem;color:var(--muted2);text-align:center;">Binance Futures · Updates every 60s</div>';
+    html+='</div><div style="margin-top:7px;font-family:var(--f-mono);font-size:.65rem;color:var(--muted2);text-align:center;">Bybit Futures · Updates every 60s</div>';
     panel.innerHTML=html;
     const env=ms>=60?t('mac_bull'):ms>=40?t('mac_neut'):t('mac_bear');
     badge.textContent='\u25CF '+env;badge.className=ms>=60?'bdg bl':ms>=40?'bdg byl':'bdg ber';
