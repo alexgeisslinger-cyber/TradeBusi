@@ -1900,14 +1900,15 @@ document.addEventListener('DOMContentLoaded',()=>{
     const cv=document.getElementById('hero-canvas');
     if(!cv)return;
     const ctx=cv.getContext('2d');
-    const CW=16,GAP=7,SPD=0.45,STEP=CW+GAP;
+    const CW=16,GAP=7,SPD=0.5,STEP=CW+GAP;
     let W,H,candles,raf;
     function pY(p){return H*0.5+p*H*0.28;}
+    function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
     function mkCandle(x,prev){
       const open=prev??0;
       const close=Math.max(-0.88,Math.min(0.88,open+(Math.random()-0.49)*0.09));
-      const hi=Math.min(open,close)-Math.random()*0.045;
-      const lo=Math.max(open,close)+Math.random()*0.045;
+      const hi=Math.min(open,close)-Math.random()*0.05;
+      const lo=Math.max(open,close)+Math.random()*0.05;
       return{x,open,close,hi,lo};
     }
     function resize(){
@@ -1916,21 +1917,39 @@ document.addEventListener('DOMContentLoaded',()=>{
       H=cv.height=hero.offsetHeight;
     }
     function init(){
+      // pre-fill only the left half so right side starts empty
       candles=[];let prev=0;
-      const n=Math.ceil(W/STEP)+2;
+      const n=Math.ceil(W*0.55/STEP)+1;
       for(let i=0;i<n;i++){const c=mkCandle(i*STEP,prev);prev=c.close;candles.push(c);}
     }
     function frame(){
       ctx.clearRect(0,0,W,H);
       candles.forEach(c=>c.x-=SPD);
       while(candles.length&&candles[0].x+CW<0)candles.shift();
-      while(candles[candles.length-1].x<W+STEP){const l=candles[candles.length-1];candles.push(mkCandle(l.x+STEP,l.close));}
+      // spawn new candle at center when last one moves past spawn point
+      const spawnX=W*0.52;
+      if(!candles.length||candles[candles.length-1].x<spawnX-STEP){
+        const prev=candles.length?candles[candles.length-1].close:0;
+        candles.push(mkCandle(spawnX,prev));
+      }
       candles.forEach(c=>{
-        const mx=c.x+CW/2,yO=pY(c.open),yC=pY(c.close),yH=pY(c.hi),yL=pY(c.lo);
-        ctx.strokeStyle='rgba(247,147,26,0.18)';ctx.lineWidth=1;
+        // scale: grow from 0→1 as candle moves from spawnX to spawnX-W*0.12
+        const scale=clamp((spawnX-c.x)/(W*0.12),0,1);
+        // fade out near left edge
+        const fade=clamp(c.x/(W*0.08),0,1);
+        const alpha=0.22*scale*fade;
+        if(alpha<0.005)return;
+        const mx=c.x+CW/2;
+        const yO=pY(c.open),yC=pY(c.close);
+        const midY=(yO+yC)/2;
+        const yH=midY+(pY(c.hi)-midY)*scale;
+        const yL=midY+(pY(c.lo)-midY)*scale;
+        const sO=midY+(yO-midY)*scale;
+        const sC=midY+(yC-midY)*scale;
+        ctx.strokeStyle=`rgba(255,255,255,${alpha})`;ctx.lineWidth=1;
         ctx.beginPath();ctx.moveTo(mx,yH);ctx.lineTo(mx,yL);ctx.stroke();
-        ctx.fillStyle='rgba(247,147,26,0.18)';
-        ctx.fillRect(c.x,Math.min(yO,yC),CW,Math.max(1,Math.abs(yC-yO)));
+        ctx.fillStyle=`rgba(255,255,255,${alpha})`;
+        ctx.fillRect(c.x,Math.min(sO,sC),CW,Math.max(1,Math.abs(sC-sO)));
       });
       raf=requestAnimationFrame(frame);
     }
