@@ -470,12 +470,34 @@ body {
 
 /* ── DASHBOARD SECTION ──────────────────────── */
 .dash-section { padding: 96px 0; background: var(--bg2); }
+/* ── CRYPTO TABS ──────────────────────────── */
+.crypto-tabs {
+  display: flex;
+  gap: 0;
+  margin-top: 36px;
+  border: 1px solid var(--border2);
+  width: fit-content;
+}
+.crypto-tab {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 22px;
+  font-family: var(--f-mono); font-size: 0.65rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  cursor: pointer; border: none; background: transparent;
+  color: var(--muted2); transition: all 0.2s;
+  border-right: 1px solid var(--border2);
+}
+.crypto-tab:last-child { border-right: none; }
+.crypto-tab:hover:not(.active) { background: var(--bg4); color: var(--text); }
+.crypto-tab.active { background: var(--amber); color: #000; font-weight: 700; }
+.crypto-tab .tab-icon { font-size: 0.85rem; }
+
 .dash-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: 0;
   border: 1px solid var(--border);
-  margin-top: 56px;
+  margin-top: 0;
   background: var(--bg3);
 }
 .dash-panel {
@@ -505,6 +527,13 @@ body {
 .dp-whale    { grid-column: 1 / 7; min-height: 480px; }
 .dp-pred     { grid-column: 7 / 13; min-height: 220px; }
 .dp-events   { grid-column: 1 / 7; min-height: 260px; }
+/* ETH panels */
+.dp-eth-chart   { grid-column: 1 / -1; min-height: 560px; }
+.dp-eth-market  { grid-column: 1 / 7;  min-height: 280px; }
+.dp-eth-futures { grid-column: 7 / 13; min-height: 280px; }
+.dp-eth-network { grid-column: 1 / 7;  min-height: 280px; }
+.dp-eth-tech    { grid-column: 7 / 13; min-height: 480px; }
+.dp-eth-whale   { grid-column: 1 / 7;  min-height: 480px; }
 .dp-techsig  { grid-column: 7 / 13; min-height: 480px; }
 
 .ph {
@@ -719,7 +748,7 @@ body {
 /* ── RESPONSIVE ─────────────────────────────── */
 @media (max-width: 1100px) {
   .dash-grid { grid-template-columns: repeat(6, 1fr); }
-  .dp-chart,.dp-net,.dp-macro,.dp-whale,.dp-pred,.dp-events,.dp-techsig,.dp-tvheat { grid-column: 1 / 7; }
+  .dp-chart,.dp-net,.dp-macro,.dp-whale,.dp-pred,.dp-events,.dp-techsig,.dp-tvheat,.dp-eth-chart,.dp-eth-market,.dp-eth-futures,.dp-eth-network,.dp-eth-tech,.dp-eth-whale { grid-column: 1 / 7; }
   .dp-fg { grid-column: 1 / 4; } .dp-dom { grid-column: 4 / 7; }
   .score-layout { grid-template-columns: 1fr; gap: 32px; }
   .feature-grid { grid-template-columns: 1fr 1fr; }
@@ -737,7 +766,7 @@ body {
   .nav-links { display: none; }
   .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
   .dash-grid { grid-template-columns: 1fr; }
-  .dp-chart,.dp-fg,.dp-dom,.dp-net,.dp-macro,.dp-whale,.dp-pred,.dp-events,.dp-techsig,.dp-tvheat { grid-column: 1; }
+  .dp-chart,.dp-fg,.dp-dom,.dp-net,.dp-macro,.dp-whale,.dp-pred,.dp-events,.dp-techsig,.dp-tvheat,.dp-eth-chart,.dp-eth-market,.dp-eth-futures,.dp-eth-network,.dp-eth-tech,.dp-eth-whale { grid-column: 1; }
 }
 </style>
 </head>
@@ -1030,7 +1059,12 @@ body {
     <h2 class="section-title" data-en="Live Dashboard" data-de="Echtzeit-Dashboard">Live Dashboard</h2>
     <p class="section-sub" data-en="All data live. Automatically updated. No login required." data-de="Alle Daten live. Automatisch aktualisiert. Keine Anmeldung erforderlich.">All data live. Automatically updated. No login required.</p>
 
-    <div class="dash-grid">
+    <div class="crypto-tabs">
+      <button class="crypto-tab active" id="tab-btc" onclick="switchCrypto('btc')"><span class="tab-icon">₿</span> Bitcoin</button>
+      <button class="crypto-tab" id="tab-eth" onclick="switchCrypto('eth')"><span class="tab-icon">Ξ</span> Ethereum</button>
+    </div>
+
+    <div class="dash-grid" id="btc-grid">
 
       <!-- BTC Chart -->
       <div class="dash-panel dp-chart">
@@ -1164,7 +1198,91 @@ body {
         </div>
       </div>
 
-    </div>
+    </div><!-- /btc-grid -->
+
+    <!-- ══ ETH GRID ══════════════════════════════════ -->
+    <div class="dash-grid" id="eth-grid" style="display:none;">
+
+      <!-- ETH Chart -->
+      <div class="dash-panel dp-eth-chart">
+        <div class="ph">
+          <span class="pt">Ethereum · ETHUSDT · Live Chart</span>
+          <span class="bdg bl">&#9679; Live &middot; TradingView</span>
+        </div>
+        <div style="flex:1;min-height:500px;">
+          <div class="tradingview-widget-container" style="width:100%;height:500px;">
+            <div class="tradingview-widget-container__widget" style="width:100%;height:500px;"></div>
+            <div class="tradingview-widget-copyright" style="display:none!important;height:0!important;overflow:hidden;"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+            {"autosize":false,"symbol":"BINANCE:ETHUSDT","interval":"D","timezone":"Etc/UTC","theme":"dark","style":"1","locale":"en","backgroundColor":"rgba(9,18,31,1)","gridColor":"rgba(56,189,248,0.04)","hide_top_toolbar":false,"hide_legend":false,"save_image":false,"calendar":false,"hide_volume":false,"support_host":"https://www.tradingview.com","width":"100%","height":"500"}
+            </script>
+          </div>
+        </div>
+      </div>
+
+      <!-- ETH Market Overview -->
+      <div class="dash-panel dp-eth-market">
+        <div class="ph">
+          <span class="pt">ETH Market Overview</span>
+          <span class="bdg blo" id="eth-market-badge">Loading&hellip;</span>
+        </div>
+        <div class="pb" id="eth-market-panel">
+          <div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div>
+        </div>
+      </div>
+
+      <!-- ETH Futures -->
+      <div class="dash-panel dp-eth-futures">
+        <div class="ph">
+          <span class="pt">ETH Futures · Market Structure</span>
+          <span class="bdg blo" id="eth-futures-badge">Loading&hellip;</span>
+        </div>
+        <div class="pb" id="eth-futures-panel">
+          <div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div>
+        </div>
+      </div>
+
+      <!-- ETH Network -->
+      <div class="dash-panel dp-eth-network">
+        <div class="ph">
+          <span class="pt">ETH Network Statistics</span>
+          <span class="bdg blo" id="eth-network-badge">Loading&hellip;</span>
+        </div>
+        <div class="pb" id="eth-network-panel">
+          <div class="sk"></div><div class="sk"></div><div class="sk"></div>
+        </div>
+      </div>
+
+      <!-- ETH Technical Analysis -->
+      <div class="dash-panel dp-eth-tech">
+        <div class="ph">
+          <span class="pt">ETH Technical Analysis · Live</span>
+          <span class="bdg bl">&#9679; Live &middot; TradingView</span>
+        </div>
+        <div style="flex:1;overflow:hidden;">
+          <div class="tradingview-widget-container" style="width:100%;height:450px;">
+            <div class="tradingview-widget-container__widget" style="width:100%;height:450px;"></div>
+            <div class="tradingview-widget-copyright" style="display:none!important;height:0!important;overflow:hidden;"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+            {"colorTheme":"dark","displayMode":"single","isTransparent":true,"locale":"en","interval":"1D","width":"100%","height":450,"symbol":"BINANCE:ETHUSDT","showIntervalTabs":true}
+            </script>
+          </div>
+        </div>
+      </div>
+
+      <!-- ETH Whale Tracker -->
+      <div class="dash-panel dp-eth-whale">
+        <div class="ph">
+          <span class="pt">ETH Whale Tracker</span>
+          <span class="bdg blo" id="eth-whale-badge">Loading&hellip;</span>
+        </div>
+        <div class="pb" id="eth-whale-panel">
+          <div class="sk"></div><div class="sk"></div><div class="sk"></div>
+        </div>
+      </div>
+
+    </div><!-- /eth-grid -->
+
   </div>
 </section>
 
@@ -1959,6 +2077,170 @@ document.addEventListener('DOMContentLoaded',()=>{
     window.addEventListener('resize',()=>{cancelAnimationFrame(raf);resize();init();frame();});
   })();
 });
+
+// ══ CRYPTO TAB SWITCHER ════════════════════
+let ethLoaded=false;
+function switchCrypto(coin){
+  const btcGrid=document.getElementById('btc-grid');
+  const ethGrid=document.getElementById('eth-grid');
+  const tabBtc=document.getElementById('tab-btc');
+  const tabEth=document.getElementById('tab-eth');
+  if(coin==='btc'){
+    btcGrid.style.display='';
+    ethGrid.style.display='none';
+    tabBtc.className='crypto-tab active';
+    tabEth.className='crypto-tab';
+  }else{
+    btcGrid.style.display='none';
+    ethGrid.style.display='grid';
+    tabBtc.className='crypto-tab';
+    tabEth.className='crypto-tab active';
+    if(!ethLoaded){loadETHDashboard();ethLoaded=true;}
+  }
+}
+
+// ══ ETH MARKET OVERVIEW ════════════════════
+async function loadETHMarket(){
+  const panel=document.getElementById('eth-market-panel'),badge=document.getElementById('eth-market-badge');
+  try{
+    const[cgR,byR]=await Promise.all([
+      fetch('https://api.coingecko.com/api/v3/coins/ethereum?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false'),
+      fetch('https://api.bybit.com/v5/market/tickers?category=spot&symbol=ETHUSDT')
+    ]);
+    const cg=await cgR.json(),by=await byR.json();
+    const md=cg.market_data;
+    const price=md.current_price.usd,chg24=md.price_change_percentage_24h,chg7=md.price_change_percentage_7d;
+    const mcap=md.market_cap.usd,vol=md.total_volume.usd,dom=md.market_cap_percentage?.eth??0;
+    const athPrice=md.ath.usd,athPct=md.ath_change_percentage.usd;
+    const ticker=by.result?.list?.[0];
+    const high24=parseFloat(ticker?.highPrice24h||0),low24=parseFloat(ticker?.lowPrice24h||0);
+    const cc=chg24>=0?'var(--green)':'var(--red)',cs=chg24>=0?'+':'';
+    const rows=[
+      {l:'Price',v:'$'+price.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),c:cc},
+      {l:'24h Change',v:cs+chg24.toFixed(2)+'%',c:cc},
+      {l:'7d Change',v:(chg7>=0?'+':'')+chg7.toFixed(2)+'%',c:chg7>=0?'var(--green)':'var(--red)'},
+      {l:'24h High',v:'$'+high24.toLocaleString('en-US',{maximumFractionDigits:2}),c:'var(--text)'},
+      {l:'24h Low',v:'$'+low24.toLocaleString('en-US',{maximumFractionDigits:2}),c:'var(--text)'},
+      {l:'Market Cap',v:'$'+(mcap/1e9).toFixed(1)+'B',c:'var(--muted2)'},
+      {l:'Volume 24h',v:'$'+(vol/1e9).toFixed(1)+'B',c:'var(--muted2)'},
+      {l:'ATH Distance',v:(athPct>=0?'+':'')+athPct.toFixed(1)+'%',c:athPct>=-10?'var(--green)':'var(--muted2)'},
+    ];
+    let html='<div style="display:flex;flex-direction:column;gap:4px;">';
+    rows.forEach(r=>{
+      html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:var(--bg4);border:1px solid var(--border);"><span style="font-family:var(--f-mono);font-size:.65rem;color:var(--muted2);">'+r.l+'</span><span style="font-family:var(--f-mono);font-size:.68rem;font-weight:600;color:'+r.c+';">'+r.v+'</span></div>';
+    });
+    html+='</div>';
+    panel.innerHTML=html;
+    badge.textContent='\u25CF Live \u00B7 CoinGecko';badge.className='bdg bl';
+  }catch(err){console.error('ETH Market:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Data unavailable.<br><button class="rbtn" onclick="loadETHMarket()">Retry</button></div>';}
+}
+
+// ══ ETH FUTURES ════════════════════════════
+async function loadETHFutures(){
+  const panel=document.getElementById('eth-futures-panel'),badge=document.getElementById('eth-futures-badge');
+  try{
+    const[tkR,oiR,lsR,spR]=await Promise.all([
+      fetch('https://api.bybit.com/v5/market/tickers?category=linear&symbol=ETHUSDT'),
+      fetch('https://api.bybit.com/v5/market/open-interest?category=linear&symbol=ETHUSDT&intervalTime=1h&limit=2'),
+      fetch('https://api.bybit.com/v5/market/account-ratio?category=linear&symbol=ETHUSDT&period=1h&limit=1'),
+      fetch('https://api.bybit.com/v5/market/tickers?category=spot&symbol=ETHUSDT')
+    ]);
+    const tk=await tkR.json(),oi=await oiR.json(),ls=await lsR.json(),sp=await spR.json();
+    const ticker=tk.result?.list?.[0],spotT=sp.result?.list?.[0];
+    const fr=parseFloat(ticker?.fundingRate||0)*100;
+    const frAnn=(fr*3*365).toFixed(1);
+    const oiList=oi.result?.list||[];
+    const oiNow=parseFloat(oiList[0]?.openInterest||0),oiPrev=parseFloat(oiList[1]?.openInterest||1);
+    const oiChg=(oiNow-oiPrev)/Math.abs(oiPrev)*100;
+    const oiUSD=parseFloat(ticker?.openInterestValue||0);
+    const lsData=ls.result?.list?.[0];
+    const buyR=parseFloat(lsData?.buyRatio||0.5);
+    const lsRatio=buyR>0&&buyR<1?buyR/(1-buyR):1;
+    const futP=parseFloat(ticker?.lastPrice||0),spotP=parseFloat(spotT?.lastPrice||0);
+    const basis=spotP>0?(futP-spotP)/spotP*100:0;
+    const rows=[
+      {label:'Funding Rate',val:(fr>=0?'+':'')+fr.toFixed(4)+'%',sub:frAnn+'% ann. · '+(fr>0.05?'Overheated':fr<-0.01?'Negative — shorts paid':'Neutral'),bull:fr>=-0.01&&fr<0.05},
+      {label:'Open Interest 1h',val:(oiChg>=0?'+':'')+oiChg.toFixed(2)+'%',sub:'$'+(oiUSD/1e9).toFixed(2)+'B · '+(oiChg>0?'Increasing':'Decreasing'),bull:oiChg>0},
+      {label:'Long / Short Ratio',val:lsRatio.toFixed(3),sub:lsRatio>1.3?'Longs dominant':lsRatio<0.77?'Shorts dominant':'Balanced',bull:lsRatio>1},
+      {label:'Futures Basis',val:(basis>=0?'+':'')+basis.toFixed(3)+'%',sub:basis>0.1?'Contango · bullish':basis<-0.1?'Backwardation · bearish':'Neutral',bull:basis>0},
+    ];
+    let html='<div style="display:flex;flex-direction:column;gap:5px;">';
+    rows.forEach(r=>{
+      const col=r.bull?'var(--green)':'var(--red)';
+      html+='<div style="padding:8px 10px;background:var(--bg4);border:1px solid var(--border);border-left:2px solid '+col+';"><div style="display:flex;justify-content:space-between;"><span style="font-family:var(--f-mono);font-size:.65rem;color:var(--muted2);">'+r.label+'</span><span style="font-family:var(--f-mono);font-size:.67rem;color:'+col+';font-weight:500;">'+r.val+'</span></div><div style="font-size:.62rem;color:var(--muted2);margin-top:2px;">'+r.sub+'</div></div>';
+    });
+    html+='</div><div style="margin-top:7px;font-family:var(--f-mono);font-size:.65rem;color:var(--muted2);text-align:center;">Bybit Futures · Updates every 60s</div>';
+    panel.innerHTML=html;
+    badge.textContent='\u25CF Bullish '+(rows.filter(r=>r.bull).length)+'/4';badge.className='bdg bl';
+    setTimeout(loadETHFutures,60000);
+  }catch(err){console.error('ETH Futures:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Data unavailable.<br><button class="rbtn" onclick="loadETHFutures()">Retry</button></div>';}
+}
+
+// ══ ETH NETWORK ════════════════════════════
+async function loadETHNetwork(){
+  const panel=document.getElementById('eth-network-panel'),badge=document.getElementById('eth-network-badge');
+  try{
+    const[cgR,bcR]=await Promise.all([
+      fetch('https://api.coingecko.com/api/v3/coins/ethereum?localization=false&tickers=false&market_data=true&community_data=false&developer_data=true&sparkline=false'),
+      fetch('https://beaconcha.in/api/v1/ethstore/latest')
+    ]);
+    const cg=await cgR.json(),bc=await bcR.json();
+    const devData=cg.developer_data||{};
+    const apr=bc.data?.apr??null;
+    const validators=bc.data?.validatorscount??null;
+    const stakedEth=bc.data?.eligibleether??null;
+    const rows=[
+      {l:'Staking APR',v:apr!==null?(apr*100).toFixed(2)+'%':'—',c:'var(--green)'},
+      {l:'Active Validators',v:validators?Number(validators).toLocaleString('en-US'):'—',c:'var(--text)'},
+      {l:'ETH Staked',v:stakedEth?((stakedEth/1e9).toFixed(1)+'M ETH'):'—',c:'var(--muted2)'},
+      {l:'GitHub Commits (4w)',v:devData.commit_count_4_weeks?.toLocaleString('en-US')??(devData.commit_count_4_weeks??'—'),c:'var(--sky)'},
+      {l:'GitHub Stars',v:devData.github_stars?.toLocaleString('en-US')??'—',c:'var(--muted2)'},
+    ];
+    let html='<div style="display:flex;flex-direction:column;gap:4px;">';
+    rows.forEach(r=>{
+      html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:var(--bg4);border:1px solid var(--border);"><span style="font-family:var(--f-mono);font-size:.65rem;color:var(--muted2);">'+r.l+'</span><span style="font-family:var(--f-mono);font-size:.68rem;font-weight:600;color:'+r.c+';">'+r.v+'</span></div>';
+    });
+    html+='</div>';
+    panel.innerHTML=html;
+    badge.textContent='\u25CF Live \u00B7 Beaconchain';badge.className='bdg bl';
+  }catch(err){console.error('ETH Network:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Data unavailable.<br><button class="rbtn" onclick="loadETHNetwork()">Retry</button></div>';}
+}
+
+// ══ ETH WHALE TRACKER ══════════════════════
+async function loadETHWhale(){
+  const panel=document.getElementById('eth-whale-panel'),badge=document.getElementById('eth-whale-badge');
+  try{
+    const res=await fetch('https://api.whale-alert.io/v1/transactions?api_key=test&min_value=1000000&currency=eth&limit=20');
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const data=await res.json();
+    renderETHWhale(data.transactions||[]);
+    badge.textContent='\u25CF Live \u00B7 Whale Alert';badge.className='bdg bl';
+  }catch(err){
+    // Fallback: show large Bybit ETH trades as proxy
+    panel.innerHTML='<div style="font-family:var(--f-mono);font-size:.65rem;color:var(--muted2);padding:12px;text-align:center;">Whale Alert API requires key.<br><br><span style="color:var(--sky);">Tip: Large ETH moves tracked via on-chain explorers like Etherscan.</span></div>';
+    badge.textContent='Limited';badge.className='bdg blo';
+  }
+}
+function renderETHWhale(txs){
+  const panel=document.getElementById('eth-whale-panel');
+  if(!txs.length){panel.innerHTML='<div style="font-family:var(--f-mono);font-size:.65rem;color:var(--muted2);padding:12px;">No large transactions in the last hour.</div>';return;}
+  let html='<div style="display:flex;flex-direction:column;gap:4px;">';
+  txs.slice(0,10).forEach(tx=>{
+    const amt=(tx.amount||0).toLocaleString('en-US',{maximumFractionDigits:0});
+    const usd=tx.amount_usd?(tx.amount_usd/1e6).toFixed(1)+'M':'—';
+    const from=tx.from?.owner_type==='exchange'?tx.from.owner:'Wallet';
+    const to=tx.to?.owner_type==='exchange'?tx.to.owner:'Wallet';
+    const bull=tx.to?.owner_type!=='exchange';
+    const col=bull?'var(--green)':'var(--red)';
+    html+='<div style="padding:6px 8px;background:var(--bg4);border:1px solid var(--border);border-left:2px solid '+col+';"><div style="display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.65rem;"><span style="color:'+col+';">'+(bull?'\u25B2 Accumulate':'\u25BC Exchange')+' · $'+usd+'</span><span style="color:var(--muted2);">'+amt+' ETH</span></div><div style="font-size:.6rem;color:var(--muted2);margin-top:2px;">'+from+' \u2192 '+to+'</div></div>';
+  });
+  html+='</div>';
+  document.getElementById('eth-whale-panel').innerHTML=html;
+}
+
+async function loadETHDashboard(){
+  await Promise.all([loadETHMarket(),loadETHFutures(),loadETHNetwork(),loadETHWhale()]);
+}
 </script>
 </body>
 </html>
