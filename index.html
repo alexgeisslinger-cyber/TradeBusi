@@ -531,9 +531,7 @@ body {
 .dp-eth-chart   { grid-column: 1 / -1; min-height: 560px; }
 .dp-eth-market  { grid-column: 1 / 7;  min-height: 280px; }
 .dp-eth-futures { grid-column: 7 / 13; min-height: 280px; }
-.dp-eth-network { grid-column: 1 / 7;  min-height: 280px; }
 .dp-eth-tech    { grid-column: 7 / 13; min-height: 480px; }
-.dp-eth-whale   { grid-column: 1 / 7;  min-height: 480px; }
 .dp-techsig  { grid-column: 7 / 13; min-height: 480px; }
 
 .ph {
@@ -748,7 +746,7 @@ body {
 /* ── RESPONSIVE ─────────────────────────────── */
 @media (max-width: 1100px) {
   .dash-grid { grid-template-columns: repeat(6, 1fr); }
-  .dp-chart,.dp-net,.dp-macro,.dp-whale,.dp-pred,.dp-events,.dp-techsig,.dp-tvheat,.dp-eth-chart,.dp-eth-market,.dp-eth-futures,.dp-eth-network,.dp-eth-tech,.dp-eth-whale { grid-column: 1 / 7; }
+  .dp-chart,.dp-net,.dp-macro,.dp-whale,.dp-pred,.dp-events,.dp-techsig,.dp-tvheat,.dp-eth-chart,.dp-eth-market,.dp-eth-futures,.dp-eth-tech { grid-column: 1 / 7; }
   .dp-fg { grid-column: 1 / 4; } .dp-dom { grid-column: 4 / 7; }
   .score-layout { grid-template-columns: 1fr; gap: 32px; }
   .feature-grid { grid-template-columns: 1fr 1fr; }
@@ -766,7 +764,7 @@ body {
   .nav-links { display: none; }
   .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
   .dash-grid { grid-template-columns: 1fr; }
-  .dp-chart,.dp-fg,.dp-dom,.dp-net,.dp-macro,.dp-whale,.dp-pred,.dp-events,.dp-techsig,.dp-tvheat,.dp-eth-chart,.dp-eth-market,.dp-eth-futures,.dp-eth-network,.dp-eth-tech,.dp-eth-whale { grid-column: 1; }
+  .dp-chart,.dp-fg,.dp-dom,.dp-net,.dp-macro,.dp-whale,.dp-pred,.dp-events,.dp-techsig,.dp-tvheat,.dp-eth-chart,.dp-eth-market,.dp-eth-futures,.dp-eth-tech { grid-column: 1; }
 }
 </style>
 </head>
@@ -1242,17 +1240,6 @@ body {
         </div>
       </div>
 
-      <!-- ETH Network -->
-      <div class="dash-panel dp-eth-network">
-        <div class="ph">
-          <span class="pt">ETH Network Statistics</span>
-          <span class="bdg blo" id="eth-network-badge">Loading&hellip;</span>
-        </div>
-        <div class="pb" id="eth-network-panel">
-          <div class="sk"></div><div class="sk"></div><div class="sk"></div>
-        </div>
-      </div>
-
       <!-- ETH Technical Analysis -->
       <div class="dash-panel dp-eth-tech">
         <div class="ph">
@@ -1267,17 +1254,6 @@ body {
             {"colorTheme":"dark","displayMode":"single","isTransparent":true,"locale":"en","interval":"1D","width":"100%","height":450,"symbol":"BINANCE:ETHUSDT","showIntervalTabs":true}
             </script>
           </div>
-        </div>
-      </div>
-
-      <!-- ETH Whale Tracker -->
-      <div class="dash-panel dp-eth-whale">
-        <div class="ph">
-          <span class="pt">ETH Whale Tracker</span>
-          <span class="bdg blo" id="eth-whale-badge">Loading&hellip;</span>
-        </div>
-        <div class="pb" id="eth-whale-panel">
-          <div class="sk"></div><div class="sk"></div><div class="sk"></div>
         </div>
       </div>
 
@@ -2176,70 +2152,8 @@ async function loadETHFutures(){
   }catch(err){console.error('ETH Futures:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Data unavailable.<br><button class="rbtn" onclick="loadETHFutures()">Retry</button></div>';}
 }
 
-// ══ ETH NETWORK ════════════════════════════
-async function loadETHNetwork(){
-  const panel=document.getElementById('eth-network-panel'),badge=document.getElementById('eth-network-badge');
-  try{
-    const[cgR,bcR]=await Promise.all([
-      fetch('https://api.coingecko.com/api/v3/coins/ethereum?localization=false&tickers=false&market_data=true&community_data=false&developer_data=true&sparkline=false'),
-      fetch('https://beaconcha.in/api/v1/ethstore/latest')
-    ]);
-    const cg=await cgR.json(),bc=await bcR.json();
-    const devData=cg.developer_data||{};
-    const apr=bc.data?.apr??null;
-    const validators=bc.data?.validatorscount??null;
-    const stakedEth=bc.data?.eligibleether??null;
-    const rows=[
-      {l:'Staking APR',v:apr!==null?(apr*100).toFixed(2)+'%':'—',c:'var(--green)'},
-      {l:'Active Validators',v:validators?Number(validators).toLocaleString('en-US'):'—',c:'var(--text)'},
-      {l:'ETH Staked',v:stakedEth?((stakedEth/1e9).toFixed(1)+'M ETH'):'—',c:'var(--muted2)'},
-      {l:'GitHub Commits (4w)',v:devData.commit_count_4_weeks?.toLocaleString('en-US')??(devData.commit_count_4_weeks??'—'),c:'var(--sky)'},
-      {l:'GitHub Stars',v:devData.github_stars?.toLocaleString('en-US')??'—',c:'var(--muted2)'},
-    ];
-    let html='<div style="display:flex;flex-direction:column;gap:4px;">';
-    rows.forEach(r=>{
-      html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:var(--bg4);border:1px solid var(--border);"><span style="font-family:var(--f-mono);font-size:.65rem;color:var(--muted2);">'+r.l+'</span><span style="font-family:var(--f-mono);font-size:.68rem;font-weight:600;color:'+r.c+';">'+r.v+'</span></div>';
-    });
-    html+='</div>';
-    panel.innerHTML=html;
-    badge.textContent='\u25CF Live \u00B7 Beaconchain';badge.className='bdg bl';
-  }catch(err){console.error('ETH Network:',err);badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML='<div class="err">Data unavailable.<br><button class="rbtn" onclick="loadETHNetwork()">Retry</button></div>';}
-}
-
-// ══ ETH WHALE TRACKER ══════════════════════
-async function loadETHWhale(){
-  const panel=document.getElementById('eth-whale-panel'),badge=document.getElementById('eth-whale-badge');
-  try{
-    const res=await fetch('https://api.whale-alert.io/v1/transactions?api_key=test&min_value=1000000&currency=eth&limit=20');
-    if(!res.ok)throw new Error('HTTP '+res.status);
-    const data=await res.json();
-    renderETHWhale(data.transactions||[]);
-    badge.textContent='\u25CF Live \u00B7 Whale Alert';badge.className='bdg bl';
-  }catch(err){
-    // Fallback: show large Bybit ETH trades as proxy
-    panel.innerHTML='<div style="font-family:var(--f-mono);font-size:.65rem;color:var(--muted2);padding:12px;text-align:center;">Whale Alert API requires key.<br><br><span style="color:var(--sky);">Tip: Large ETH moves tracked via on-chain explorers like Etherscan.</span></div>';
-    badge.textContent='Limited';badge.className='bdg blo';
-  }
-}
-function renderETHWhale(txs){
-  const panel=document.getElementById('eth-whale-panel');
-  if(!txs.length){panel.innerHTML='<div style="font-family:var(--f-mono);font-size:.65rem;color:var(--muted2);padding:12px;">No large transactions in the last hour.</div>';return;}
-  let html='<div style="display:flex;flex-direction:column;gap:4px;">';
-  txs.slice(0,10).forEach(tx=>{
-    const amt=(tx.amount||0).toLocaleString('en-US',{maximumFractionDigits:0});
-    const usd=tx.amount_usd?(tx.amount_usd/1e6).toFixed(1)+'M':'—';
-    const from=tx.from?.owner_type==='exchange'?tx.from.owner:'Wallet';
-    const to=tx.to?.owner_type==='exchange'?tx.to.owner:'Wallet';
-    const bull=tx.to?.owner_type!=='exchange';
-    const col=bull?'var(--green)':'var(--red)';
-    html+='<div style="padding:6px 8px;background:var(--bg4);border:1px solid var(--border);border-left:2px solid '+col+';"><div style="display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.65rem;"><span style="color:'+col+';">'+(bull?'\u25B2 Accumulate':'\u25BC Exchange')+' · $'+usd+'</span><span style="color:var(--muted2);">'+amt+' ETH</span></div><div style="font-size:.6rem;color:var(--muted2);margin-top:2px;">'+from+' \u2192 '+to+'</div></div>';
-  });
-  html+='</div>';
-  document.getElementById('eth-whale-panel').innerHTML=html;
-}
-
 async function loadETHDashboard(){
-  await Promise.all([loadETHMarket(),loadETHFutures(),loadETHNetwork(),loadETHWhale()]);
+  await Promise.all([loadETHMarket(),loadETHFutures()]);
 }
 </script>
 </body>
