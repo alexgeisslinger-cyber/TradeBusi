@@ -2,27 +2,44 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://signalslayered.com/</loc>
+    <lastmod>2026-04-24</lastmod>
     <priority>1.0</priority>
     <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>https://signalslayered.com/bitcoin.html</loc>
+    <lastmod>2026-04-24</lastmod>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://signalslayered.com/mining.html</loc>
+    <lastmod>2026-04-24</lastmod>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
+    <loc>https://signalslayered.com/about.html</loc>
+    <lastmod>2026-04-24</lastmod>
+    <priority>0.4</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://signalslayered.com/disclaimer.html</loc>
+    <lastmod>2026-04-24</lastmod>
+    <priority>0.2</priority>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
     <loc>https://signalslayered.com/privacy.html</loc>
-    <priority>0.3</priority>
+    <lastmod>2026-04-24</lastmod>
+    <priority>0.2</priority>
     <changefreq>yearly</changefreq>
   </url>
   <url>
     <loc>https://signalslayered.com/impressum.html</loc>
-    <priority>0.3</priority>
+    <lastmod>2026-04-24</lastmod>
+    <priority>0.2</priority>
     <changefreq>yearly</changefreq>
   </url>
 </urlset>
