@@ -1166,6 +1166,9 @@ body {
     <div class="crypto-tabs">
       <button class="crypto-tab active" id="tab-btc" onclick="switchCrypto('btc')"><span class="tab-icon">₿</span> Bitcoin</button>
       <button class="crypto-tab" id="tab-eth" onclick="switchCrypto('eth')"><span class="tab-icon">Ξ</span> Ethereum</button>
+      <button class="crypto-tab" id="tab-xrp" onclick="switchCrypto('xrp')"><span class="tab-icon">◈</span> XRP</button>
+      <button class="crypto-tab" id="tab-bnb" onclick="switchCrypto('bnb')"><span class="tab-icon">⬡</span> BNB</button>
+      <button class="crypto-tab" id="tab-sol" onclick="switchCrypto('sol')"><span class="tab-icon">◎</span> Solana</button>
     </div>
 
     <div class="dash-grid" id="btc-grid">
@@ -1420,6 +1423,8 @@ body {
       </div>
 
     </div><!-- /eth-grid -->
+
+    <div id="alt-grids"></div>
 
   </div>
 </section>
@@ -2217,24 +2222,153 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 // ══ CRYPTO TAB SWITCHER ════════════════════
+const ALL_COINS=['btc','eth','xrp','bnb','sol'];
+const altLoaded={};
 let ethLoaded=false;
 function switchCrypto(coin){
-  const btcGrid=document.getElementById('btc-grid');
-  const ethGrid=document.getElementById('eth-grid');
-  const tabBtc=document.getElementById('tab-btc');
-  const tabEth=document.getElementById('tab-eth');
-  if(coin==='btc'){
-    btcGrid.style.display='';
-    ethGrid.style.display='none';
-    tabBtc.className='crypto-tab active';
-    tabEth.className='crypto-tab';
-  }else{
-    btcGrid.style.display='none';
-    ethGrid.style.display='grid';
-    tabBtc.className='crypto-tab';
-    tabEth.className='crypto-tab active';
-    if(!ethLoaded){loadETHDashboard();ethLoaded=true;}
+  ALL_COINS.forEach(id=>{
+    const grid=document.getElementById(id+'-grid');
+    if(grid)grid.style.display=(id===coin)?(id==='btc'?'':'grid'):'none';
+    const tab=document.getElementById('tab-'+id);
+    if(tab)tab.className='crypto-tab'+(id===coin?' active':'');
+  });
+  if(coin==='eth'&&!ethLoaded){loadETHDashboard();ethLoaded=true;}
+  if(['xrp','bnb','sol'].includes(coin)&&!altLoaded[coin]){
+    buildCoinGrid(coin);loadAltDashboard(coin);altLoaded[coin]=true;
   }
+}
+
+// ══ ALT COIN CONFIG ═════════════════════════
+const COINS={
+  xrp:{name:'XRP',   cgId:'ripple',       sym:'XRPUSDT', tvSym:'BINANCE:XRPUSDT', color:'#E84142', domKey:'xrp'},
+  bnb:{name:'BNB',   cgId:'binancecoin',  sym:'BNBUSDT',  tvSym:'BINANCE:BNBUSDT',  color:'#F3BA2F', domKey:'bnb'},
+  sol:{name:'Solana',cgId:'solana',        sym:'SOLUSDT',  tvSym:'BINANCE:SOLUSDT',  color:'#9945FF', domKey:'sol'}
+};
+
+function injectTVWidget(container,src,config,height){
+  if(!container)return;
+  const h=height||500;
+  const wrap=document.createElement('div');
+  wrap.className='tradingview-widget-container';
+  wrap.style.cssText=`width:100%;height:${h}px;`;
+  const inner=document.createElement('div');
+  inner.className='tradingview-widget-container__widget';
+  inner.style.cssText=`width:100%;height:${h}px;`;
+  wrap.appendChild(inner);
+  const s=document.createElement('script');
+  s.type='text/javascript';s.src=src;s.async=true;
+  s.text=JSON.stringify({...config,width:'100%',height:`${h}`});
+  wrap.appendChild(s);container.appendChild(wrap);
+}
+
+function buildCoinGrid(id){
+  const cfg=COINS[id];if(!cfg)return;
+  const grid=document.createElement('div');
+  grid.className='dash-grid';grid.id=id+'-grid';grid.style.display='none';
+  grid.innerHTML=`
+    <div class="dash-panel dp-eth-chart"><div class="ph"><span class="pt">${cfg.name} · ${cfg.sym} · Live Chart</span><span class="bdg bl">&#9679; Live &middot; TradingView</span></div><div id="${id}-chart-cnt" style="flex:1;min-height:500px;"></div></div>
+    <div class="dash-panel dp-eth-fg"><div class="ph"><span class="pt">Crypto Fear &amp; Greed Index</span><span class="bdg blo" id="${id}-fg-badge">Loading&hellip;</span></div><div class="pb" id="${id}-fg-panel"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div></div>
+    <div class="dash-panel dp-eth-dom"><div class="ph"><span class="pt">${cfg.name} Dominance</span><span class="bdg blo" id="${id}-dom-badge">Loading&hellip;</span></div><div class="pb" id="${id}-dom-panel"><div class="sk"></div><div class="sk"></div></div></div>
+    <div class="dash-panel dp-eth-tech"><div class="ph"><span class="pt">${cfg.name} Technical Analysis · Live</span><span class="bdg bl">&#9679; Live &middot; TradingView</span></div><div id="${id}-tech-cnt" style="flex:1;overflow:hidden;"></div></div>
+    <div class="dash-panel dp-eth-market"><div class="ph"><span class="pt">${cfg.name} Market Overview</span><span class="bdg blo" id="${id}-market-badge">Loading&hellip;</span></div><div class="pb" id="${id}-market-panel"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div></div>
+    <div class="dash-panel dp-eth-futures"><div class="ph"><span class="pt">${cfg.name} Futures · Market Structure</span><span class="bdg blo" id="${id}-futures-badge">Loading&hellip;</span></div><div class="pb" id="${id}-futures-panel"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div></div>
+    <div class="dash-panel dp-events"><div class="ph"><span class="pt">Economic Calendar · USD Events</span><span class="bdg bl">&#9679; Live &middot; TradingView</span></div><div id="${id}-events-cnt" style="flex:1;overflow:hidden;"></div></div>
+    <div class="dash-panel dp-tvheat"><div class="ph"><span class="pt">Crypto Market Heatmap · 24h</span><span class="bdg bl">&#9679; Live &middot; TradingView</span></div><div id="${id}-heat-cnt" style="flex:1;min-height:420px;"></div></div>`;
+  document.getElementById('alt-grids').appendChild(grid);
+  injectTVWidget(document.getElementById(`${id}-chart-cnt`),'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js',{autosize:false,symbol:cfg.tvSym,interval:'D',timezone:'Etc/UTC',theme:'dark',style:'1',locale:'en',backgroundColor:'rgba(9,18,31,1)',gridColor:'rgba(56,189,248,0.04)',hide_top_toolbar:false,hide_legend:false,save_image:false,hide_volume:false},500);
+  injectTVWidget(document.getElementById(`${id}-tech-cnt`),'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js',{colorTheme:'dark',displayMode:'single',isTransparent:true,locale:'en',interval:'1D',symbol:cfg.tvSym,showIntervalTabs:true},450);
+  injectTVWidget(document.getElementById(`${id}-events-cnt`),'https://s3.tradingview.com/external-embedding/embed-widget-events.js',{colorTheme:'dark',isTransparent:true,locale:'en',importanceFilter:'0,1',countryFilter:'us'},420);
+  injectTVWidget(document.getElementById(`${id}-heat-cnt`),'https://s3.tradingview.com/external-embedding/embed-widget-crypto-coins-heatmap.js',{dataSource:'Crypto',blockSize:'market_cap_calc',blockColor:'24h_close_change|5',locale:'en',colorTheme:'dark',hasTopBar:false,isZoomEnabled:true,hasSymbolTooltip:true},420);
+}
+
+// ══ GENERIC ALT LOADERS ════════════════════
+async function loadAltMarket(id){
+  const cfg=COINS[id],panel=document.getElementById(`${id}-market-panel`),badge=document.getElementById(`${id}-market-badge`);
+  try{
+    const[cgR,byR]=await Promise.all([fetch(`https://api.coingecko.com/api/v3/coins/${cfg.cgId}?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false`),fetch(`https://api.bybit.com/v5/market/tickers?category=spot&symbol=${cfg.sym}`)]);
+    const cg=await cgR.json(),by=await byR.json();const md=cg.market_data;
+    const price=md.current_price.usd,chg24=md.price_change_percentage_24h,chg7=md.price_change_percentage_7d;
+    const mcap=md.market_cap.usd,vol=md.total_volume.usd,athPct=md.ath_change_percentage.usd;
+    const ticker=by.result?.list?.[0];
+    const high24=parseFloat(ticker?.highPrice24h||0),low24=parseFloat(ticker?.lowPrice24h||0);
+    const cc=chg24>=0?'var(--green)':'var(--red)',cs=chg24>=0?'+':'';
+    const dp=price<1?6:price<10?4:2;
+    const rows=[{l:'Price',v:'$'+price.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:dp}),c:cc},{l:'24h Change',v:cs+chg24.toFixed(2)+'%',c:cc},{l:'7d Change',v:(chg7>=0?'+':'')+chg7.toFixed(2)+'%',c:chg7>=0?'var(--green)':'var(--red)'},{l:'24h High',v:'$'+high24.toLocaleString('en-US',{maximumFractionDigits:dp}),c:'var(--text)'},{l:'24h Low',v:'$'+low24.toLocaleString('en-US',{maximumFractionDigits:dp}),c:'var(--text)'},{l:'Market Cap',v:'$'+(mcap/1e9).toFixed(1)+'B',c:'var(--muted2)'},{l:'Volume 24h',v:'$'+(vol/1e9).toFixed(1)+'B',c:'var(--muted2)'},{l:'ATH Distance',v:(athPct>=0?'+':'')+athPct.toFixed(1)+'%',c:athPct>=-10?'var(--green)':'var(--muted2)'}];
+    let html='<div style="display:flex;flex-direction:column;gap:4px;">';
+    rows.forEach(r=>{html+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:var(--bg4);border:1px solid var(--border);"><span style="font-family:var(--f-mono);font-size:.65rem;color:var(--muted2);">${r.l}</span><span style="font-family:var(--f-mono);font-size:.68rem;font-weight:600;color:${r.c};">${r.v}</span></div>`;});
+    html+='</div>';panel.innerHTML=html;badge.textContent='● Live · CoinGecko';badge.className='bdg bl';
+  }catch(err){badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML=`<div class="err">Data unavailable.<br><button class="rbtn" onclick="loadAltMarket('${id}')">Retry</button></div>`;}
+}
+
+async function loadAltFutures(id){
+  const cfg=COINS[id],panel=document.getElementById(`${id}-futures-panel`),badge=document.getElementById(`${id}-futures-badge`);
+  try{
+    const[tkR,oiR,lsR,spR]=await Promise.all([fetch(`https://api.bybit.com/v5/market/tickers?category=linear&symbol=${cfg.sym}`),fetch(`https://api.bybit.com/v5/market/open-interest?category=linear&symbol=${cfg.sym}&intervalTime=1h&limit=2`),fetch(`https://api.bybit.com/v5/market/account-ratio?category=linear&symbol=${cfg.sym}&period=1h&limit=1`),fetch(`https://api.bybit.com/v5/market/tickers?category=spot&symbol=${cfg.sym}`)]);
+    const tk=await tkR.json(),oi=await oiR.json(),ls=await lsR.json(),sp=await spR.json();
+    const ticker=tk.result?.list?.[0],spotT=sp.result?.list?.[0];
+    const fr=parseFloat(ticker?.fundingRate||0)*100,frAnn=(fr*3*365).toFixed(1);
+    const oiList=oi.result?.list||[];
+    const oiNow=parseFloat(oiList[0]?.openInterest||0),oiPrev=parseFloat(oiList[1]?.openInterest||1);
+    const oiChg=(oiNow-oiPrev)/Math.abs(oiPrev)*100,oiUSD=parseFloat(ticker?.openInterestValue||0);
+    const buyR=parseFloat(ls.result?.list?.[0]?.buyRatio||0.5);
+    const lsRatio=buyR>0&&buyR<1?buyR/(1-buyR):1;
+    const futP=parseFloat(ticker?.lastPrice||0),spotP=parseFloat(spotT?.lastPrice||0);
+    const basis=spotP>0?(futP-spotP)/spotP*100:0;
+    const rows=[{label:'Funding Rate',val:(fr>=0?'+':'')+fr.toFixed(4)+'%',sub:frAnn+'% ann. · '+(fr>0.05?'Overheated':fr<-0.01?'Negative':'Neutral'),bull:fr>=-0.01&&fr<0.05},{label:'Open Interest 1h',val:(oiChg>=0?'+':'')+oiChg.toFixed(2)+'%',sub:'$'+(oiUSD/1e9).toFixed(2)+'B · '+(oiChg>0?'Increasing':'Decreasing'),bull:oiChg>0},{label:'Long / Short Ratio',val:lsRatio.toFixed(3),sub:lsRatio>1.3?'Longs dominant':lsRatio<0.77?'Shorts dominant':'Balanced',bull:lsRatio>1},{label:'Futures Basis',val:(basis>=0?'+':'')+basis.toFixed(3)+'%',sub:basis>0.1?'Contango · bullish':basis<-0.1?'Backwardation · bearish':'Neutral',bull:basis>0}];
+    let html='<div style="display:flex;flex-direction:column;gap:5px;">';
+    rows.forEach(r=>{const col=r.bull?'var(--green)':'var(--red)';html+=`<div style="padding:8px 10px;background:var(--bg4);border:1px solid var(--border);border-left:2px solid ${col};"><div style="display:flex;justify-content:space-between;"><span style="font-family:var(--f-mono);font-size:.65rem;color:var(--muted2);">${r.label}</span><span style="font-family:var(--f-mono);font-size:.67rem;color:${col};font-weight:500;">${r.val}</span></div><div style="font-size:.62rem;color:var(--muted2);margin-top:2px;">${r.sub}</div></div>`;});
+    html+=`</div><div style="margin-top:7px;font-family:var(--f-mono);font-size:.65rem;color:var(--muted2);text-align:center;">Bybit Futures · Updates every 60s</div>`;
+    panel.innerHTML=html;badge.textContent=`● Bullish ${rows.filter(r=>r.bull).length}/4`;badge.className='bdg bl';
+    setTimeout(()=>loadAltFutures(id),60000);
+  }catch(err){badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML=`<div class="err">Data unavailable.<br><button class="rbtn" onclick="loadAltFutures('${id}')">Retry</button></div>`;}
+}
+
+async function loadAltFearGreed(id){
+  const panel=document.getElementById(`${id}-fg-panel`),badge=document.getElementById(`${id}-fg-badge`);
+  try{
+    const res=await fetch('https://api.alternative.me/fng/?limit=30&format=json');
+    if(!res.ok)throw new Error();
+    const data=await res.json();const entries=data.data||[];if(!entries.length)throw new Error();
+    const cur=entries[0],score=parseInt(cur.value),label=cur.value_classification;
+    const sc=score>=60?'var(--amber)':score>=40?'var(--yellow)':'var(--red)';
+    const lw=entries[7]?parseInt(entries[7].value):null,lm=entries[29]?parseInt(entries[29].value):null;
+    const wd=lw!==null?score-lw:null,md=lm!==null?score-lm:null;
+    panel.innerHTML=`<div style="text-align:center;padding:6px 0 14px;"><div style="font-family:var(--f-ui);font-weight:800;font-size:3.5rem;line-height:1;color:${sc};">${score}</div><div style="font-family:var(--f-mono);font-size:.52rem;letter-spacing:.16em;text-transform:uppercase;color:${sc};margin-top:4px;">${label}</div></div><div style="height:4px;background:linear-gradient(90deg,var(--red) 0%,var(--yellow) 50%,var(--green) 100%);position:relative;margin:0 4px 4px;"><div style="position:absolute;top:50%;left:${Math.min(96,Math.max(4,score))}%;transform:translate(-50%,-50%);width:10px;height:10px;background:var(--text);border:2px solid ${sc};"></div></div><div style="display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.52rem;color:var(--muted2);margin-bottom:12px;padding:0 4px;"><span style="color:var(--red)">FEAR</span><span>NEUTRAL</span><span style="color:var(--green)">GREED</span></div><div style="display:flex;gap:6px;"><div style="flex:1;background:var(--bg4);border:1px solid var(--border);padding:8px;text-align:center;"><div style="font-family:var(--f-mono);font-size:.5rem;color:var(--muted2);margin-bottom:3px;">LAST WEEK</div><div style="font-family:var(--f-mono);font-size:.88rem;font-weight:600;color:${lw>=60?'var(--amber)':lw>=40?'var(--yellow)':'var(--red)'};">${lw??'—'}${wd!==null?`<span style="font-size:.6rem;color:${wd>=0?'var(--green)':'var(--red)'}"> ${wd>=0?'+':''}${wd}</span>`:''}</div></div><div style="flex:1;background:var(--bg4);border:1px solid var(--border);padding:8px;text-align:center;"><div style="font-family:var(--f-mono);font-size:.5rem;color:var(--muted2);margin-bottom:3px;">LAST MONTH</div><div style="font-family:var(--f-mono);font-size:.88rem;font-weight:600;color:${lm>=60?'var(--amber)':lm>=40?'var(--yellow)':'var(--red)'};">${lm??'—'}${md!==null?`<span style="font-size:.6rem;color:${md>=0?'var(--green)':'var(--red)'}"> ${md>=0?'+':''}${md}</span>`:''}</div></div></div>`;
+    badge.textContent='● Live · Alternative.me';badge.className='bdg bl';
+  }catch(err){badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML=`<div class="err">Data unavailable.<br><button class="rbtn" onclick="loadAltFearGreed('${id}')">Retry</button></div>`;}
+}
+
+async function loadAltDominance(id){
+  const cfg=COINS[id],panel=document.getElementById(`${id}-dom-panel`),badge=document.getElementById(`${id}-dom-badge`);
+  try{
+    const res=await fetch('https://api.coingecko.com/api/v3/global');if(!res.ok)throw new Error();
+    const data=await res.json();const mp=data.data?.market_cap_percentage,dom=mp?.[cfg.domKey];
+    if(!dom)throw new Error();
+    const totalMcap=data.data?.total_market_cap?.usd,mcc=data.data?.market_cap_change_percentage_24h_usd;
+    const dv=dom.toFixed(1),dc=cfg.color,ts=totalMcap?'$'+(totalMcap/1e12).toFixed(2)+'T':'—';
+    const cc=mcc>=0?'var(--green)':'var(--red)',cs=mcc>=0?'+':'';
+    const coins=[{s:'BTC',k:'btc',c:'#F7931A'},{s:'ETH',k:'eth',c:'#627EEA'},{s:'BNB',k:'bnb',c:'#F3BA2F'},{s:'XRP',k:'xrp',c:'#E84142'},{s:'SOL',k:'sol',c:'#9945FF'}];
+    const known=coins.reduce((s,c)=>s+(mp?.[c.k]||0),0),other=Math.max(0,100-known);
+    const allSlices=[...coins.map(c=>({pct:mp?.[c.k]||0,color:c.c,s:c.s})),{pct:other,color:'#2A3F5C',s:'Others'}];
+    const cid=`${id}-dom-donut`;
+    panel.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:10px;"><canvas id="${cid}" width="170" height="170" style="width:170px;height:170px;"></canvas><div style="width:100%;"><div style="text-align:center;margin-bottom:8px;"><div style="font-family:var(--f-ui);font-weight:800;font-size:2.6rem;line-height:1;color:${dc};">${dv}<span style="font-size:1rem;">%</span></div><div style="font-family:var(--f-mono);font-size:.47rem;letter-spacing:.13em;color:${dc};margin-top:3px;">${cfg.name.toUpperCase()} DOMINANT</div></div><div style="height:4px;overflow:hidden;margin-bottom:7px;display:flex;border-radius:2px;">${coins.map(c=>'<div style="width:'+(mp?.[c.k]||0).toFixed(1)+'%;background:'+c.c+';"></div>').join('')}<div style="flex:1;background:#2A3F5C;"></div></div><div style="display:flex;flex-wrap:wrap;gap:4px 8px;margin-bottom:10px;">${allSlices.map(sl=>'<div style="display:flex;align-items:center;gap:3px;"><div style="width:5px;height:5px;border-radius:50%;background:'+sl.color+';"></div><span style="font-family:var(--f-mono);font-size:.52rem;color:var(--muted2);">'+sl.s+' <span style="color:var(--text);">'+sl.pct.toFixed(1)+'%</span></span></div>').join('')}</div><div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px;"><div style="display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.65rem;"><span style="color:var(--muted2);">Total Market Cap</span><span>${ts}</span></div><div style="display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.65rem;"><span style="color:var(--muted2);">24h Change</span><span style="color:${cc};">${cs}${mcc?.toFixed(2)}%</span></div></div><div style="padding:7px 10px;background:var(--bg4);border:1px solid var(--border);border-left:2px solid ${dc};"><div style="font-size:.61rem;color:var(--muted2);">${dom>=5?`High ${cfg.name} dominance.`:dom>=2?`Moderate ${cfg.name} dominance.`:`Low ${cfg.name} dominance.`}</div></div></div></div>`;
+    requestAnimationFrame(()=>{
+      const cv=document.getElementById(cid);if(!cv)return;
+      const dpr=window.devicePixelRatio||1,sz=170;cv.width=sz*dpr;cv.height=sz*dpr;
+      const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);
+      const cx=sz/2,cy=sz/2,rOuter=78,rInner=50,total=allSlices.reduce((s,sl)=>s+sl.pct,0)||100;
+      let ang=-Math.PI/2;
+      allSlices.forEach(sl=>{if(sl.pct<=0)return;const sweep=sl.pct/total*Math.PI*2;ctx.beginPath();ctx.arc(cx,cy,rOuter,ang,ang+sweep);ctx.arc(cx,cy,rInner,ang+sweep,ang,true);ctx.closePath();ctx.fillStyle=sl.color;ctx.fill();ctx.strokeStyle='#0D1A2D';ctx.lineWidth=1.5;ctx.stroke();ang+=sweep;});
+      ctx.fillStyle=dc;ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.font=`bold ${Math.round(18*dpr)/dpr}px var(--f-ui,sans-serif)`;ctx.fillText(dv+'%',cx,cy-7);
+      ctx.font=`${Math.round(9*dpr)/dpr}px var(--f-mono,monospace)`;ctx.fillStyle='rgba(148,163,184,0.7)';ctx.fillText(cfg.name+' DOM',cx,cy+10);
+    });
+    badge.textContent='● Live · CoinGecko';badge.className='bdg bl';
+  }catch(err){badge.textContent='Offline';badge.className='bdg ber';panel.innerHTML=`<div class="err">Data unavailable.<br><button class="rbtn" onclick="loadAltDominance('${id}')">Retry</button></div>`;}
+}
+
+async function loadAltDashboard(id){
+  await Promise.all([loadAltMarket(id),loadAltFutures(id),loadAltFearGreed(id),loadAltDominance(id)]);
 }
 
 // ══ ETH MARKET OVERVIEW ════════════════════
