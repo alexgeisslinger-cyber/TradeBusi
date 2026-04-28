@@ -2226,6 +2226,9 @@ const ALL_COINS=['btc','eth','xrp','bnb','sol'];
 const altLoaded={};
 let ethLoaded=false;
 function switchCrypto(coin){
+  if(['xrp','bnb','sol'].includes(coin)&&!altLoaded[coin]){
+    buildCoinGrid(coin);loadAltDashboard(coin);altLoaded[coin]=true;
+  }
   ALL_COINS.forEach(id=>{
     const grid=document.getElementById(id+'-grid');
     if(grid)grid.style.display=(id===coin)?(id==='btc'?'':'grid'):'none';
@@ -2233,9 +2236,6 @@ function switchCrypto(coin){
     if(tab)tab.className='crypto-tab'+(id===coin?' active':'');
   });
   if(coin==='eth'&&!ethLoaded){loadETHDashboard();ethLoaded=true;}
-  if(['xrp','bnb','sol'].includes(coin)&&!altLoaded[coin]){
-    buildCoinGrid(coin);loadAltDashboard(coin);altLoaded[coin]=true;
-  }
 }
 
 // ══ ALT COIN CONFIG ═════════════════════════
